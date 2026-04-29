@@ -52,7 +52,9 @@ layers:
   - auto_size: false
     canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
     compute_settings:
-      compute_environment_type: 1
+      compute_environment_type: 2
+      ephemeral_storage_gib: 20
+      size: small
     description: Builds a slim `events` frame, prints top events, time range, upgrade
       base rate, and flags likely-leakage events.
     height: 1000
@@ -104,7 +106,9 @@ layers:
   - auto_size: false
     canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
     compute_settings:
-      compute_environment_type: 1
+      compute_environment_type: 2
+      ephemeral_storage_gib: 20
+      size: small
     description: Loads zerve_events.csv and displays dataset structure including shape,
       data types, and first few rows for initial data exploration.
     height: 1000
@@ -119,6 +123,62 @@ layers:
     width: 1600
     x: 0
     y: 0
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 2
+      ephemeral_storage_gib: 20
+      size: small
+    description: Extracts top browsers / countries / device_types / OS into a
+      `demographics` dict so downstream visual blocks don't need the full df.
+    height: 1000
+    id: 877bb737-f325-419e-88d4-f0c74609523d
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: User Demographics
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 1700
+    y: 500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Aggregates the slim `events` frame into a daily series — DAU and
+      event volume per day. Light enough for Lambda.
+    height: 1000
+    id: 88de52cc-b1df-46fb-8e55-af7c7655c402
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Daily Activity
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 1700
+    y: 1500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Fan-in block. Combines `daily` (from Daily Activity) and
+      `demographics` (from User Demographics) into a 2x2 dashboard.
+    height: 1000
+    id: 531adde6-ff95-44a7-90e4-268ef86cf771
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Visualize Combined
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 1700
+    y: 2500
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   edges:
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
@@ -146,6 +206,26 @@ layers:
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: 45972ed8-d7b0-431c-8af2-14f3aeb57aa4
     target: 74b326c2-b2ce-43f2-ada9-088406566be2
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: c82ef78e-adc4-478d-a558-6e85a0c2d06a
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: bbd1b635-38e8-4533-b331-c647f51a44a2
+    target: 877bb737-f325-419e-88d4-f0c74609523d
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: d9bdd6dc-37ef-48ff-857d-87695a3b85c4
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 45972ed8-d7b0-431c-8af2-14f3aeb57aa4
+    target: 88de52cc-b1df-46fb-8e55-af7c7655c402
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: d1aef9e2-bcf0-438c-9f8b-fae5b0415156
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 88de52cc-b1df-46fb-8e55-af7c7655c402
+    target: 531adde6-ff95-44a7-90e4-268ef86cf771
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 193f0270-4230-4f77-b84a-bb253d5a6fec
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 877bb737-f325-419e-88d4-f0c74609523d
+    target: 531adde6-ff95-44a7-90e4-268ef86cf771
   id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Development
   type: 1
