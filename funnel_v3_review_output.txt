@@ -1,0 +1,101 @@
+[1] Loading...
+    rows=3,509,628  users=17,541
+
+[2] Running v3 classification @ DATA_END...
+    classified: 17,541
+
+=== (A) v3 transition matrix ===
+
+  v3 transition counts (FROM → TO):
+           TO →      1      2      3      4      5      6      7      8
+  FROM 1        0 14,406      1    605      3      1      0     18   1.New
+  FROM 2        4      0    111  6,249    100      3     10     80   2.Exploring
+  FROM 3        0     56      0     27  1,776    178    245     90   3.Created
+  FROM 4        1    124  4,246      0    671     31     59     37   4.UsedAI
+  FROM 5        0     13    394     82      0    179    310     48   5.WroteCode
+  FROM 6        1      4     17      0     30      0     94     28   6.Integrated
+  FROM 7        0      5     41      3     51     50      0     22   7.Engaged
+  FROM 8        0      1     22     59     35     28     63      0   8.Upgraded
+
+  v3 transition probs P(next | from):
+           TO →      1      2      3      4      5      6      7      8
+  FROM 1    0.0%  95.8%   0.0%   4.0%   0.0%   0.0%   0.0%   0.1%   1.New
+  FROM 2    0.1%   0.0%   1.7%  95.3%   1.5%   0.0%   0.2%   1.2%   2.Exploring
+  FROM 3    0.0%   2.4%   0.0%   1.1%  74.9%   7.5%  10.3%   3.8%   3.Created
+  FROM 4    0.0%   2.4%  82.1%   0.0%  13.0%   0.6%   1.1%   0.7%   4.UsedAI
+  FROM 5    0.0%   1.3%  38.4%   8.0%   0.0%  17.4%  30.2%   4.7%   5.WroteCode
+  FROM 6    0.6%   2.3%   9.8%   0.0%  17.2%   0.0%  54.0%  16.1%   6.Integrated
+  FROM 7    0.0%   2.9%  23.8%   1.7%  29.7%  29.1%   0.0%  12.8%   7.Engaged
+  FROM 8    0.0%   0.5%  10.6%  28.4%  16.8%  13.5%  30.3%   0.0%   8.Upgraded
+
+=== (B) Stage k 도달자의 v3 최종 상태 ===
+  reached          users   progressed   upgraded   AR@Used   AR@Code   AR@Int   AR@Eng   active
+  1.New           17,191       87.5%      1.8%    21.6%    10.2%    1.1%    2.6%   12.5%
+  2.Exploring     14,825       44.8%      2.0%    22.9%    12.1%    1.2%    3.0%   55.2%
+  3.Created        4,834       99.9%      5.5%    40.8%    31.2%    3.8%    8.8%    0.1%
+  4.UsedAI         7,086       43.3%      4.1%    53.2%    25.3%    2.8%    6.4%    3.5%
+  5.WroteCode      2,669       28.5%      6.4%     0.0%    67.6%    4.3%   11.5%    3.9%
+  6.Integrated       470       46.6%     21.1%     0.0%     0.0%   41.5%   13.0%   11.9%
+  7.Engaged          781       19.2%     19.2%     0.0%     0.0%    0.0%   58.5%   22.3%
+
+=== (C) AtRisk subgroup별 행동 프로파일 ===
+
+  subgroup                  users   median_events   median_days   median_lifetime   median_inactive
+  9.AtRisk@UsedAI           3,767             45            1             0.04d            64.03d
+  9.AtRisk@WroteCode        1,803            149            1             0.29d            82.78d
+  9.AtRisk@Integrated         195            713            2             1.80d            34.13d
+  9.AtRisk@Engaged            457            633            6            19.22d            57.61d
+  7.Engaged                   174          1,056            9            35.45d             3.45d
+  8.Upgraded                  323          1,239            4            18.25d            17.72d
+
+=== (D) Stage 3 (Created) 문제 진단 ===
+  highest = 3 (현재 분류): 3명
+  Created 도달 + UsedAI/Code/Integ 미도달: 3명
+  Stage 3 도달자 중 그 다음 milestone까지 median: -0.02h
+  Stage 3+4 모두 도달한 사용자 4,827명 중:
+    AI를 먼저 도달:        4,788  (99.2%)
+    Created를 먼저 도달:      39  (0.8%)
+    동시:                      0  (0.0%)
+
+=== (E) AtRisk 사용자의 재활성화 율 (60일 전 → 지금) ===
+  prev_state                count   now_active    now_upg   still_AR
+  9.AtRisk@UsedAI           1,751        0.8%      0.1%     99.1%
+  9.AtRisk@WroteCode        1,006        0.1%      0.2%     99.7%
+  9.AtRisk@Integrated          30        0.0%      0.0%    100.0%
+  9.AtRisk@Engaged            217        6.0%      0.5%     93.5%
+
+=== (F) 단계별 활동 깊이 (events per user, AI 사용량) ===
+
+  stage                         n   med_events    med_AI   med_code
+  1.New                     2,155           2        0         0
+  2.Exploring               8,181          13        0         0
+  4.UsedAI                    248         101       23         0
+  5.WroteCode                 105         332       67         4
+  6.Integrated                 56       1,046      105         1
+  7.Engaged                   174       1,056      194        11
+  8.Upgraded                  323       1,239      276         1
+  9.AtRisk@UsedAI           3,767          45        8         0
+  9.AtRisk@WroteCode        1,803         149       23         2
+  9.AtRisk@Integrated         195         713       77         1
+  9.AtRisk@Engaged            457         633      132         3
+
+========================================================================
+=== (G) v3 진단 결과 — 잠재 v4 개선점 ===
+========================================================================
+  ⚠️ 1. Stage 3 (Created) transit 문제: highest=3 사용자 3명 / 도달자 4834명
+  ⚠️ 2. AtRisk@Integrated population 작음: 195명 (전체의 1.11%)
+  ⚠️ 3. Exploring stuck 사용자 거대: 8,181명 (46.6%)  → 이건 stage 자체의 문제라기보다 product onboarding 문제
+  ⚠️ 4. Engaged v3 reach 증가 미미 (754 → 781, +27)  → Code/Integration 단독으로는 3+ days 활동 사용자 거의 없음
+  ⚠️ 5. NoEvent 74명 — timestamp는 있지만 NaN event/None 사용자 (data quality 이슈)
+
+  v4 권장 개선 후보:
+     a) Stage 3 정의 약간 좁히기 (block_create + files_upload만, agent_tool은 4로):
+        → AI 사용 전에 직접 콘텐츠 생성한 사용자만 잡아 transit 문제 완화
+     b) AtRisk 시간 윈도우를 stage별로 차등 (예: Engaged 출신 30일, UsedAI 출신 14일)
+        → Engaged였던 사람은 더 오래 inactive해야 진짜 떠난 것으로 봄
+     c) 'Stuck@Exploring' 별도 세분화 (no_progress인지 progressed인지 구분):
+        → 46% 거대 양동이를 분리. 47%는 product team 액션 타깃
+     d) 'Reactivated' state 신설: AtRisk였다가 다시 활동 시작한 사용자 마킹
+        → 마케팅/CS 팀이 우선 케어할 segment
+
+WROTE: review output above + console log
