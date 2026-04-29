@@ -2,5 +2,6 @@
 /venv/
 /.venv/
 /figures/
+/app.zip
 __pycache__/
 .DS_Store
