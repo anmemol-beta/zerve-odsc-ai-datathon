@@ -9,6 +9,8 @@ requirements:
 - scikit-learn
 - lightgbm
 - shap
+- streamlit
+- plotly
 linux_packages: []
 environment_variables: []
 is_public: false
