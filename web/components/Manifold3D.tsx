@@ -2,7 +2,6 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useMemo, useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import type { Manifold, ManifoldPoint, Stage } from "@/lib/types";
@@ -74,10 +73,15 @@ function PointCloud({
       fragmentShader: `
         varying vec3 vColor;
         void main() {
-          float d = length(gl_PointCoord - vec2(0.5));
+          vec2 uv = gl_PointCoord - vec2(0.5);
+          float d = length(uv);
           if (d > 0.5) discard;
-          float alpha = smoothstep(0.5, 0.0, d);
-          gl_FragColor = vec4(vColor * 1.6, alpha * 0.9);
+          // hot core + soft halo for fake bloom
+          float core = smoothstep(0.18, 0.0, d);
+          float halo = smoothstep(0.5, 0.18, d);
+          float alpha = clamp(core + halo * 0.6, 0.0, 1.0);
+          vec3 col = vColor * (1.0 + core * 1.4) + vec3(core * 0.35);
+          gl_FragColor = vec4(col, alpha * 0.95);
         }
       `,
     });
@@ -123,13 +127,6 @@ export default function Manifold3D({ manifold }: { manifold: Manifold }) {
             zoomSpeed={0.6}
             autoRotate={false}
           />
-          <EffectComposer>
-            <Bloom
-              intensity={1.2}
-              luminanceThreshold={0.2}
-              luminanceSmoothing={0.5}
-            />
-          </EffectComposer>
         </Canvas>
         <div className="absolute bottom-3 left-4 text-xs text-slate-400 pointer-events-none font-mono">
           PCA explains {(evr.reduce((a, b) => a + b, 0) * 100).toFixed(1)}% — drag to rotate, scroll to zoom
