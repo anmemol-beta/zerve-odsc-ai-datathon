@@ -125,10 +125,9 @@ export default function Manifold3D({ manifold }: { manifold: Manifold }) {
           />
           <EffectComposer>
             <Bloom
-              intensity={1.4}
-              luminanceThreshold={0.18}
-              luminanceSmoothing={0.45}
-              mipmapBlur
+              intensity={1.2}
+              luminanceThreshold={0.2}
+              luminanceSmoothing={0.5}
             />
           </EffectComposer>
         </Canvas>

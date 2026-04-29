@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, MouseEvent } from "react";
+import { motion } from "framer-motion";
+import { useRef, useState, MouseEvent } from "react";
 import AnimatedNumber from "./AnimatedNumber";
 import type { Headline } from "@/lib/types";
 
@@ -19,50 +19,55 @@ type Card = {
 
 function TiltCard({ card, index }: { card: Card; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rotX = useSpring(useTransform(my, (v) => (v - 0.5) * -8), { damping: 18, stiffness: 220 });
-  const rotY = useSpring(useTransform(mx, (v) => (v - 0.5) * 12),  { damping: 18, stiffness: 220 });
-  const glowX = useTransform(mx, (v) => v * 100);
-  const glowY = useTransform(my, (v) => v * 100);
+  const [pos, setPos] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
+  const [active, setActive] = useState(false);
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
-    mx.set((e.clientX - rect.left) / rect.width);
-    my.set((e.clientY - rect.top) / rect.height);
+    setPos({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
   };
   const onLeave = () => {
-    mx.set(0.5);
-    my.set(0.5);
+    setPos({ x: 50, y: 50 });
+    setActive(false);
   };
+  const onEnter = () => setActive(true);
+
+  // Rotate offsets ±5deg, scaled by mouse position
+  const rotX = ((pos.y - 50) / 50) * -5;
+  const rotY = ((pos.x - 50) / 50) * 7;
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.5, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
-      style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
+      transition={{ duration: 0.6, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       onMouseMove={onMove}
+      onMouseEnter={onEnter}
       onMouseLeave={onLeave}
+      style={{
+        transform: `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg)`,
+        transition: "transform 0.18s cubic-bezier(.2,.9,.4,1)",
+      }}
       className="group relative rounded-2xl p-px overflow-hidden"
     >
-      {/* Animated border gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${card.accent} opacity-70 group-hover:opacity-100 transition-opacity duration-500`} />
 
-      {/* Inner card */}
       <div className="relative rounded-[15px] bg-ink-900/85 backdrop-blur-md p-5 overflow-hidden">
-        {/* Mouse-tracked glow */}
-        <motion.div
-          className="absolute pointer-events-none inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        <div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-500"
           style={{
-            background: `radial-gradient(220px circle at ${glowX.get()}% ${glowY.get()}%, ${card.glow}, transparent 60%)`,
+            opacity: active ? 1 : 0,
+            background: `radial-gradient(240px circle at ${pos.x}% ${pos.y}%, ${card.glow}, transparent 60%)`,
           }}
         />
 
-        <div className="relative" style={{ transform: "translateZ(20px)" }}>
+        <div className="relative">
           <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono">
             {card.label}
           </div>
@@ -114,7 +119,7 @@ export default function HeadlineCards({ data }: { data: Headline }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ perspective: "1200px" }}>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((c, i) => (
         <TiltCard key={c.label} card={c} index={i} />
       ))}
