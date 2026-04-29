@@ -35,23 +35,6 @@ export default function ShaderBackground() {
 
       {/* Heavy bottom vignette so content stays readable */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-ink-950/40 to-ink-950/85" />
-
-      <style jsx>{`
-        @keyframes blobA {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          33% { transform: translate(60px, 40px) scale(1.1); }
-          66% { transform: translate(-30px, 50px) scale(0.92); }
-        }
-        @keyframes blobB {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          33% { transform: translate(-50px, 30px) scale(0.95); }
-          66% { transform: translate(40px, -40px) scale(1.15); }
-        }
-        @keyframes blobC {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          50% { transform: translate(80px, -60px) scale(1.08); }
-        }
-      `}</style>
     </div>
   );
 }

@@ -16,6 +16,21 @@ html, body {
 /* Solid base — ShaderBackground component layers the gradient mesh on top */
 body { position: relative; min-height: 100vh; }
 
+@keyframes blobA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(60px, 40px) scale(1.10); }
+  66%      { transform: translate(-30px, 50px) scale(0.92); }
+}
+@keyframes blobB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(-50px, 30px) scale(0.95); }
+  66%      { transform: translate(40px, -40px) scale(1.15); }
+}
+@keyframes blobC {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(80px, -60px) scale(1.08); }
+}
+
 .glass {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.65), rgba(11, 17, 32, 0.85));
   backdrop-filter: blur(12px) saturate(140%);
