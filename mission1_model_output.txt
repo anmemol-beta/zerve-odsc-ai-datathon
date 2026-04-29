@@ -1,0 +1,127 @@
+[1] Loading feature matrix...
+    shape: (17541, 217)
+
+[2] Time-based cohort split @ 2026-03:
+    train: 10,104 users, upgraders=138, rate=1.37%
+    test:  7,437 users, upgraders=185, rate=2.49%
+    feature count: 212
+
+[3] Baseline 0: 단일 feature 'n_credits_exceeded_full'
+    PR-AUC : 0.0837  (baseline rate 0.0249)
+    ROC-AUC: 0.6502
+
+[4] Model 1: Logistic Regression...
+/Users/hunjunsin/.pyenv/versions/3.10.12/lib/python3.10/site-packages/sklearn/utils/extmath.py:203: RuntimeWarning: divide by zero encountered in matmul
+  ret = a @ b
+/Users/hunjunsin/.pyenv/versions/3.10.12/lib/python3.10/site-packages/sklearn/utils/extmath.py:203: RuntimeWarning: overflow encountered in matmul
+  ret = a @ b
+/Users/hunjunsin/.pyenv/versions/3.10.12/lib/python3.10/site-packages/sklearn/utils/extmath.py:203: RuntimeWarning: invalid value encountered in matmul
+  ret = a @ b
+    PR-AUC : 0.2534  (vs baseline 0.0249)
+    ROC-AUC: 0.9174
+    Brier  : 0.2771
+    fit+predict: 0.4s
+
+[5] Model 2: XGBoost...
+    scale_pos_weight: 72.2
+    PR-AUC : 0.3704
+    ROC-AUC: 0.8702
+    Brier  : 0.9619
+    best iter: 162, fit: 0.7s
+
+[6] Top-K analysis (test set):
+  Naive:
+    k%         k  caught  precision    recall
+       1%     74       16     21.62%     8.65%
+       5%    371       63     16.98%    34.05%
+      10%    743       71      9.56%    38.38%
+      20%  1,487       77      5.18%    41.62%
+  Logistic:
+    k%         k  caught  precision    recall
+       1%     74       11     14.86%     5.95%
+       5%    371      114     30.73%    61.62%
+      10%    743      155     20.86%    83.78%
+      20%  1,487      166     11.16%    89.73%
+  XGBoost:
+    k%         k  caught  precision    recall
+       1%     74       42     56.76%    22.70%
+       5%    371       93     25.07%    50.27%
+      10%    743      124     16.69%    67.03%
+      20%  1,487      142      9.55%    76.76%
+
+[7] XGBoost feature importance — top 30:
+      0.0707  observation_days
+      0.0576  os_Linux
+      0.0376  n_pageview_7d
+      0.0287  n_autocapture_7d
+      0.0277  session_minutes_full
+      0.0238  n_banner_shown_full
+      0.0210  n_credits_exceeded_7d
+      0.0202  n_credits_used_1h
+      0.0197  country_Other
+      0.0192  country_Canada
+      0.0190  n_credits_exceeded_full
+      0.0183  n_files_upload_1h
+      0.0182  n_block_create_full
+      0.0168  country_India
+      0.0153  n_pageview_full
+      0.0150  n_banner_shown_1h
+      0.0138  did_hit_credit_limit_full
+      0.0132  n_agent_new_7d
+      0.0132  hours_to_first_block_create
+      0.0131  n_ai_1h
+      0.0130  work_type_Business Applications
+      0.0120  n_events_full
+      0.0117  signup_source_Colleague
+      0.0115  n_distinct_days_full
+      0.0112  purpose_Personal Projects
+      0.0111  n_pageview_24h
+      0.0109  n_exception_7d
+      0.0106  n_create_7d
+      0.0103  os_Windows
+      0.0100  mean_event_interval_sec_7d
+
+[8] Logistic top coefficients (sign-aware):
+    Top 15 POSITIVE (업그레이드 ↑):
+       +2.360  session_minutes_full
+       +0.751  purpose_Education
+       +0.681  events_per_day_full
+       +0.614  n_pageview_full
+       +0.602  device_type_Desktop
+       +0.601  did_files_upload_7d
+       +0.580  exception_rate_24h
+       +0.509  n_distinct_days_24h
+       +0.480  os_Android
+       +0.448  did_see_banner_full
+       +0.436  agent_first
+       +0.433  n_create_24h
+       +0.332  n_distinct_event_types_1h
+       +0.300  events_per_day_24h
+       +0.293  n_agent_tool_7d
+    Top 15 NEGATIVE (업그레이드 ↓):
+       -7.001  observation_days
+       -0.816  device_type_Mobile
+       -0.775  n_distinct_days_full
+       -0.626  session_minutes_24h
+       -0.620  n_ai_full
+       -0.599  any_tour_finish_full
+       -0.508  n_agent_new_full
+       -0.470  did_files_upload_full
+       -0.461  any_tour_finish_1h
+       -0.451  n_ai_24h
+       -0.426  n_ai_7d
+       -0.402  did_deploy_full
+       -0.362  n_block_create_full
+       -0.357  did_use_agent_7d
+       -0.352  exception_rate_7d
+
+============================================================
+=== SUMMARY ===
+============================================================
+  Test set: 7,437 users, 185 upgraders, base rate 2.49%
+  model           PR-AUC   ROC-AUC   lift@5%
+  Naive           0.0837    0.6502     6.83x
+  Logistic        0.2534    0.9174    12.35x
+  XGBoost         0.3704    0.8702    10.08x
+
+WROTE: mission1_test_predictions.csv, mission1_xgb_importance.csv, mission1_logit_coef.csv
