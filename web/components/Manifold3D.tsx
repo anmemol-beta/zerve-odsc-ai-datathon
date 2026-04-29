@@ -2,6 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useMemo, useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import type { Manifold, ManifoldPoint, Stage } from "@/lib/types";
@@ -105,10 +106,11 @@ export default function Manifold3D({ manifold }: { manifold: Manifold }) {
         <Canvas
           camera={{ position: [3.5, 3.5, 3.5], fov: 50 }}
           dpr={[1, 2]}
+          gl={{ antialias: true, alpha: true }}
           style={{ background: "transparent" }}
         >
           <ambientLight intensity={0.3} />
-          <Stars radius={50} depth={20} count={1500} factor={3} fade speed={0.3} />
+          <Stars radius={60} depth={20} count={2200} factor={3.2} fade speed={0.4} />
           <PointCloud
             points={manifold.points}
             highlightedStage={highlightedStage}
@@ -121,6 +123,14 @@ export default function Manifold3D({ manifold }: { manifold: Manifold }) {
             zoomSpeed={0.6}
             autoRotate={false}
           />
+          <EffectComposer>
+            <Bloom
+              intensity={1.4}
+              luminanceThreshold={0.18}
+              luminanceSmoothing={0.45}
+              mipmapBlur
+            />
+          </EffectComposer>
         </Canvas>
         <div className="absolute bottom-3 left-4 text-xs text-slate-400 pointer-events-none font-mono">
           PCA explains {(evr.reduce((a, b) => a + b, 0) * 100).toFixed(1)}% — drag to rotate, scroll to zoom
