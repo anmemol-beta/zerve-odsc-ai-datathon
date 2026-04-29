@@ -1,0 +1,58 @@
+id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+name: Beta
+project_id: 96de927e-4ee8-4f75-a4bd-28806d91739b
+global_imports: []
+python_global_imports: import pandas as pd
+r_global_imports: ''
+requirements: []
+linux_packages: []
+environment_variables: []
+is_public: false
+organization_id: ac14984c-63dc-4624-af9c-eeedc9704f1d
+layers:
+- blocks:
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings: null
+    description: Displays a heading labeled "Test" as markdown content.
+    height: 1000
+    id: aceafec9-7891-49ca-9fb9-b07b0513d30d
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: markdown_block
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 4
+    variables: null
+    width: 1600
+    x: 0
+    y: -500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Loads zerve_events.csv and displays dataset structure including shape,
+      data types, and first few rows for initial data exploration.
+    height: 1000
+    id: bbd1b635-38e8-4533-b331-c647f51a44a2
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Example Dataset
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 0
+    y: 0
+  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  edges:
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 4ae4a3d7-1c24-46a8-8d92-c77c55396dc1
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: aceafec9-7891-49ca-9fb9-b07b0513d30d
+    target: bbd1b635-38e8-4533-b331-c647f51a44a2
+  id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  name: Development
+  type: 1
+assets: []
