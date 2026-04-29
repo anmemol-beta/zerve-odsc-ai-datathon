@@ -1,0 +1,6 @@
+/datas/
+/venv/
+/.venv/
+/figures/
+__pycache__/
+.DS_Store

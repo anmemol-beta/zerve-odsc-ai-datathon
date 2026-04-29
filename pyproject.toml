@@ -1,0 +1,10 @@
+[project]
+name = "zerve-odsc-ai-datathon"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.9",
+    "pandas>=3.0.2",
+    "pyarrow>=24.0.0",
+    "pyyaml>=6.0.3",
+]
