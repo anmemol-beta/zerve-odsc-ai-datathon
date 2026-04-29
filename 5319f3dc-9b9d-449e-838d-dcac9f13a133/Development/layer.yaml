@@ -37,9 +37,32 @@ blocks:
   width: 1600
   x: 0
   y: 0
+- auto_size: false
+  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  compute_settings:
+    compute_environment_type: 1
+  description: Prints df.info() and df.describe(include="all") to summarize column
+    types, non-null counts, and basic statistics.
+  height: 1000
+  id: 1ee64dff-2328-4f1a-9b24-9df617c6d447
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  name: Describe Dataset
+  parent_id: null
+  properties: {}
+  status: 1
+  type: 1
+  variables: null
+  width: 1600
+  x: 0
+  y: 500
 edges:
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: 4ae4a3d7-1c24-46a8-8d92-c77c55396dc1
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: aceafec9-7891-49ca-9fb9-b07b0513d30d
   target: bbd1b635-38e8-4533-b331-c647f51a44a2
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 63f33bc8-e69b-4912-9718-b8a99dc29839
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: bbd1b635-38e8-4533-b331-c647f51a44a2
+  target: 1ee64dff-2328-4f1a-9b24-9df617c6d447
