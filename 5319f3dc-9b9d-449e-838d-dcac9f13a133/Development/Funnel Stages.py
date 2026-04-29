@@ -1,8 +1,7 @@
 
 
-# Inherits `events` from upstream "EDA Summary" block.
-# Classifies every user into exactly ONE funnel stage (highest reached).
-# Stages follow the kickoff guide adapted to the actual event vocabulary.
+# Inherits `events`. Builds per-user features in one vectorized groupby pass,
+# then assigns each user to exactly one funnel stage (highest reached).
 
 CREATED_EVENTS = {
     "agent_tool_call_create_block_tool",
@@ -25,7 +24,6 @@ flags = pd.DataFrame({
     "is_upgrade": events["event"].eq(UPGRADE_EVENT),
     "date":       events["timestamp"].dt.date,
 })
-
 user_features = flags.groupby("person_id", sort=False).agg(
     n_signins       = ("is_signin",  "sum"),
     n_created       = ("is_created", "sum"),
@@ -34,20 +32,15 @@ user_features = flags.groupby("person_id", sort=False).agg(
     n_distinct_days = ("date",       "nunique"),
 )
 
-def stage(r):
-    if r["upgraded"]:
-        return "6_upgraded"
-    if r["n_distinct_days"] >= 3 and r["n_ai"] > 0:
-        return "5_engaged"
-    if r["n_ai"] > 0:
-        return "4_used_ai"
-    if r["n_created"] > 0:
-        return "3_created_content"
-    if r["n_signins"] >= 2:
-        return "2_active"
-    return "1_signed_up"
-
-user_features["stage"] = user_features.apply(stage, axis=1)
+# Stage assignment: apply rules from lowest to highest priority — later
+# assignments override earlier, so each user lands in their highest stage.
+stage = pd.Series("1_signed_up", index=user_features.index)
+stage[user_features["n_signins"] >= 2] = "2_active"
+stage[user_features["n_created"] > 0] = "3_created_content"
+stage[user_features["n_ai"] > 0] = "4_used_ai"
+stage[(user_features["n_distinct_days"] >= 3) & (user_features["n_ai"] > 0)] = "5_engaged"
+stage[user_features["upgraded"]] = "6_upgraded"
+user_features["stage"] = stage
 
 stage_order = [
     "1_signed_up",
@@ -58,21 +51,20 @@ stage_order = [
     "6_upgraded",
 ]
 
-# Cumulative reach: users who satisfy this stage's criteria regardless of higher
-# stages. This is the standard funnel view (kickoff guide §6) and gives
-# monotone-decreasing counts that "conversion from prior" actually applies to.
-reach_mask = {
-    "1_signed_up":       pd.Series(True, index=user_features.index),
-    "2_active":          user_features["n_signins"] >= 2,
-    "3_created_content": user_features["n_created"] > 0,
-    "4_used_ai":         user_features["n_ai"] > 0,
-    "5_engaged":         (user_features["n_distinct_days"] >= 3) & (user_features["n_ai"] > 0),
-    "6_upgraded":        user_features["upgraded"],
-}
-reach = pd.Series({s: int(m.sum()) for s, m in reach_mask.items()})
+# Cumulative reach: users who satisfy this stage's criteria regardless of any
+# higher stage. This is the standard funnel view — gives monotone-decreasing
+# counts that "conversion from prior" is meaningful for.
+reach = pd.Series({
+    "1_signed_up":       len(user_features),
+    "2_active":          int((user_features["n_signins"] >= 2).sum()),
+    "3_created_content": int((user_features["n_created"] > 0).sum()),
+    "4_used_ai":         int((user_features["n_ai"] > 0).sum()),
+    "5_engaged":         int(((user_features["n_distinct_days"] >= 3) & (user_features["n_ai"] > 0)).sum()),
+    "6_upgraded":        int(user_features["upgraded"].sum()),
+})
 total = int(reach["1_signed_up"])
 
-print("Funnel — cumulative reach (users who satisfy this stage, regardless of higher stages)")
+print("Funnel — cumulative reach (users who satisfy this stage)")
 print(f"{'stage':<22}{'users':>8}  {'% of total':>11}  {'conv from prior':>17}")
 prev = total
 for s in stage_order:
@@ -89,7 +81,3 @@ for s in stage_order:
     c = int(counts[s])
     pct = 100 * c / total if total else 0.0
     print(f"  {s:<22}{c:>8,}  ({pct:>5.2f}%)")
-
-print()
-print(f"total classified users : {total:,}")
-print(f"upgraded users         : {int(reach['6_upgraded']):,}  ({100*reach['6_upgraded']/total:.2f}%)")

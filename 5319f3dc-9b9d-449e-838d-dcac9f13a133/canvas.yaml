@@ -4,7 +4,8 @@ project_id: 96de927e-4ee8-4f75-a4bd-28806d91739b
 global_imports: []
 python_global_imports: import pandas as pd
 r_global_imports: ''
-requirements: []
+requirements:
+- pyarrow
 linux_packages: []
 environment_variables: []
 is_public: false
@@ -14,23 +15,57 @@ layers:
   - auto_size: false
     canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
     compute_settings:
-      compute_environment_type: 2
-      ephemeral_storage_gib: 20
-      size: small
-    description: Prints df.info() and df.describe(include="all") to summarize column
-      types, non-null counts, and basic statistics.
+      compute_environment_type: 1
+    description: Slim-loads zerve_events.csv with usecols=[person_id, timestamp, event],
+      pyarrow engine, ISO8601 timestamps, categorical event dtype. Produces `events`.
     height: 1000
-    id: 1ee64dff-2328-4f1a-9b24-9df617c6d447
+    id: bbd1b635-38e8-4533-b331-c647f51a44a2
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Describe Dataset
+    name: Example Dataset
     parent_id: null
     properties: {}
-    status: 4
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 0
+    y: 0
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Prints top events, base upgrade rate, and flags likely-leakage events
+      that must be excluded from upgrade-prediction features.
+    height: 1000
+    id: 45972ed8-d7b0-431c-8af2-14f3aeb57aa4
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: EDA Summary
+    parent_id: null
+    properties: {}
+    status: 1
     type: 1
     variables: null
     width: 1600
     x: 0
     y: 500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Builds per-user features and assigns each user to one of six funnel
+      stages. Outputs `user_features`.
+    height: 1000
+    id: 74b326c2-b2ce-43f2-ada9-088406566be2
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Funnel Stages
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 0
+    y: 1000
   - auto_size: false
     canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
     compute_settings:
@@ -48,158 +83,13 @@ layers:
     variables: null
     width: 1600
     x: 0
-    y: 2000
-  - auto_size: false
-    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    compute_settings:
-      compute_environment_type: 2
-      ephemeral_storage_gib: 20
-      size: small
-    description: Builds a slim `events` frame, prints top events, time range, upgrade
-      base rate, and flags likely-leakage events.
-    height: 1000
-    id: 45972ed8-d7b0-431c-8af2-14f3aeb57aa4
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: EDA Summary
-    parent_id: null
-    properties: {}
-    status: 1
-    type: 1
-    variables: null
-    width: 1600
-    x: 0
-    y: 1000
-  - auto_size: false
-    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    compute_settings:
-      compute_environment_type: 1
-    description: Classifies every user into exactly one of six funnel stages and prints
-      the conversion table.
-    height: 1000
-    id: 74b326c2-b2ce-43f2-ada9-088406566be2
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Funnel Stages
-    parent_id: null
-    properties: {}
-    status: 1
-    type: 1
-    variables: null
-    width: 1600
-    x: 0
     y: 1500
-  - auto_size: false
-    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    compute_settings: null
-    description: Displays a heading labeled "Test" as markdown content.
-    height: 1000
-    id: aceafec9-7891-49ca-9fb9-b07b0513d30d
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: markdown_block
-    parent_id: null
-    properties: {}
-    status: 1
-    type: 4
-    variables: null
-    width: 1600
-    x: 0
-    y: -500
-  - auto_size: false
-    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    compute_settings:
-      compute_environment_type: 2
-      ephemeral_storage_gib: 20
-      size: small
-    description: Loads zerve_events.csv and displays dataset structure including shape,
-      data types, and first few rows for initial data exploration.
-    height: 1000
-    id: bbd1b635-38e8-4533-b331-c647f51a44a2
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Example Dataset
-    parent_id: null
-    properties: {}
-    status: 3
-    type: 1
-    variables: null
-    width: 1600
-    x: 0
-    y: 0
-  - auto_size: false
-    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    compute_settings:
-      compute_environment_type: 2
-      ephemeral_storage_gib: 20
-      size: small
-    description: Extracts top browsers / countries / device_types / OS into a
-      `demographics` dict so downstream visual blocks don't need the full df.
-    height: 1000
-    id: 877bb737-f325-419e-88d4-f0c74609523d
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: User Demographics
-    parent_id: null
-    properties: {}
-    status: 1
-    type: 1
-    variables: null
-    width: 1600
-    x: 1700
-    y: 500
-  - auto_size: false
-    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    compute_settings:
-      compute_environment_type: 1
-    description: Aggregates the slim `events` frame into a daily series — DAU and
-      event volume per day. Light enough for Lambda.
-    height: 1000
-    id: 88de52cc-b1df-46fb-8e55-af7c7655c402
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Daily Activity
-    parent_id: null
-    properties: {}
-    status: 1
-    type: 1
-    variables: null
-    width: 1600
-    x: 1700
-    y: 1500
-  - auto_size: false
-    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    compute_settings:
-      compute_environment_type: 1
-    description: Fan-in block. Combines `daily` (from Daily Activity) and
-      `demographics` (from User Demographics) into a 2x2 dashboard.
-    height: 1000
-    id: 531adde6-ff95-44a7-90e4-268ef86cf771
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Visualize Combined
-    parent_id: null
-    properties: {}
-    status: 1
-    type: 1
-    variables: null
-    width: 1600
-    x: 1700
-    y: 2500
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   edges:
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: 11059005-0511-4caf-b094-df53ea6bd100
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    source: 74b326c2-b2ce-43f2-ada9-088406566be2
-    target: 20db1618-a7ea-4817-8bc2-303733ef13a0
-  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: 4ae4a3d7-1c24-46a8-8d92-c77c55396dc1
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    source: aceafec9-7891-49ca-9fb9-b07b0513d30d
-    target: bbd1b635-38e8-4533-b331-c647f51a44a2
-  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: 63f33bc8-e69b-4912-9718-b8a99dc29839
+    id: 7cdcc258-b746-4ec9-ae59-43e11c9edc65
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: bbd1b635-38e8-4533-b331-c647f51a44a2
-    target: 1ee64dff-2328-4f1a-9b24-9df617c6d447
-  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: 6d6a7e03-733a-45e9-aa39-9005bd296495
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    source: 1ee64dff-2328-4f1a-9b24-9df617c6d447
     target: 45972ed8-d7b0-431c-8af2-14f3aeb57aa4
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
     id: c82a1524-0653-4f85-b2f4-b54fec4d60dc
@@ -207,25 +97,10 @@ layers:
     source: 45972ed8-d7b0-431c-8af2-14f3aeb57aa4
     target: 74b326c2-b2ce-43f2-ada9-088406566be2
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: c82ef78e-adc4-478d-a558-6e85a0c2d06a
+    id: 11059005-0511-4caf-b094-df53ea6bd100
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    source: bbd1b635-38e8-4533-b331-c647f51a44a2
-    target: 877bb737-f325-419e-88d4-f0c74609523d
-  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: d9bdd6dc-37ef-48ff-857d-87695a3b85c4
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    source: 45972ed8-d7b0-431c-8af2-14f3aeb57aa4
-    target: 88de52cc-b1df-46fb-8e55-af7c7655c402
-  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: d1aef9e2-bcf0-438c-9f8b-fae5b0415156
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    source: 88de52cc-b1df-46fb-8e55-af7c7655c402
-    target: 531adde6-ff95-44a7-90e4-268ef86cf771
-  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-    id: 193f0270-4230-4f77-b84a-bb253d5a6fec
-    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    source: 877bb737-f325-419e-88d4-f0c74609523d
-    target: 531adde6-ff95-44a7-90e4-268ef86cf771
+    source: 74b326c2-b2ce-43f2-ada9-088406566be2
+    target: 20db1618-a7ea-4817-8bc2-303733ef13a0
   id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Development
   type: 1
