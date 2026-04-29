@@ -1,11 +1,51 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Line, Text } from "@react-three/drei";
 import { useMemo, useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import type { Manifold, ManifoldPoint, Stage } from "@/lib/types";
 import { STAGE_COLORS, STAGE_LABELS } from "@/lib/types";
+
+function Axes({ length = 2.2 }: { length?: number }) {
+  const axes: { dir: [number, number, number]; color: string; label: string }[] = [
+    { dir: [1, 0, 0], color: "#ec4899", label: "PC1" },
+    { dir: [0, 1, 0], color: "#8b5cf6", label: "PC2" },
+    { dir: [0, 0, 1], color: "#06b6d4", label: "PC3" },
+  ];
+  return (
+    <group>
+      {axes.map(({ dir, color, label }) => {
+        const tip: [number, number, number] = [dir[0] * length, dir[1] * length, dir[2] * length];
+        const labelPos: [number, number, number] = [dir[0] * (length + 0.28), dir[1] * (length + 0.28), dir[2] * (length + 0.28)];
+        // Cone rotation: default cone points +Y, rotate to match dir
+        let rot: [number, number, number] = [0, 0, 0];
+        if (dir[0] === 1) rot = [0, 0, -Math.PI / 2];
+        else if (dir[2] === 1) rot = [Math.PI / 2, 0, 0];
+        return (
+          <group key={label}>
+            <Line points={[[0, 0, 0], tip]} color={color} lineWidth={1.6} transparent opacity={0.85} />
+            <mesh position={tip} rotation={rot}>
+              <coneGeometry args={[0.045, 0.16, 12]} />
+              <meshBasicMaterial color={color} />
+            </mesh>
+            <Text
+              position={labelPos}
+              fontSize={0.18}
+              color={color}
+              anchorX="center"
+              anchorY="middle"
+              outlineWidth={0.008}
+              outlineColor="#000"
+            >
+              {label}
+            </Text>
+          </group>
+        );
+      })}
+    </group>
+  );
+}
 
 function PointCloud({
   points,
@@ -17,15 +57,6 @@ function PointCloud({
   highProbBoost: boolean;
 }) {
   const ref = useRef<THREE.Points>(null);
-  const t = useRef(0);
-
-  // Auto-rotate slowly when not interacting (paused if user touches OrbitControls)
-  useFrame((_, dt) => {
-    if (ref.current) {
-      t.current += dt;
-      ref.current.rotation.y = t.current * 0.06;
-    }
-  });
 
   const { geometry, material } = useMemo(() => {
     const g = new THREE.BufferGeometry();
@@ -106,15 +137,18 @@ export default function Manifold3D({ manifold }: { manifold: Manifold }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4">
-      <div className="glass rounded-2xl overflow-hidden h-[600px] relative">
+      <div
+        className="rounded-2xl overflow-hidden h-[600px] relative border border-slate-800/60"
+        style={{ background: "#03060f" }}
+      >
         <Canvas
           camera={{ position: [3.5, 3.5, 3.5], fov: 50 }}
           dpr={[1, 2]}
-          gl={{ antialias: true, alpha: true }}
-          style={{ background: "transparent" }}
+          gl={{ antialias: true, alpha: false }}
+          style={{ background: "#03060f" }}
         >
           <ambientLight intensity={0.3} />
-          <Stars radius={60} depth={20} count={2200} factor={3.2} fade speed={0.4} />
+          <Axes length={2.2} />
           <PointCloud
             points={manifold.points}
             highlightedStage={highlightedStage}
