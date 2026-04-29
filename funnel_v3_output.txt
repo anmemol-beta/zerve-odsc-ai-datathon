@@ -1,0 +1,73 @@
+[1] Loading...
+    rows=3,509,628  users=17,541  data_end=2026-04-16 23:59:58.634000+00:00
+
+[2] Classify @ asof=DATA_END, AT_RISK_MIN_STAGE=4 (default)...
+    classified users: 17,541
+
+=== (A) v3 FINAL DISTRIBUTION (asof=DATA_END, at_risk_min=4) ===
+  stage                      users    % of all
+  0.NoEvent                     74       0.42%
+  1.New                      2,155      12.29%
+  2.Exploring                8,181      46.64%
+  3.Created                      3       0.02%
+  4.UsedAI                     248       1.41%
+  5.WroteCode                  105       0.60%
+  6.Integrated                  56       0.32%
+  7.Engaged                    174       0.99%
+  8.Upgraded                   323       1.84%
+  9.AtRisk@UsedAI            3,767      21.48%
+  9.AtRisk@WroteCode         1,803      10.28%
+  9.AtRisk@Integrated          195       1.11%
+  9.AtRisk@Engaged             457       2.61%
+  TOTAL                     17,541  (sanity: must equal 17,541)
+
+[3] Strict mode: AT_RISK_MIN_STAGE=7 (PDF 'after engagement')...
+
+=== (B) STRICT DISTRIBUTION (asof=DATA_END, at_risk_min=7) ===
+  stage                      default      strict      diff
+  0.NoEvent                       74          74        +0
+  1.New                        2,155       2,155        +0
+  2.Exploring                  8,181       8,181        +0
+  3.Created                        3           3        +0
+  4.UsedAI                       248       4,015    +3,767
+  5.WroteCode                    105       1,908    +1,803
+  6.Integrated                    56         251      +195
+  7.Engaged                      174         174        +0
+  8.Upgraded                     323         323        +0
+  9.AtRisk@UsedAI              3,767           0    -3,767
+  9.AtRisk@WroteCode           1,803           0    -1,803
+  9.AtRisk@Integrated            195           0      -195
+  9.AtRisk@Engaged               457         457        +0
+
+[4] Engaged v3 vs v2 비교...
+    Engaged v2 reach:   754 (4.30%)
+    Engaged v3 reach:   781 (4.45%)  diff=+27
+    추가 포섭: AI 안 쓰고 Code/Integration만으로 3+ days 활동한 사용자
+
+[5] Time-Aware 검증: 여러 asof 시점에서 funnel 분포...
+
+  stage                     2025-12-17  2026-02-15  2026-03-17  2026-04-09  2026-04-16
+  1.New                            314       1,031       1,770       2,119       2,155
+  2.Exploring                    1,241       3,641       6,782       8,128       8,181
+  4.UsedAI                         292         370         904         437         248
+  7.Engaged                         65         112         168         199         174
+  8.Upgraded                        23          81         195         308         323
+  9.AtRisk@UsedAI                  778       1,751       2,352       3,497       3,767
+  9.AtRisk@WroteCode               542       1,006       1,297       1,715       1,803
+  9.AtRisk@Integrated               11          30          42         171         195
+  9.AtRisk@Engaged                  65         217         294         399         457
+
+[6] 재활성화 검증: AtRisk → 활동재개 → 다른 단계 복귀...
+    60일 전 AtRisk → DATA_END에 active로 복귀한 사용자: 33
+    예시 사용자 c2ec190a-068a-532a-bf29-04167010703b:  60일 전 = 9.AtRisk@Engaged  →  지금 = 7.Engaged
+    → 함수가 시간에 따라 단계를 자동 재계산함 ✓ Time-Aware ✓
+
+[7] AtRisk 세분화 — prior stage 정보 보존 ===
+    AtRisk 총합: 6,222
+    세분화 분포:
+      9.AtRisk@UsedAI          3,767  (60.54% of AtRisk)
+      9.AtRisk@WroteCode       1,803  (28.98% of AtRisk)
+      9.AtRisk@Integrated        195  ( 3.13% of AtRisk)
+      9.AtRisk@Engaged           457  ( 7.34% of AtRisk)
+
+WROTE: funnel_v3_assignment.csv

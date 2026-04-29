@@ -1,0 +1,61 @@
+[1] Loading...
+    upgraders: 323
+
+=== (A) 이탈 관련 이벤트 빈도 (전체) ===
+  subscription_downgraded         total=  211  unique_users= 130
+  downgrade_subscription          total=  123  unique_users= 117
+  subscription_cancelled          total=    2  unique_users=   2
+  cancel_subscription             total=   13  unique_users=   4
+  open_cancel_plan_modal          total=  112  unique_users=  98
+
+=== (B) 업그레이더 중 이탈 이벤트 발생자 ===
+  subscription_downgraded          127 / 323 (39.3% of upgraders)
+  downgrade_subscription           114 / 323 (35.3% of upgraders)
+  subscription_cancelled             2 / 323 (0.6% of upgraders)
+  cancel_subscription                4 / 323 (1.2% of upgraders)
+  open_cancel_plan_modal            97 / 323 (30.0% of upgraders)
+
+=== (C) 업그레이드 후 vs 전 다운그레이드/취소 시점 ===
+  subscription_downgraded         after_upg= 206 (127 users), before/at_upg=   0
+  downgrade_subscription          after_upg= 120 (114 users), before/at_upg=   0
+  subscription_cancelled          after_upg=   2 (  2 users), before/at_upg=   0
+  cancel_subscription             after_upg=  13 (  4 users), before/at_upg=   0
+
+=== (D) 업그레이드 → 다운그레이드/취소까지 시간 분포 ===
+  subscription_downgraded: n=127, median=4.5d, p25=0.0d, p75=28.6d, max=172.1d
+  subscription_cancelled: n=2, median=36.5d, p25=25.7d, p75=47.4d, max=58.2d
+
+=== (E) 업그레이더의 행동상 이탈 (asof=DATA_END) ===
+  업그레이더 inactive 일수 분포:
+    median: 17.7d
+    p25:    8.07d
+    p75:    36.61d
+    p90:    67.0d
+    max:    174.0d
+    >=   7d 무활동: 251 / 323  (77.7%)
+    >=  14d 무활동: 198 / 323  (61.3%)
+    >=  30d 무활동: 100 / 323  (31.0%)
+    >=  60d 무활동:  39 / 323  (12.1%)
+    >=  90d 무활동:  19 / 323  (5.9%)
+    >= 180d 무활동:   0 / 323  (0.0%)
+
+=== (F) 명시적 churn 이벤트 + 행동상 inactive 합쳐서 보기 ===
+  명시적 churn 이벤트 발생 (업그레이드 이후): 132명
+  행동상 이탈 (30일+ 무활동): 100명
+  행동상 이탈 (60일+ 무활동): 39명
+  명시적 + 행동상(30d) 합집합: 206명
+  명시적 ∩ 행동상(30d): 26명  (명시적이면서 비활성)
+  명시적인데 활성: 106명  (다운그레이드했지만 계속 사용)
+
+=== (G) renew_plan 이벤트 (정상 갱신자) ===
+  renew_plan 발생자: 3명 (업그레이더 중 3명)
+
+========================================================================
+=== (H) v4 'Churned@Upgraded' 단계 필요성 검토 ===
+========================================================================
+  명시적 churn (downgrade/cancel):  132명
+  행동상 inactive 30d+:            100명
+  행동상 inactive 60d+:             39명
+  결합 (둘 중 하나):                 160명
+
+  ✓ 의미있는 population 존재 → v4에서 별도 단계 신설 권장
