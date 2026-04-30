@@ -31,6 +31,15 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent
 DATAS_DIR = REPO_ROOT / "datas"
 
+# LightGBM on Apple Silicon requires libomp from Homebrew. Tell the dynamic
+# linker where to find it before any block imports lightgbm.
+if sys.platform == "darwin":
+    libomp = Path("/opt/homebrew/opt/libomp/lib")
+    if libomp.exists():
+        os.environ["DYLD_FALLBACK_LIBRARY_PATH"] = (
+            str(libomp) + ":" + os.environ.get("DYLD_FALLBACK_LIBRARY_PATH", "")
+        )
+
 TYPE_PYTHON = 1
 TYPE_MARKDOWN = 4
 

@@ -1,15 +1,18 @@
 # Zerve × ODSC AI Datathon
 
-Canvas: **Beta** → Layer: **Development**.
+Canvas: **Beta** → Layer: **Development**. Two parallel pipelines after EDA.
 
 ```
 Example Dataset    (slim load — 3 cols, pyarrow, ISO8601, category dtype)
-   └─► EDA Summary       (top events, base upgrade rate, leakage flags)
-         └─► Funnel Stages      (per-user features, 6-stage funnel classification)
-               └─► Visualize Funnel
+   └─► EDA Summary
+         ├─► Funnel Stages       ─► Visualize Funnel
+         │     (strict-nested 6-stage funnel + at_risk lateral state)
+         └─► Build Features      ─► Train Model    ─► Visualize Model
+               (per-user pivot,         (LR + LGBM + SHAP,
+                leakage-safe X/y)        PR-AUC, recall@K)
 ```
 
-End-to-end run on the full 3.5M-row dataset: **~1.7s**, **~190MB RAM**. Lambda-friendly.
+End-to-end pipeline on the full 3.5M-row dataset: **~30s** (Build Features + Train Model dominate), Lambda-friendly throughout.
 
 ## Local execution (mirrors Zerve)
 
@@ -24,6 +27,9 @@ cp /path/to/zerve_events.csv datas/zerve_events.csv
 
 # 2. python env via uv
 uv sync
+
+# 3. macOS only — LightGBM needs OpenMP
+brew install libomp
 ```
 
 ### Run
@@ -35,7 +41,15 @@ uv run run_local.py --until "EDA Summary"    # stop after a given block
 uv run run_local.py --save-figures           # write each plt.show() to figures/figure_NN.png (no GUI)
 ```
 
-The runner `chdir`s into `datas/` before exec so block code can keep using `pd.read_csv("zerve_events.csv")` unchanged — same path as in Zerve.
+The runner `chdir`s into `datas/` before exec so block code can keep using `pd.read_csv("zerve_events.csv")` unchanged — same path as in Zerve. macOS auto-injects `DYLD_FALLBACK_LIBRARY_PATH` for `libomp`.
+
+### Streamlit demo
+
+```bash
+uv run streamlit run app.py
+```
+
+Opens a 4-section dashboard at `localhost:8501`: headline metrics → 3D PCA user manifold → user lookup with SHAP → funnel sankey + interactive thresholds. Same script deploys to Zerve via the Streamlit App option (variables come from `from zerve import variable`; falls back to local canvas re-execution otherwise).
 
 ## Data loading optimizations
 
@@ -45,7 +59,7 @@ The runner `chdir`s into `datas/` before exec so block code can keep using `pd.r
 - `format="ISO8601"` — fast-path timestamp parser
 - `dtype={"event": "category"}` — 227 unique events × 3.5M rows compressed via dict encoding
 
-Canvas requires `pyarrow` (declared in `canvas.yaml` → `requirements`).
+Canvas requires `pyarrow`, `scikit-learn`, `lightgbm`, `shap`, `streamlit`, `plotly` (declared in `canvas.yaml` → `requirements`).
 
 ## What lives where
 
@@ -55,15 +69,31 @@ Canvas requires `pyarrow` (declared in `canvas.yaml` → `requirements`).
 | `5319f3dc-…/Development/layer.yaml` | Blocks + edges for the Development layer |
 | `5319f3dc-…/Development/*.py` | Python block source — one file per block |
 | `run_local.py` | Local runner — re-execs the canvas off the YAML |
-| `pyproject.toml` / `uv.lock` | Local deps (pandas, matplotlib, pyarrow, pyyaml) |
+| `app.py` | Streamlit dashboard (3D PCA + Sankey + SHAP) |
+| `pyproject.toml` / `uv.lock` | Local deps |
 | `datas/zerve_events.csv` | Input dataset (gitignored) |
 | `figures/` | `--save-figures` output (gitignored) |
 
 Editing block files locally and pushing keeps Zerve in sync — Zerve re-imports from the repo. Adding a block requires editing **both** `canvas.yaml` (the layer's mirrored block list) and `<layer>/layer.yaml`, plus the source file.
 
+## Compute strategy
+
+All blocks run on Lambda (`compute_environment_type: 1`) thanks to slim loading. Fargate is reserved for blocks that genuinely need >1.5 GB RAM — currently none. Toggling a block to Fargate in Zerve UI sets:
+
+```yaml
+compute_settings:
+  compute_environment_type: 2
+  ephemeral_storage_gib: 20
+  size: small        # 1 cpu / 8 GB
+```
+
 ## Known findings (from current pipeline)
 
 - **3.5M rows / 17,541 users / 2025-09-01 → 2026-04-16**
-- **Base upgrade rate**: 323 users (**1.84%**)
-- **Leakage events** (do NOT use as features): `clicked_upgrade`, `upgrade_subscription`, `promo_code_redeemed`, `redeem upgrade offer`, etc.
-- **Funnel cumulative reach**: 100% → 23.9% (active) → 24.9% (created) → 39.9% (used AI) → 10.8% (engaged) → 1.8% (upgraded). Note: `created_content` reach > `active` reach — funnel rule ordering needs review (some users create content without ≥2 sign_ins).
+- **Base upgrade rate**: 323 users (**1.84%**), class imbalance ~53:1
+- **Time-to-upgrade**: 70.9% within 3 days, median 3 hours — most upgrades are intent-driven, not earned through engagement
+- **Funnel** (strict-nested cumulative reach): 100% → 36.1% (active) → 16.3% (created) → 16.3% (used AI) → 8.8% (engaged) → 1.8% (upgraded)
+- **Retention crisis**: 1,053 users at-risk (engaged → 14d idle) vs 286 currently engaged. **78% of engagement is being lost.**
+- **Leakage events** (excluded from features): `subscription_upgraded`, `clicked_upgrade`, `upgrade_subscription`, `promo_code_redeemed`, `redeem upgrade offer`, `watermark_remove_upgrade_clicked`, `agent_resume_plan_button_clicked`, `seats_exceeded_share_resource_warning_clicked_upgrade`
+- **Model performance** on 8,088 candidates / 31 positives (3-day obs, 60-day label): LightGBM ROC-AUC 0.70, top-decile recall 33% (3× base rate)
+- **Top features**: activity intensity (`n_events_obs`), activity hour (`activity_hour_*`), AI usage (`n_ai_obs`), credit pressure (`n_credits_below_obs`)

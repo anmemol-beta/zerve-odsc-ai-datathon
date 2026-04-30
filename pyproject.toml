@@ -3,8 +3,15 @@ name = "zerve-odsc-ai-datathon"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.136.1",
+    "lightgbm>=4.6.0",
     "matplotlib>=3.10.9",
     "pandas>=3.0.2",
+    "plotly>=6.7.0",
     "pyarrow>=24.0.0",
     "pyyaml>=6.0.3",
+    "scikit-learn>=1.8.0",
+    "shap>=0.51.0",
+    "streamlit>=1.57.0",
+    "uvicorn[standard]>=0.46.0",
 ]
