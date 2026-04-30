@@ -3,12 +3,12 @@
 **Frontend**: <https://anmemol-beta.github.io/zerve-odsc-ai-datathon/>
 **API**: <https://beta-zerve.hub.zerve.cloud>
 
-A production-style MLOps pipeline built entirely inside the Zerve canvas. **39 blocks · 60 edges**, organized as a parallel-converge DAG that goes from raw events → validated features → an AutoML pool of 5 models → drift detection → a champion picked for serving → a weekly retraining feedback loop → a Next.js frontend that reads canvas variables in real time.
+A production-style MLOps pipeline built entirely inside the Zerve canvas. **35 blocks · 50 edges**, organized as a parallel-converge DAG that goes from raw events → validated features → an AutoML pool of 5 models → drift detection → a champion picked for serving → a weekly retraining feedback loop → a Next.js frontend that reads canvas variables in real time.
 
 ```
 ┌──────────────────────┐        ┌──────────────────────┐        ┌──────────────────────┐
 │  Zerve canvas        │        │  Zerve deployment    │        │  GitHub Pages        │
-│  (Beta · 39 blocks)  │  ◄──►  │  zerve_deploy/main.py│  ◄──►  │  Next.js static site │
+│  (Beta · 35 blocks)  │  ◄──►  │  zerve_deploy/main.py│  ◄──►  │  Next.js static site │
 │                      │        │  beta-zerve.hub...   │        │  /web                │
 └──────────────────────┘        └──────────────────────┘        └──────────────────────┘
         ▲                                ▲                                ▲
@@ -23,41 +23,41 @@ The frontend never executes ML code. It draws the canvas DAG (using the exact xy
 - pick a segment → `GET /strategies/segments` (K2-Think output from the canvas)
 - the final card → `GET /insights` + `/figure/Insights Card`
 
-## Pipeline (39 blocks, parallel-converge DAG)
+## Pipeline (35 blocks, parallel-converge DAG)
 
 ```
                             ┌─ EDA Summary
                             ├─ Funnel Stages ──── Visualize Funnel
 Example Dataset ────────────┤
-   │                        ├─ Build Features  ── Train Model (v1) ──────────────┐
-   │                        ├─ Funnel v4
-   │                        ├─ Validate Funnel v4
-   │                        ├─ Validate Features v3                              │
-   ├─ Validate Events       └─ Build Features v3 ──┐                             │
-   │                                                │                             │
-   │     ┌─ Train Model v3   (XGB+RF+HGB calibrated soft-vote ensemble) ─┐       │
-   │     ├─ Train MLP v3     (PyTorch tab-MLP, isotonic calibration)     ┤       │
-   │     ├─ Train GBM v3     (sklearn GBM, isotonic cv=3)                ┤       │
-   │     │                                                                │       │
-   │     ▼                                                                ▼       │
-   │   Diagnose v3 · SHAP v3 · Compare Models · Per-Segment Performance ──────┐  │
-   │                                                                            │  │
-   │   Time-Rolling Splits ─► Train Across Time ─► Performance Drift ─► Champion Selector
-   │                                                                            │  │
-   │   Build Strategies (K2-Think LLM) ──► ROI Ranking · Strategy Heatmap ────┐│  │
-   │                                                                          ││  │
-   ├─ Weekly Data Slices ──► Data Drift Monitor (PSI + KS) ──────────────────┐│  │
-   │            │                                                            ││  │
-   │            ▼                                                            ││  │
-   │     Weekly Inference ◄── Load Models ◄── Persist Models ◄───────────────┘│  │
-   │                                                                           │  │
-   └─ Load Events Master ─┐                                                    │  │
-                           ├─► Merge Events ─┬─► Build Inference Pool ─────────┤  │
+   │                        ├─ Build Features  ── Train Model (v1) ────────────┐
+   │                        ├─ Funnel v4                                        │
+   │                        ├─ Validate Funnel v4                               │
+   │                        ├─ Validate Features v3                             │
+   ├─ Validate Events       └─ Build Features v3 ──┐                            │
+   │                                                │                            │
+   │     ┌─ Train Model v3   (XGB+RF+HGB calibrated soft-vote ensemble) ─┐      │
+   │     ├─ Train MLP v3     (PyTorch tab-MLP, isotonic calibration)     ┤      │
+   │     ├─ Train GBM v3     (sklearn GBM, isotonic cv=3)                ┤      │
+   │     │                                                                │      │
+   │     ▼                                                                ▼      │
+   │   Diagnose v3 · SHAP v3 · Compare Models · Per-Segment Performance ────┐   │
+   │                                                       │                 │   │
+   │                                                       └─► Persist Models ─►─┤
+   │                                                                            │
+   │   Build Strategies (K2-Think LLM) ──► ROI Ranking · Strategy Heatmap ─────┤
+   │                                                                            │
+   ├─ Weekly Data Slices ──► Data Drift Monitor (PSI + KS) ────────────────────┤
+   │            │                                                               │
+   │            ▼                                                               │
+   │     Weekly Inference ◄── Load Models ◄── Persist Models                   │
+   │                                                                            │
+   └─ Load Events Master ─┐                                                     │
+                           ├─► Merge Events ─┬─► Build Inference Pool ──────────┤
    Load Weekly Drop ─────┘                  └─► Build Training Pool ─► Persist Master
-                                                                              │  │
-                                                          Visualize Cohort ◄──┤  │
-                                                                              ▼  ▼
-                                                                        Insights Card
+                                                                                │
+                                                            Visualize Cohort ───┤
+                                                                                ▼
+                                                                          Insights Card
 ```
 
 Five tiers, each running in parallel within itself and converging at the next:
@@ -67,7 +67,7 @@ Five tiers, each running in parallel within itself and converging at the next:
 | **Validation** | Validate Events, Validate Funnel v4, Validate Features v3 | great-expectations-style schema/leakage checks |
 | **EDA + Funnel** | EDA Summary, Funnel Stages (v1, 6 stages), Funnel v4 (15 stages incl. post-upgrade) | descriptive analysis + lifecycle assignment |
 | **Modeling (AutoML pool of 5)** | Train Model v3 (calibrated XGB+RF+HGB ensemble), Train MLP v3 (PyTorch), Train GBM v3 (sklearn GBM), Train Model (v1 LR+LightGBM) | 4 model families, all isotonic-calibrated, evaluated on a forward-looking holdout |
-| **Diagnostics + AutoML loop** | Diagnose v3, SHAP v3 (real shap or pure-numpy Štrumbelj-Kononenko fallback), Compare Models, Per-Segment Performance, Time-Rolling Splits, Train Across Time, Performance Drift, Champion Selector | rolling cohorts × all candidates → weighted champion (0.5·latest + 0.3·mean + 0.2·stability) |
+| **Diagnostics + champion** | Diagnose v3, SHAP v3 (real shap or pure-numpy Štrumbelj-Kononenko fallback), Compare Models, Per-Segment Performance | head-to-head metrics on the time-cohort holdout; Compare Models is the source of truth for the champion (single-split PR-AUC, 185 test positives) and feeds Persist Models directly |
 | **Strategy + Insights** | Build Strategies (K2-Think LLM strategist), ROI Ranking, Strategy Heatmap, Visualize Cohort, Insights Card | per-segment playbooks with cached fallback |
 | **Weekly drift + serve** | Weekly Data Slices, Data Drift Monitor (PSI 0.10/0.25 + KS), Persist Models, Load Models, Weekly Inference | train tier persists champion to `/tmp/zerve-models/v3/`; inference tier loads on demand and scores incoming weekly slices |
 | **Weekly data feedback loop** | Load Events Master, Load Weekly Drop, Merge Events, **Build Inference Pool**, **Build Training Pool**, Persist Master | reads accumulated events pool + this week's drop; merges/dedups; explicitly forks into an inference pool (recency-windowed, all users) and a training pool (label-lag cutoff + trainability gates); Persist Master writes back the master and includes a `would_promote_new_model` flag based on the gate result |
@@ -81,7 +81,7 @@ The data tier is **append-only**: Load Events Master fetches `data/events_master
 | Path | What it is |
 |---|---|
 | `5319f3dc-…/canvas.yaml` | Canvas root — globals, requirements, env vars |
-| `5319f3dc-…/Development/layer.yaml` | Layer config — 39 blocks + 60 edges |
+| `5319f3dc-…/Development/layer.yaml` | Layer config — 35 blocks + 60 edges |
 | `5319f3dc-…/Development/*.py` | One file per block (~5500 lines total) |
 | `zerve_deploy/main.py` | FastAPI deployment — paste into Zerve deployment editor |
 | `web/` | Next.js 14 frontend (App Router, static export, ReactFlow DAG) |
@@ -97,7 +97,7 @@ The data tier is **append-only**: Load Events Master fetches `data/events_master
 - **Base upgrade rate**: 1.84% (323 users) · class imbalance ~53:1
 - **v3 ensemble** (XGB + RF + HGB, isotonic CalibratedClassifierCV, soft voting): **PR-AUC 0.2645 · ROC-AUC 0.812 · Brier 0.0222** · top-5% precision 0.16 (~9× lift)
 - **v4 funnel** (15 stages incl. `9.AtRisk@*` and `9.Churned@Upgraded`): captures the 36% post-upgrade churn-within-60-days problem that v1's 6-stage funnel ignored
-- **Champion picker**: weighted score over rolling cohorts → ensemble_v3 wins on stability + latest-cohort PR-AUC
+- **Champion picker**: Compare Models picks `ensemble_v3` on the forward-looking time-cohort holdout (185 test positives, 30× the v1 baseline) — feeds Persist Models directly
 - **K2 strategist**: 14 segments × 3 actions × 3 risks, cached JSON fallback for live demo
 - **Drift watch**: PSI/KS per (week × feature) vs first-4-weeks baseline; alerts on material (>0.25) and chronic (3-week) drift
 
@@ -166,9 +166,9 @@ requirements:
 
 ## Key design choices
 
-- **Real DAG, not a notebook**: 39 blocks with explicit edges; you can see fan-out (parallel model training, train/infer split) and fan-in (Champion Selector, Insights Card) directly in the canvas.
+- **Real DAG, not a notebook**: 35 blocks with explicit edges; you can see fan-out (parallel model training, train/infer split) and fan-in (Champion Selector, Insights Card) directly in the canvas.
 - **Train/serve separation**: Persist Models + Load Models pattern decouples weekly retraining from on-demand inference. Inference works even if training is offline (GitHub-raw fallback).
-- **AutoML over time, not just one split**: Time-Rolling Splits + Train Across Time + Performance Drift + Champion Selector picks the model that is **stable across cohorts**, not the one with the best single-split number.
+- **Calibrated, comparable model pool**: every candidate (XGB+RF+HGB ensemble, PyTorch MLP, sklearn GBM, v1 LR/LightGBM) is isotonic-calibrated so PR-AUC is a fair head-to-head metric; Compare Models picks the champion on a forward-looking time-cohort split with 185 test positives.
 - **Drift-aware**: Data Drift Monitor watches incoming weekly data without labels (PSI + KS), so we know when to re-train before metrics degrade.
 - **Honest interpretability**: real SHAP when available, principled sampling-SHAP fallback otherwise — never a fake stand-in.
 - **Live demo, not a static export**: every figure in the frontend is fetched from `zerve.variable(block, name)` at request time.

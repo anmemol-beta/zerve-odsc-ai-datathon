@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>3-min video storyboard · Zerve × ODSC</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --panel: #11172a;
+    --panel2: #161d33;
+    --border: #1f2942;
+    --text: #e6ebf5;
+    --muted: #8b95ad;
+    --dim: #5a6580;
+    --pink: #ec4899;
+    --cyan: #22d3ee;
+    --amber: #fbbf24;
+    --emerald: #34d399;
+    --violet: #a78bfa;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+    background: radial-gradient(1200px 600px at 20% 0%, #1b1340 0%, var(--bg) 60%) fixed;
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* ---------- header ---------- */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+    padding-bottom: 28px; border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .logo {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .logo::before {
+    content: ""; width: 18px; height: 18px;
+    background: linear-gradient(135deg, var(--pink), var(--violet));
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+  h1 {
+    margin: 8px 0 6px; font-size: 36px; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(120deg, #fff 30%, var(--pink) 70%, var(--violet));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { color: var(--muted); font-size: 13px; }
+  .stats { display: flex; gap: 18px; flex-wrap: wrap; }
+  .stat {
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 10px 14px; border-radius: 10px; min-width: 100px;
+  }
+  .stat .v { font-size: 20px; font-weight: 700; color: #fff; }
+  .stat .l { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.16em; margin-top: 2px; }
+
+  /* ---------- timeline ribbon ---------- */
+  .timeline {
+    margin: 24px 0 36px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px;
+  }
+  .timeline-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.18em;
+    margin-bottom: 12px;
+  }
+  .ribbon {
+    position: relative; height: 56px; border-radius: 8px; overflow: hidden;
+    display: flex; gap: 2px; background: #050812;
+  }
+  .seg {
+    position: relative;
+    background: linear-gradient(180deg, var(--panel2), #0d1224);
+    border-top: 2px solid transparent;
+    transition: background .15s;
+  }
+  .seg.k-discover { border-top-color: var(--pink); }
+  .seg.k-funnel   { border-top-color: var(--cyan); }
+  .seg.k-leakage  { border-top-color: var(--amber); }
+  .seg.k-model    { border-top-color: var(--violet); }
+  .seg.k-mlops    { border-top-color: var(--emerald); }
+  .seg.k-business { border-top-color: var(--pink); }
+  .seg.k-meta     { border-top-color: var(--dim); }
+  .seg:hover { background: linear-gradient(180deg, #1d2541, #0d1224); }
+  .seg .tlab {
+    position: absolute; top: 4px; left: 6px;
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 9px; color: var(--muted); letter-spacing: 0.04em;
+  }
+  .seg .ttitle {
+    position: absolute; bottom: 6px; left: 6px; right: 6px;
+    font-size: 10px; color: var(--text);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px;
+    font-size: 11px; color: var(--muted);
+  }
+  .legend .li { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .dot { width: 10px; height: 3px; border-radius: 2px; }
+
+  /* ---------- shots grid ---------- */
+  .section-h {
+    font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.22em;
+    margin: 36px 0 14px; padding-left: 4px;
+  }
+  .grid { display: grid; gap: 16px; }
+  @media (min-width: 980px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .shot {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px 20px;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .shot::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  }
+  .shot.k-discover::before { background: var(--pink); }
+  .shot.k-funnel::before   { background: var(--cyan); }
+  .shot.k-leakage::before  { background: var(--amber); }
+  .shot.k-model::before    { background: var(--violet); }
+  .shot.k-mlops::before    { background: var(--emerald); }
+  .shot.k-business::before { background: var(--pink); }
+  .shot.k-meta::before     { background: var(--dim); }
+
+  .shot-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .pill-time {
+    font-family: 'SF Mono', ui-monospace, monospace;
+    background: #0a0f1f; border: 1px solid var(--border);
+    color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .duration {
+    font-family: 'SF Mono', ui-monospace, monospace;
+    color: var(--muted); font-size: 11px;
+  }
+  .kind-tag {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.18em;
+    padding: 3px 8px; border-radius: 999px;
+    background: rgba(236, 72, 153, 0.1); color: var(--pink);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+  }
+  .k-funnel   .kind-tag { background: rgba(34,211,238,0.08); color: var(--cyan);    border-color: rgba(34,211,238,0.25); }
+  .k-leakage  .kind-tag { background: rgba(251,191,36,0.08); color: var(--amber);   border-color: rgba(251,191,36,0.25); }
+  .k-model    .kind-tag { background: rgba(167,139,250,0.08); color: var(--violet); border-color: rgba(167,139,250,0.25); }
+  .k-mlops    .kind-tag { background: rgba(52,211,153,0.08); color: var(--emerald); border-color: rgba(52,211,153,0.25); }
+  .k-meta     .kind-tag { background: rgba(139,149,173,0.08); color: var(--muted);  border-color: rgba(139,149,173,0.25); }
+
+  .screen {
+    background: linear-gradient(180deg, #0a0f1f, #060914);
+    border: 1px solid #1a233f; border-radius: 8px; padding: 12px 14px;
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 11px; color: var(--text); min-height: 70px;
+  }
+  .screen .label {
+    color: var(--dim); font-size: 9px; text-transform: uppercase; letter-spacing: 0.18em;
+    margin-bottom: 6px;
+  }
+  .screen .desc { color: #cdd5e8; line-height: 1.5; }
+
+  .overlays {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .chip {
+    background: rgba(236, 72, 153, 0.1); color: var(--pink);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+    padding: 4px 8px; border-radius: 999px;
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.02em;
+  }
+  .chip.cyan { background: rgba(34,211,238,0.08); color: var(--cyan); border-color: rgba(34,211,238,0.25); }
+  .chip.amber { background: rgba(251,191,36,0.08); color: var(--amber); border-color: rgba(251,191,36,0.25); }
+  .chip.violet { background: rgba(167,139,250,0.08); color: var(--violet); border-color: rgba(167,139,250,0.25); }
+  .chip.emerald { background: rgba(52,211,153,0.08); color: var(--emerald); border-color: rgba(52,211,153,0.25); }
+
+  .voice {
+    background: rgba(255,255,255,0.025);
+    border-left: 2px solid var(--pink);
+    padding: 12px 14px;
+    border-radius: 0 8px 8px 0;
+    color: #d8dff0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .voice .vlabel {
+    display: block; font-size: 9px; color: var(--pink);
+    text-transform: uppercase; letter-spacing: 0.22em; margin-bottom: 6px;
+    font-family: 'SF Mono', ui-monospace, monospace;
+  }
+  .voice b { color: #fff; font-weight: 600; }
+
+  .footer-tags {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;
+  }
+  .rubric {
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.06em;
+    background: #0a0f1f; color: var(--muted);
+    padding: 3px 6px; border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .rubric.match { color: var(--emerald); border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.05); }
+
+  /* ---------- rubric coverage matrix ---------- */
+  .matrix {
+    margin-top: 48px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px 24px;
+  }
+  .matrix h3 {
+    margin: 0 0 16px; font-size: 14px; font-weight: 700;
+    color: #fff; letter-spacing: -0.01em;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    color: var(--dim); font-weight: 600; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.14em;
+  }
+  td.score { font-family: 'SF Mono', ui-monospace, monospace; color: var(--cyan); }
+  td .where {
+    display: inline-block; font-family: 'SF Mono', ui-monospace, monospace;
+    background: #0a0f1f; padding: 2px 6px; border-radius: 4px;
+    font-size: 10px; color: var(--muted); margin-right: 4px; margin-bottom: 2px;
+    border: 1px solid var(--border);
+  }
+  td .where.primary { color: var(--pink); border-color: rgba(236,72,153,0.3); background: rgba(236,72,153,0.05); }
+
+  /* ---------- shot list footer ---------- */
+  .checklist {
+    margin-top: 36px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px 24px;
+  }
+  .checklist h3 {
+    margin: 0 0 14px; font-size: 14px; font-weight: 700; color: #fff;
+  }
+  .checklist ol {
+    margin: 0; padding-left: 20px; color: #cdd5e8; font-size: 13px; line-height: 1.9;
+  }
+  .checklist code {
+    background: #0a0f1f; padding: 1px 6px; border-radius: 4px;
+    font-family: 'SF Mono', ui-monospace, monospace; font-size: 11px;
+    color: var(--cyan); border: 1px solid var(--border);
+  }
+
+  /* ---------- print ---------- */
+  @media print {
+    body { background: #fff; color: #000; }
+    .shot, .matrix, .checklist, .timeline {
+      background: #fff !important; border: 1px solid #ccc !important;
+      box-shadow: none !important;
+    }
+    .voice { background: #f8f8f8 !important; color: #111 !important; }
+    .voice b { color: #000 !important; }
+    .screen { background: #f4f4f4 !important; color: #111 !important; border-color: #ddd !important; }
+    h1 { color: #000 !important; -webkit-text-fill-color: #000 !important; }
+    .chip, .rubric, .pill-time, .stat { background: #fff !important; color: #000 !important; border: 1px solid #888 !important; }
+    .grid { grid-template-columns: 1fr !important; }
+    .shot { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="logo">Zerve × ODSC AI Datathon · April 2026</div>
+    <h1>3-min video storyboard</h1>
+    <div class="sub">14 cuts · 180s · findings-first · audience-friendly naming · leakage 21/21 ✓</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="v">180s</div><div class="l">total</div></div>
+    <div class="stat"><div class="v">14</div><div class="l">cuts</div></div>
+    <div class="stat"><div class="v">21/21</div><div class="l">leak audit</div></div>
+    <div class="stat"><div class="v">3.5M</div><div class="l">events</div></div>
+    <div class="stat"><div class="v">17,541</div><div class="l">users</div></div>
+  </div>
+</header>
+
+<!-- TIMELINE RIBBON -->
+<div class="timeline">
+  <div class="timeline-head">
+    <span>Timeline · 0:00 → 3:00</span>
+    <span>color = topic · width = duration</span>
+  </div>
+  <div class="ribbon">
+    <div class="seg k-meta"     style="flex:5">  <span class="tlab">0:00</span><span class="ttitle">title</span></div>
+    <div class="seg k-discover" style="flex:18"> <span class="tlab">0:05</span><span class="ttitle">14min lifetime</span></div>
+    <div class="seg k-discover" style="flex:18"> <span class="tlab">0:23</span><span class="ttitle">lift table</span></div>
+    <div class="seg k-funnel"   style="flex:12"> <span class="tlab">0:41</span><span class="ttitle">funnel v4</span></div>
+    <div class="seg k-funnel"   style="flex:16"> <span class="tlab">0:53</span><span class="ttitle">post-upg 32%</span></div>
+    <div class="seg k-funnel"   style="flex:14"> <span class="tlab">1:09</span><span class="ttitle">transitions</span></div>
+    <div class="seg k-discover" style="flex:14"> <span class="tlab">1:23</span><span class="ttitle">meta 55×</span></div>
+    <div class="seg k-leakage"  style="flex:12"> <span class="tlab">1:37</span><span class="ttitle">leakage</span></div>
+    <div class="seg k-model"    style="flex:14"> <span class="tlab">1:49</span><span class="ttitle">ensemble</span></div>
+    <div class="seg k-model"    style="flex:12"> <span class="tlab">2:03</span><span class="ttitle">top-K</span></div>
+    <div class="seg k-mlops"    style="flex:16"> <span class="tlab">2:15</span><span class="ttitle">champion</span></div>
+    <div class="seg k-business" style="flex:14"> <span class="tlab">2:31</span><span class="ttitle">playbook</span></div>
+    <div class="seg k-business" style="flex:12"> <span class="tlab">2:45</span><span class="ttitle">K2 demo</span></div>
+    <div class="seg k-meta"     style="flex:3">  <span class="tlab">2:57</span><span class="ttitle">end</span></div>
+  </div>
+  <div class="legend">
+    <span class="li"><span class="dot" style="background:var(--pink)"></span>discovery / business</span>
+    <span class="li"><span class="dot" style="background:var(--cyan)"></span>funnel</span>
+    <span class="li"><span class="dot" style="background:var(--amber)"></span>leakage</span>
+    <span class="li"><span class="dot" style="background:var(--violet)"></span>model</span>
+    <span class="li"><span class="dot" style="background:var(--emerald)"></span>mlops</span>
+    <span class="li"><span class="dot" style="background:var(--dim)"></span>frame</span>
+  </div>
+</div>
+
+<!-- SHOTS -->
+<div class="section-h">14 shots · in record order</div>
+<div class="grid">
+
+  <!-- 1 -->
+  <div class="shot k-meta">
+    <div class="shot-head">
+      <span class="pill-time">0:00</span>
+      <span class="duration">5s</span>
+      <span class="kind-tag">title</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">타이틀 카드 — "User Funnel &amp; Upgrade Predictor"<br/>서브: 17,541 users · 323 upgraders · base 1.84%</div>
+    </div>
+    <div class="overlays">
+      <span class="chip">17,541 users</span>
+      <span class="chip cyan">323 upgraders</span>
+      <span class="chip violet">base 1.84%</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      <b>17,541명</b> 사용자 데이터에서 업그레이드 예측과 퍼널을 동시에 풀었습니다.
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="shot k-discover">
+    <div class="shot-head">
+      <span class="pill-time">0:05</span>
+      <span class="duration">18s</span>
+      <span class="kind-tag">discovery</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">EDA Summary 블록 출력 + Top events bar chart<br/>+ lifetime 분포 (median 14분)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip">median lifetime 14m</span>
+      <span class="chip cyan">76% upgrade ≤ 7d</span>
+      <span class="chip violet">61% same-day</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      데이터에서 가장 먼저 본 건 두 가지 — 사용자 절반이 가입 후 <b>14분 안에 사라집니다</b>. 그리고 결제하는 사람의 <b>76%가 7일 안에, 61%가 같은 날</b> 결제합니다. 모델이 봐야 할 건 오랜 history가 아니라 <b>첫 1시간·24시간 시그널</b>.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R1 · Data Understanding</span>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="shot k-discover">
+    <div class="shot-head">
+      <span class="pill-time">0:23</span>
+      <span class="duration">18s</span>
+      <span class="kind-tag">discovery</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">분석 리포트 6장 — 강한 예측 신호 표 (lift &gt; 10×)<br/>또는 event_lift_table.csv 시각화</div>
+    </div>
+    <div class="overlays">
+      <span class="chip">credits_exceeded 12×</span>
+      <span class="chip">banner_shown 22×</span>
+      <span class="chip">deployment 12-25×</span>
+      <span class="chip cyan">source_control 14×</span>
+      <span class="chip cyan">canvas_clone 14×</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      결제자와 비결제자 행동을 비교해 lift가 큰 시그널 5개를 뽑았습니다. <b>credits_exceeded 12배, AI credit 배너 노출 22배, deployment 12-25배, source control 14배, canvas clone 14배.</b> 한 줄로 요약하면 <b>"진지하게 일하다 무료 한도에 부딪힌 사용자"</b>가 결제합니다.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R1 · Data Understanding</span>
+      <span class="rubric match">R6 · Insights</span>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="shot k-funnel">
+    <div class="shot-head">
+      <span class="pill-time">0:41</span>
+      <span class="duration">12s</span>
+      <span class="kind-tag">funnel</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Funnel v4 블록 출력 — 15-stage 분포 표<br/>(Visualize Funnel 블록도 ok)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip cyan">15 stages</span>
+      <span class="chip cyan">8.Upgraded 221</span>
+      <span class="chip cyan">9.AtRisk@Upgraded 74</span>
+      <span class="chip cyan">9.Churned@Upgraded 28</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      이 행동 패턴 위에 퍼널을 <b>15단계</b>로 정의했습니다. 결정적 임계값 — Engaged는 <b>3+ distinct days</b>, AtRisk는 <b>14일 무활동</b>. 모든 사용자가 정확히 한 단계.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R4 · Funnel Design</span>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="shot k-funnel">
+    <div class="shot-head">
+      <span class="pill-time">0:53</span>
+      <span class="duration">16s</span>
+      <span class="kind-tag">funnel</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Post-upgrade lifecycle 분해 표 / 도넛 차트<br/>analysis_report.md 11장 또는 Visualize Cohort</div>
+    </div>
+    <div class="overlays">
+      <span class="chip cyan">active 68%</span>
+      <span class="chip amber">AtRisk 23%</span>
+      <span class="chip" style="background:rgba(244,63,94,.1);color:#fb7185;border-color:rgba(244,63,94,.3)">Churned 9%</span>
+      <span class="chip">결제자 32% 위험</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER · KEY FINDING</span>
+      v4의 <b>최대 발견</b> — 결제한 323명을 추적하니 <b>active 유지는 68%뿐</b>이고, 23%는 30일 이상 무활동, 9%는 cancel/downgrade. 단순히 '8.Upgraded' 한 양동이로 보면 <b>결제자 32%가 위험 상태</b>라는 사실이 묻힙니다.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R4 · Funnel Design</span>
+      <span class="rubric match">R6 · Insights</span>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="shot k-funnel">
+    <div class="shot-head">
+      <span class="pill-time">1:09</span>
+      <span class="duration">14s</span>
+      <span class="kind-tag">funnel</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Transition matrix v4 — 핵심 행 highlight<br/>(transition_v4_counts.csv 또는 캔버스 transition 출력)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip cyan">Integrated → Engaged 51.2%</span>
+      <span class="chip cyan">Engaged → Upgraded 12.8%</span>
+      <span class="chip">UsedAI → Created 82%</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      전이 확률에서도 핵심 패턴이 나옵니다. <b>Integrated 단계 도달자의 절반(51%)이 Engaged로 진행</b>, <b>Engaged 도달자의 13%가 결제</b>. 그래서 'integration → engagement' 구간이 <b>비즈니스 ROI가 가장 높은 개입 지점</b>.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R5 · Transition Logic</span>
+      <span class="rubric match">R6 · Insights</span>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="shot k-discover">
+    <div class="shot-head">
+      <span class="pill-time">1:23</span>
+      <span class="duration">14s</span>
+      <span class="kind-tag">discovery</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">메타 컬럼 lift 표 (analysis_report.md 8장)<br/>+ tour×promo×agent_first 조합 강조</div>
+    </div>
+    <div class="overlays">
+      <span class="chip">is_power_engaged 16×</span>
+      <span class="chip">agent_first 13×</span>
+      <span class="chip">tour_completed 10×</span>
+      <span class="chip violet">3-flag combo: 11.5% vs 0.21%</span>
+      <span class="chip violet">55× spread</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      퍼널과 직교한 <b>7개 메타 시그널</b> — is_power_engaged 16배, agent_first 13배, onboarding_completed 10배 lift. 셋 다 True인 1,204명은 결제율 <b>11.5%</b>, 셋 다 False인 9,324명은 <b>0.21%</b>. <b>55배 차이</b>. 모델 feature로 그대로 활용.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R1 · Data Understanding</span>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="shot k-leakage">
+    <div class="shot-head">
+      <span class="pill-time">1:37</span>
+      <span class="duration">12s</span>
+      <span class="kind-tag">leakage</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Validate Features v3 출력 (audit pass) +<br/>observation_days leak 발견 사례 (PR-AUC 0.37 → 0.24)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip amber">25-token blacklist</span>
+      <span class="chip amber">per-user cutoff −1µs</span>
+      <span class="chip amber">_full window dropped</span>
+      <span class="chip">PR-AUC 0.37 → 0.24 (honest)</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER · METHODOLOGY</span>
+      Leakage는 25-token 블랙리스트 + 사용자별 cutoff까지 한 뒤에도, <b>observation_days가 XGB importance 1위</b>로 떠서 'cutoff 길이' 자체가 leak임을 발견. <b>_full window 39개를 통째로 drop</b>. PR-AUC가 0.37 → 0.24로 떨어졌지만 <b>honest 성능</b>.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R2 · Leakage &amp; Rigor</span>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="shot k-model">
+    <div class="shot-head">
+      <span class="pill-time">1:49</span>
+      <span class="duration">14s</span>
+      <span class="kind-tag">model</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Train Model v3 → Compare Models 출력 표<br/>(head-to-head: ensemble vs MLP vs GBM vs LR vs LightGBM)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip violet">PR-AUC 0.265</span>
+      <span class="chip violet">ROC-AUC 0.81</span>
+      <span class="chip violet">Brier 0.022</span>
+      <span class="chip">9× lift @ top 5%</span>
+      <span class="chip cyan">5-model pool</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      5개 모델 풀 — <b>calibrated XGB+RF+HGB ensemble</b>, MLP, sklearn GBM, v1 baseline. head-to-head 결과 앙상블이 <b>PR-AUC 0.265, ROC-AUC 0.81</b>. isotonic calibration으로 <b>Brier가 0.09에서 0.022로</b> — 순위뿐 아니라 확률 자체로도 사용 가능.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R3 · Predictive Quality</span>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="shot k-model">
+    <div class="shot-head">
+      <span class="pill-time">2:03</span>
+      <span class="duration">12s</span>
+      <span class="kind-tag">model</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Top-K precision/recall 표 + 적용 시뮬<br/>(prediction_report.md 7.2 또는 Per-Segment Performance)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip violet">Top 5% → 371 users</span>
+      <span class="chip violet">90 upgraders caught</span>
+      <span class="chip">precision 24% (random 2.5%)</span>
+      <span class="chip">recall 49%</span>
+      <span class="chip cyan">10× campaign efficiency</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER · BUSINESS</span>
+      비즈니스 적용은 단순합니다. 모델 점수 <b>상위 5%(371명)만 타겟팅</b>하면 전체 결제자 185명 중 <b>90명(49%)을 포착</b>, 적중률 24%. random 대비 <b>10배 효율</b>.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R3 · Predictive Quality</span>
+      <span class="rubric match">R6 · Insights</span>
+    </div>
+  </div>
+
+  <!-- 11 -->
+  <div class="shot k-mlops">
+    <div class="shot-head">
+      <span class="pill-time">2:15</span>
+      <span class="duration">16s</span>
+      <span class="kind-tag">mlops</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Champion Selector + Performance Drift dashboard<br/>+ Data Drift Monitor heatmap (PSI/KS)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip emerald">0.5 latest + 0.3 mean + 0.2 stability</span>
+      <span class="chip emerald">PSI 0.10 / 0.25</span>
+      <span class="chip">no-label drift watch</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      단일 split 챔피언이 함정이라, <b>4개 월별 cohort에 모든 후보를 돌려 stability 가중 점수</b>로 고릅니다. 한 달 운 좋아서 잘 나온 모델은 떨어지게. 그리고 weekly 데이터에 <b>PSI·KS로 라벨 없이 드리프트 감시</b> — 0.25 넘으면 재학습 알림.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R3 · Predictive Quality</span>
+      <span class="rubric match">R2 · Rigor</span>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="shot k-business">
+    <div class="shot-head">
+      <span class="pill-time">2:31</span>
+      <span class="duration">14s</span>
+      <span class="kind-tag">business</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">business_playbook.md TL;DR — 7-action 표<br/>+ 우선순위 lift 컬럼 highlight</div>
+    </div>
+    <div class="overlays">
+      <span class="chip">credit limit hit · 9.6×</span>
+      <span class="chip">banner shown · 16.4×</span>
+      <span class="chip">deployment user · 5.4×</span>
+      <span class="chip cyan">~1,300 target users</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER · ACTION</span>
+      이 모든 인사이트를 <b>7개 비즈니스 액션</b>으로 정리. credit 한도 도달자 <b>9.6배</b>, 배너 노출자 <b>16.4배</b>, deployment 사용자 <b>5.4배</b> lift. 상위 3개 액션의 공통 타겟 <b>약 1,300명</b> — 캠페인 비용 효율 매우 높음.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R6 · Insights</span>
+    </div>
+  </div>
+
+  <!-- 13 -->
+  <div class="shot k-business">
+    <div class="shot-head">
+      <span class="pill-time">2:45</span>
+      <span class="duration">12s</span>
+      <span class="kind-tag">demo</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">프론트엔드 라이브 — K2 StrategyGallery<br/>segment 클릭 → 3 ranked actions 카드 펼침</div>
+    </div>
+    <div class="overlays">
+      <span class="chip">K2-Think LLM</span>
+      <span class="chip">14 segments × 3 actions</span>
+      <span class="chip cyan">channel · message · ROI</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER · LIVE DEMO</span>
+      이 playbook을 <b>K2-Think LLM이 14개 v4 segment마다 자동 생성</b> — 채널·메시지·예상 lift·ROI까지 ranked로. 프론트엔드에서 클릭으로 바로 확인됩니다.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R7 · Communication</span>
+      <span class="rubric match">R6 · Insights</span>
+    </div>
+  </div>
+
+  <!-- 14 -->
+  <div class="shot k-meta">
+    <div class="shot-head">
+      <span class="pill-time">2:57</span>
+      <span class="duration">3s</span>
+      <span class="kind-tag">end</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">Insights Card 풀샷 + URL 오버레이<br/>github.com/anmemol-beta/zerve-odsc-ai-datathon</div>
+    </div>
+    <div class="overlays">
+      <span class="chip cyan">repo + live demo</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER</span>
+      링크는 아래. 감사합니다.
+    </div>
+  </div>
+
+</div>
+
+<!-- RUBRIC COVERAGE MATRIX -->
+<div class="matrix">
+  <h3>Rubric coverage · 100 pts</h3>
+  <table>
+    <thead>
+      <tr><th style="width:32px">#</th><th>Criterion</th><th style="width:50px">Pts</th><th>Where in video</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Data Understanding &amp; Feature Engineering</td>
+        <td class="score">15</td>
+        <td>
+          <span class="where primary">0:05 lifetime</span>
+          <span class="where primary">0:23 lift table</span>
+          <span class="where primary">1:23 meta combos</span>
+        </td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Handling of Leakage &amp; Methodological Rigor</td>
+        <td class="score">15</td>
+        <td>
+          <span class="where primary">1:37 leakage</span>
+          <span class="where">2:15 stability</span>
+        </td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Predictive Model Quality &amp; Usefulness</td>
+        <td class="score">25</td>
+        <td>
+          <span class="where primary">1:49 metrics</span>
+          <span class="where primary">2:03 top-K</span>
+          <span class="where">2:15 champion</span>
+        </td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Funnel Design &amp; Stage Definitions</td>
+        <td class="score">25</td>
+        <td>
+          <span class="where primary">0:41 v4 stages</span>
+          <span class="where primary">0:53 post-upgrade</span>
+        </td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Transition Logic &amp; Behavioral Modeling</td>
+        <td class="score">25</td>
+        <td>
+          <span class="where primary">1:09 transitions</span>
+          <span class="where">0:53 lifecycle</span>
+        </td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Insights, Recommendations &amp; Business Impact</td>
+        <td class="score">5</td>
+        <td>
+          <span class="where primary">2:31 playbook</span>
+          <span class="where">2:03 top-K</span>
+          <span class="where">0:53 post-upg</span>
+        </td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Communication &amp; Presentation</td>
+        <td class="score">5</td>
+        <td>
+          <span class="where primary">2:45 live demo</span>
+          <span class="where">2:57 end</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PRE-PRODUCTION CHECKLIST -->
+<div class="checklist">
+  <h3>녹화 직전 체크리스트</h3>
+  <ol>
+    <li>캔버스 블록 13개 미리 다 실행해서 출력 캐시 — <code>EDA Summary</code>, <code>Funnel v4</code>, <code>Validate Features v3</code>, <code>Compare Models</code>, <code>Champion Selector</code>, <code>Performance Drift</code>, <code>Data Drift Monitor</code>, <code>Per-Segment Performance</code>, <code>Build Strategies</code>, <code>ROI Ranking</code>, <code>Insights Card</code>, <code>Visualize Cohort</code>, <code>Visualize Funnel</code></li>
+    <li>분석 리포트 표 4개를 <strong>큰 글자</strong>로 캡처해 두기 — 6장(lift table), 8장(meta combo), 10장(transitions), 11장(post-upg lifecycle)</li>
+    <li>프론트엔드 새 탭에서 <code>https://anmemol-beta.github.io/zerve-odsc-ai-datathon/</code> 한 번 ping → 콜드 스타트 워밍업</li>
+    <li>K2 StrategyGallery에서 한 segment 미리 펼쳐서 카드 3개 보이게 두고 녹화 시작</li>
+    <li>보이스오버 3분 풀테이크 한 번 녹음 → DaVinci에서 컷 시퀀스를 voice 위에 붙임 (반대 순서 X)</li>
+    <li>이 페이지를 <strong>두 번째 모니터</strong>나 <strong>인쇄</strong>해서 옆에 두고 녹화 (Cmd+P → "background graphics" 체크하면 다크 그대로, 끄면 흑백)</li>
+  </ol>
+</div>
+
+</div>
+</body>
+</html>

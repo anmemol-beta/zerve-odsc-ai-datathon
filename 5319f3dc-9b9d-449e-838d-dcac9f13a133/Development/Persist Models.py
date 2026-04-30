@@ -23,7 +23,7 @@ Inputs (from canvas namespace):
     gbm_v3, gbm_metrics_v3, gbm_backend  (Train GBM v3)
     mlp_v3, mlp_metrics_v3         (Train MLP v3)
     feature_cols_v3                (Build Features v3)
-    current_champion, champion_summary  (Champion Selector)
+    current_champion, champion_summary  (Compare Models — single-split champion contract)
 
 Outputs:
     artifacts_path     str   — directory we wrote to

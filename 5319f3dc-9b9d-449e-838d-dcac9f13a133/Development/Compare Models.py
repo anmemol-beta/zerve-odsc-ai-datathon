@@ -110,6 +110,20 @@ comparison_summary = {
     ),
 }
 
+# ─── 2b. champion contract for downstream Persist Models ─────────────────
+# (Replaces the rolling-AutoML Champion Selector. Single-split PR-AUC is
+# the picking criterion; Compare Models is the source of truth.)
+current_champion = chosen_model  # "ensemble_v3"
+_v3_ens_row = v3_ens.iloc[0] if len(v3_ens) else None
+champion_summary = {
+    "current_champion": current_champion,
+    "selection_basis": "single-split PR-AUC (v3 ensemble)",
+    "pr_auc": float(_v3_ens_row["pr_auc"]) if _v3_ens_row is not None else None,
+    "roc_auc": float(_v3_ens_row["roc_auc"]) if _v3_ens_row is not None else None,
+    "brier": float(_v3_ens_row["brier"]) if _v3_ens_row is not None else None,
+    "n_test_positives": int(v3_view["n_test_pos"].iloc[0]),
+}
+
 # ─── 3. visual ────────────────────────────────────────────────────────────
 fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 metric_order = ["pr_auc", "roc_auc", "brier"]
