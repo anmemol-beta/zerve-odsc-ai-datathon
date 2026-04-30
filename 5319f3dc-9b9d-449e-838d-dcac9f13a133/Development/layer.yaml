@@ -15,7 +15,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Visualize Cohort
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -33,7 +34,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Validate Events
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -51,7 +53,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Visualize Funnel
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -70,7 +73,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Champion Selector
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -90,7 +94,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Weekly Inference
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -108,7 +113,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Train Model
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -126,7 +132,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Visualize Model
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -146,7 +153,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Build Strategies
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -165,7 +173,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: ROI Ranking
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -183,7 +192,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: EDA Summary
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -203,7 +213,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Weekly Data Slices
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -221,7 +232,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Build Features
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -240,7 +252,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Compare Models
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -261,7 +274,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Train MLP v3
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -280,7 +294,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Diagnose v3
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -299,7 +314,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Strategy Heatmap
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -317,7 +333,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Funnel Stages
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -339,7 +356,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Train GBM v3
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -358,7 +376,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Per-Segment Performance
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -379,7 +398,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Train Model v3
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -401,7 +421,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Train Across Time
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -420,7 +441,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Funnel v4
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -440,7 +462,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Load Models
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -461,7 +484,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Persist Models
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -479,7 +503,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Example Dataset
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -497,7 +522,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Validate Features v3
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -516,7 +542,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Performance Drift
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -535,7 +562,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Insights Card
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -555,7 +583,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Data Drift Monitor
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -575,7 +604,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Time-Rolling Splits
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -594,7 +624,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Validate Funnel v4
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
@@ -613,7 +644,8 @@ blocks:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: SHAP v3
   parent_id: null
-  properties: {}
+  properties:
+    interactive_execution: true
   status: 1
   type: 1
   variables: null
