@@ -2,7 +2,13 @@ id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
 name: Beta
 project_id: 96de927e-4ee8-4f75-a4bd-28806d91739b
 global_imports: []
-python_global_imports: import pandas as pd
+python_global_imports: |
+  import pandas as pd
+  import numpy as np
+  import matplotlib.pyplot as plt
+  import matplotlib.dates as mdates
+  import json
+  import os
 r_global_imports: ''
 requirements:
 - pyarrow
