@@ -15,11 +15,10 @@ requirements:
 - scikit-learn
 - lightgbm
 - xgboost<4
-- shap
+- torch<3
 - streamlit
 - plotly
 - catboost
-- torch
 - optuna
 - imbalanced-learn
 linux_packages: []

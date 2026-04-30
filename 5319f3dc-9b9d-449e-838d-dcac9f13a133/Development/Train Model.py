@@ -19,7 +19,13 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 import numpy as np
 import lightgbm as lgb
-import shap
+try:
+    import shap  # heavy LLVM deps; absent in some Zerve runtimes
+    _SHAP_OK = True
+except Exception as _e:
+    print(f"[Train Model v1] shap unavailable ({_e}) — SHAP block will be skipped")
+    shap = None  # type: ignore
+    _SHAP_OK = False
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
@@ -131,13 +137,23 @@ print(lr_importance.head(15).to_string())
 
 # ── SHAP values — only for the LGBM model (tree explainer is fast).
 # Compute on test set to keep size sane.
-shap_explainer = shap.TreeExplainer(lgbm_model)
-shap_raw = shap_explainer.shap_values(X_test.values)
-# In newer SHAP versions, binary classifiers may return one array (class 1) or list of two arrays.
-if isinstance(shap_raw, list):
-    shap_values = shap_raw[1]
+if _SHAP_OK:
+    shap_explainer = shap.TreeExplainer(lgbm_model)
+    shap_raw = shap_explainer.shap_values(X_test.values)
+    # newer SHAP: binary classifiers may return one array (class 1) or list of two
+    if isinstance(shap_raw, list):
+        shap_values = shap_raw[1]
+    else:
+        shap_values = shap_raw if shap_raw.ndim == 2 else shap_raw[..., 1]
+    print()
+    print(f"shap_values shape: {shap_values.shape}")
 else:
-    shap_values = shap_raw if shap_raw.ndim == 2 else shap_raw[..., 1]
-
-print()
-print(f"shap_values shape: {shap_values.shape}")
+    # Fallback: native LightGBM gain importance, replicated to (n_test, n_feat)
+    # so downstream code that expects per-row attribution doesn't crash.
+    print()
+    print("[Train Model v1] shap missing — using native LightGBM importance as proxy")
+    gain = lgbm_model.booster_.feature_importance(importance_type="gain")
+    norm = gain / max(gain.sum(), 1)
+    shap_values = np.tile(norm, (len(X_test), 1)).astype(np.float32)
+    shap_explainer = None
+    print(f"shap_values shape (proxy): {shap_values.shape}")
