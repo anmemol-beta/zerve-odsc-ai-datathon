@@ -412,12 +412,12 @@
     </div>
     <div class="overlays">
       <span class="chip">median lifetime 14m</span>
-      <span class="chip cyan">76% upgrade ≤ 7d</span>
-      <span class="chip violet">61% same-day</span>
+      <span class="chip cyan">3 of 4 pay within 7 days</span>
+      <span class="chip violet">2 of 3 pay on day one</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      Two things jumped out of the data right away. First — <b>half of all users disappear within fourteen minutes of signing up</b>. Second — <b>three out of four upgraders pay within their first week, and over sixty percent pay on day one</b>. So our model can't rely on long histories. It has to read the first hour, the first day.
+      Two things jumped out of the data right away. First — <b>half of all users disappear within fourteen minutes of signing up</b>. Second — <b>three out of four upgraders pay within their first week, and two out of three pay on day one</b>. So our model can't rely on long histories. It has to read the first hour, the first day.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -490,14 +490,14 @@
       <div class="desc">Post-upgrade lifecycle 분해 표 / 도넛 차트<br/>analysis_report.md 11장 또는 Visualize Cohort</div>
     </div>
     <div class="overlays">
-      <span class="chip cyan">active 68%</span>
-      <span class="chip amber">AtRisk 23%</span>
-      <span class="chip" style="background:rgba(244,63,94,.1);color:#fb7185;border-color:rgba(244,63,94,.3)">Churned 9%</span>
-      <span class="chip">결제자 32% 위험</span>
+      <span class="chip cyan">2 of 3 still active</span>
+      <span class="chip amber">~1 in 4 went silent (30+ days)</span>
+      <span class="chip" style="background:rgba(244,63,94,.1);color:#fb7185;border-color:rgba(244,63,94,.3)">~1 in 11 already canceled</span>
+      <span class="chip">1 in 3 paying users at risk</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · KEY FINDING</span>
-      Here is our biggest finding. We tracked all <b>three hundred twenty-three upgraders</b> after they paid. <b>Only sixty-eight percent are still active.</b> Twenty-three percent went silent for thirty days or more. Nine percent already canceled or downgraded. Treating "upgraded" as the end of the funnel hides the fact that <b>one in three paying users is at risk</b>. So we added two new stages — "at-risk after upgrade" and "churned after upgrade".
+      Here is our biggest finding. We tracked all <b>three hundred twenty-three upgraders</b> after they paid. <b>Only two out of three are still active</b>. Almost a quarter went silent for thirty days. Nearly one in eleven already canceled or downgraded. Treating "upgraded" as the end of the funnel hides the fact that <b>one in three paying users is at risk</b>. So we added two new stages — "at-risk after upgrade" and "churned after upgrade".
     </div>
     <div class="footer-tags">
       <span class="rubric match">R4 · Funnel Design</span>
@@ -543,15 +543,14 @@
       <div class="desc">메타 컬럼 lift 표 (analysis_report.md 8장)<br/>+ tour×promo×agent_first 조합 강조</div>
     </div>
     <div class="overlays">
-      <span class="chip">is_power_engaged 16×</span>
-      <span class="chip">agent_first 13×</span>
-      <span class="chip">tour_completed 10×</span>
-      <span class="chip violet">3-flag combo: 11.5% vs 0.21%</span>
-      <span class="chip violet">55× spread</span>
+      <span class="chip">power users · 16× vs others</span>
+      <span class="chip">AI-first · 13× vs notebook-first</span>
+      <span class="chip">tour completers · 10× vs skippers</span>
+      <span class="chip violet">3-flag combo · 55× more likely to pay</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      Beyond the funnel, we extracted seven behavioral flags. "<b>Power users</b>" — sixteen times more likely to upgrade. "<b>Users who tried AI before notebooks</b>" — thirteen times. "<b>Users who finished onboarding</b>" — ten times. The <b>twelve hundred users who hit all three flags pay at eleven and a half percent</b>. The nine thousand who hit none pay at <b>zero point two percent</b>. That is a <b>fifty-five-fold spread</b>, and we feed all three signals into the model.
+      Beyond the funnel, we extracted seven behavioral flags. "<b>Power users</b>" pay <b>sixteen times more often</b> than non-power users. "<b>Users who tried AI before notebooks</b>" — <b>thirteen times</b> more often. "<b>Users who finished onboarding</b>" — <b>ten times</b>. And the twelve hundred users who hit all three flags are <b>fifty-five times more likely to upgrade</b> than the nine thousand who hit none. We feed all three into the model.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -577,7 +576,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · TRUST</span>
-      Our biggest discipline check — we caught a <b>hidden data leak that was inflating our early scores</b>. Fixing it cost us <b>twenty-eight percent of our number</b>. The benefit: <b>every metric we show today will hold up in production</b>, not just in a notebook.
+      Our biggest catch — a <b>hidden data leak</b>. One feature was <b>secretly telling the model who had already paid</b> — just by measuring <b>how long we had watched each user</b>. Upgraders' windows were artificially short because we cut them at the purchase moment, so the model was learning that artifact, not the signal. We dropped it. Cost: <b>twenty-eight percent of our score</b>. Benefit: <b>every number we show today holds up in production</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R2 · Leakage &amp; Rigor</span>
@@ -596,15 +595,15 @@
       <div class="desc">최종 모델 비교 표 (head-to-head)<br/>로지스틱 / LightGBM / GBM / MLP / 캘리브레이션 앙상블</div>
     </div>
     <div class="overlays">
-      <span class="chip violet">PR-AUC 0.265 (random 0.025의 10.6×)</span>
-      <span class="chip violet">ROC-AUC 0.81</span>
-      <span class="chip violet">Brier 0.09 → 0.022 (4.1× 정확)</span>
-      <span class="chip">로지스틱 0.13 → 앙상블 0.265 (2.0×)</span>
-      <span class="chip cyan">단순 majority 대비 결제자 +323명</span>
+      <span class="chip violet">Logistic · 5× random</span>
+      <span class="chip violet">Single XGBoost · 10× random</span>
+      <span class="chip violet">Calibrated ensemble · 11× random</span>
+      <span class="chip">Calibration · 4× more accurate probabilities</span>
+      <span class="chip cyan">Majority predictor · 0 upgraders caught</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · NUMBERS</span>
-      We trained <b>five candidate models</b> side by side. Always predicting "no upgrade" gets ninety-seven percent accuracy and catches zero upgraders. Logistic regression scored <b>zero point one three</b>. A single XGBoost scored <b>zero point two four</b>. Our final model — <b>three tree models, all calibrated, voting together</b> — scored <b>zero point two six five</b>. That is <b>ten point six times better than random</b>. And calibration cut our probability error by <b>four times</b>. So when we say "this user has a twenty-three percent chance of upgrading", that number is real.
+      We trained <b>five candidate models</b> side by side. Always predicting "no upgrade" gets ninety-seven percent accuracy but catches <b>zero upgraders</b> — useless. Logistic regression: <b>five times better than random</b>. A single XGBoost: <b>ten times</b>. Our final model — <b>three tree models, all calibrated, voting together</b> — scores <b>eleven times random</b>. And calibration makes our probabilities <b>four times more accurate</b>. So "twenty-three percent chance" really means twenty-three percent.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -706,14 +705,14 @@
       <div class="desc">business_playbook.md TL;DR — 7-action 표<br/>+ 우선순위 lift 컬럼 highlight</div>
     </div>
     <div class="overlays">
-      <span class="chip">크레딧 한도 도달자 · 결제율 13.4% · 9.6×</span>
-      <span class="chip">한도 임박 배너 노출자 · 23.8% · 16.4×</span>
-      <span class="chip">배포 기능 사용자 · 9.1% · 5.4×</span>
-      <span class="chip cyan">상위 3액션 공통 타겟 1,300명 (전체의 7%)</span>
+      <span class="chip">credit-ceiling hitters · 7× avg user</span>
+      <span class="chip">banner viewers · 16× avg user (strongest)</span>
+      <span class="chip">notebook deployers · 5× avg user</span>
+      <span class="chip cyan">top 3 actions = 1,300 people · 7% of base</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · ACTION</span>
-      We translated every finding into <b>seven concrete campaigns</b>. The top three: users who hit the credit ceiling — <b>six hundred forty-nine people, who upgrade at thirteen percent — over seven times the platform average</b>. Users who saw the limit-warning banner — <b>three hundred two people, twenty-four percent</b>. Users who deployed a notebook — three hundred fifty-three people, nine percent. Combined that's <b>about thirteen hundred users, seven percent of the base, converting at five to sixteen times the average</b>.
+      We translated every finding into <b>seven concrete campaigns</b>. The top three: users who hit the credit ceiling — <b>six hundred forty-nine people — convert seven times more often than the average user</b>. Users who saw the limit-warning banner — three hundred two people — <b>sixteen times</b>. Users who deployed a notebook — three hundred fifty-three people — <b>five times</b>. Combined: <b>about thirteen hundred users — just seven percent of our base — converting five to sixteen times more often than the average</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R6 · Insights</span>
