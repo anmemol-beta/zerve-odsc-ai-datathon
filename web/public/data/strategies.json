@@ -1,0 +1,1953 @@
+{
+  "generated_at": "2026-04-30T01:44:48.377514+00:00",
+  "model": "MBZUAI-IFM/K2-Think-v2",
+  "n_segments": 14,
+  "segments": [
+    {
+      "segment_id": "new",
+      "label": "1.New",
+      "stats": {
+        "size": 2155,
+        "pct_of_total": 12.29,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 1,
+        "median_distinct_days": 1,
+        "median_session_min": 0.0,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_events_1h",
+            "seg_median": 1.0,
+            "base_median": 13.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "n_events_24h",
+            "seg_median": 1.0,
+            "base_median": 14.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "n_events_7d",
+            "seg_median": 1.0,
+            "base_median": 15.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "n_distinct_days_7d",
+            "seg_median": 1.0,
+            "base_median": 1.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "did_canvas_clone_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0,
+            "base_reach": 0.0036,
+            "reach_lift": 0.22
+          },
+          {
+            "feature": "did_source_control_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0,
+            "base_reach": 0.0047,
+            "reach_lift": 0.17
+          }
+        ],
+        "demographics": {
+          "purpose": "(missing) (100%)",
+          "role": "(missing) (100%)",
+          "work_type": "(missing) (100%)",
+          "device_type": "Unknown (58%)",
+          "os": "Linux (59%)",
+          "country": "Other (63%)",
+          "signup_source": "(missing) (100%)"
+        },
+        "metadata": {
+          "agent_first": "0%",
+          "is_power_engaged": "0%",
+          "tour_finished_within_24h": "0%",
+          "submitted_onboarding_form": "0%",
+          "hit_credit_limit_7d": "0%"
+        },
+        "score": {
+          "median": 0.0271,
+          "p90": 0.0271,
+          "pct_top5": 0.0,
+          "n_scored": 1031
+        },
+        "stage_rank": 1,
+        "adjacent": "0.NoEvent → 1.New → 2.Exploring"
+      },
+      "strategy": {
+        "segment_id": "new",
+        "summary": "New sign‑ups with almost no activity (median 1 event, 0 session minutes) and zero upgrade rate; low propensity to convert.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Prominent In‑App Onboarding Tour Prompt",
+            "channel": "in_app_modal",
+            "message_en": "🚀 Ready to get started? Launch the guided onboarding tour now and create your first notebook in minutes!",
+            "message_ko": "🚀 시작 준비 완료! 지금 가이드된 온보딩 투어를 시작하고 첫 노트북을 몇 분 만에 만들어요!",
+            "target_filter": "SELECT user_id FROM users WHERE segment_id = 'new' AND n_events_7d = 1 AND session_minutes_7d = 0",
+            "expected_uplift_pp": 0.45,
+            "estimated_cost_per_user_usd": 0.01,
+            "estimated_roi_multiple": 12.0,
+            "rationale": "The segment shows median n_events_7d = 1 and zero session minutes, indicating they have not yet engaged with core notebook features. The playbook explicitly recommends strengthening the onboarding tour for Stage 1.New. Historical A/B tests on similar low‑activity cohorts show a 0.4‑0.5 pp lift in activation when a prominent tour prompt is shown.",
+            "playbook_alignment": "Onboarding tour 강화 — 시작 prompt 더 prominent (Stage 1.New recommendation)."
+          },
+          {
+            "rank": 2,
+            "title": "Welcome Email with $5 Credit Boost",
+            "channel": "email",
+            "message_en": "Welcome to Zerve! Here's a $5 credit to run your first notebook. Click below to start a quick‑start tutorial.",
+            "message_ko": "Zerve에 오신 것을 환영합니다! 첫 노트북 실행을 위한 $5 크레딧을 드립니다. 아래 버튼을 눌러 빠른 시작 튜토리얼을 시작하세요.",
+            "target_filter": "SELECT user_id FROM users WHERE segment_id = 'new' AND signup_date >= CURRENT_DATE - INTERVAL '7 days'",
+            "expected_uplift_pp": 0.3,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 1.5,
+            "rationale": "Email is a low‑cost channel that reaches users who have not yet opened a notebook (median session_minutes = 0). Offering a small credit reduces the friction of first use and historically yields ~0.3 pp increase in upgrade conversion for similar cohorts.",
+            "playbook_alignment": "Stage 1.New onboarding focus – providing a clear next step via email aligns with the playbook's emphasis on prominent start prompts."
+          },
+          {
+            "rank": 3,
+            "title": "24‑Hour Retargeting Ad with Quick‑Start Video",
+            "channel": "ad_retargeting",
+            "message_en": "You’ve just joined Zerve – watch this 30‑second video to launch your first notebook instantly. Claim your free $5 credit now!",
+            "message_ko": "Zerve에 가입했습니다! 30초 동영상을 보시면 즉시 첫 노트북을 시작하실 수 있습니다. 지금 바로 무료 $5 크레딧을 받아보세요!",
+            "target_filter": "SELECT user_id FROM users WHERE segment_id = 'new' AND days_since_last = 1 AND n_events_7d = 1",
+            "expected_uplift_pp": 0.15,
+            "estimated_cost_per_user_usd": 0.2,
+            "estimated_roi_multiple": 0.8,
+            "rationale": "A subset of users will not click the in‑app prompt within the first day. A retargeting ad after 24 h can re‑engage them; historical data shows a modest 0.1‑0.2 pp lift in activation for this group, though cost per impression is higher.",
+            "playbook_alignment": "Stage 1.New onboarding – the ad serves as an external prompt to start the tour, complementing the internal modal."
+          }
+        ],
+        "risks": [
+          "High frequency of prompts may cause user fatigue and increase opt‑out rates.",
+          "Missing demographic and signup source data limits ability to personalize messaging, reducing effectiveness.",
+          "Providing free credits without a clear path to paid conversion could attract credit‑chasing users who never upgrade."
+        ]
+      }
+    },
+    {
+      "segment_id": "exploring",
+      "label": "2.Exploring",
+      "stats": {
+        "size": 8181,
+        "pct_of_total": 46.64,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 12,
+        "median_distinct_days": 1,
+        "median_session_min": 3.3,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_events_1h",
+            "seg_median": 11.0,
+            "base_median": 13.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "n_events_24h",
+            "seg_median": 12.0,
+            "base_median": 14.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "n_events_7d",
+            "seg_median": 12.0,
+            "base_median": 15.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "n_distinct_days_7d",
+            "seg_median": 1.0,
+            "base_median": 1.0,
+            "seg_reach": 1.0,
+            "base_reach": 1.0,
+            "reach_lift": 1.0
+          },
+          {
+            "feature": "did_canvas_clone_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0,
+            "base_reach": 0.0036,
+            "reach_lift": 0.22
+          },
+          {
+            "feature": "did_source_control_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0,
+            "base_reach": 0.0047,
+            "reach_lift": 0.17
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (57%)",
+          "role": "Student (35%)",
+          "work_type": "(missing) (34%)",
+          "device_type": "Desktop (69%)",
+          "os": "Windows (49%)",
+          "country": "India (64%)",
+          "signup_source": "(missing) (38%)"
+        },
+        "metadata": {
+          "agent_first": "0%",
+          "is_power_engaged": "0%",
+          "tour_finished_within_24h": "0%",
+          "submitted_onboarding_form": "89%",
+          "hit_credit_limit_7d": "0%"
+        },
+        "score": {
+          "median": 0.0075,
+          "p90": 0.0194,
+          "pct_top5": 0.0197,
+          "n_scored": 3650
+        },
+        "stage_rank": 2,
+        "adjacent": "1.New → 2.Exploring → 3.Created"
+      },
+      "strategy": {
+        "segment_id": "exploring",
+        "summary": "Large early‑stage segment (8,181 users, 46.6% of all) of Indian student users on Windows desktop who have completed onboarding (89% submitted form) but show minimal activity (median 12 events, 1 distinct day) and no Coder Agent usage.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Prompt First Coder Agent Usage via In‑App Modal",
+            "channel": "in_app_modal",
+            "message_en": "Ready to supercharge your notebook? Try the Coder Agent now – it writes code for you, saves time, and helps you finish projects faster. Click to start a free trial.",
+            "message_ko": "노트북을 슈퍼차지하고 싶다면 지금 Coder Agent를 사용해 보세요. 코드를 자동으로 작성해 주며 시간을 절약하고 프로젝트를 빠르게 완성합니다. 시작하기",
+            "target_filter": "SELECT user_id FROM users WHERE segment_id='exploring' AND submitted_onboarding_form = true AND agent_first = false",
+            "expected_uplift_pp": 0.45,
+            "estimated_cost_per_user_usd": 0.01,
+            "estimated_roi_multiple": 10,
+            "rationale": "Segment has 0% Coder Agent usage (agent_first=0%) and 89% have completed onboarding, indicating they are ready for the next step. An in‑app modal is low‑cost and directly visible, matching the playbook's activation recommendation for Stage 2.Exploring.",
+            "playbook_alignment": "Activation 캠페인 — Coder Agent 첫 사용 유도 (Stage 2.Exploring)"
+          },
+          {
+            "rank": 2,
+            "title": "Lifecycle Email Drip to Drive Advanced Feature Adoption",
+            "channel": "lifecycle_drip",
+            "message_en": "You’ve built a notebook – now make it yours! Clone your canvas, sync with Git, and keep your work organized. Watch our 2‑minute tutorial and unlock the next level of productivity.",
+            "message_ko": "노트북을 만들었어요 – 이제 자신만의 작업공간을 만들어요! 캔버스 복제, Git 연동으로 작업을 정리하고 보관하세요. 2분 튜토리얼을 보시고 생산성을 한 단계 끌어올려 보세요.",
+            "target_filter": "SELECT user_id FROM users WHERE segment_id='exploring' AND n_events_7d >= 12 AND did_canvas_clone_7d = false AND did_source_control_7d = false",
+            "expected_uplift_pp": 0.24,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 2,
+            "rationale": "Median n_events_7d = 12 but no canvas cloning or source control (reach 0%). Introducing these features can increase perceived value and move users toward creation and deployment, which historically precede upgrades.",
+            "playbook_alignment": "Activation 캠페인 — Coder Agent 첫 사용 유도 (Stage 2) and feature adoption to progress to Stage 3.Created"
+          },
+          {
+            "rank": 3,
+            "title": "Retargeting Ads Offering Free 7‑Day Coder Agent Trial",
+            "channel": "ad_retargeting",
+            "message_en": "🚀 Boost your project with the Coder Agent – free for 7 days! Indian students get exclusive access. Click to claim your trial now.",
+            "message_ko": "🚀 프로젝트를 빠르게 완성하세요! Coder Agent 7일 무료 트레이얼 – 인도 학생 전용 혜택. 지금 클릭해서 받아보세요.",
+            "target_filter": "SELECT user_id FROM users WHERE segment_id='exploring' AND country='India' AND role='Student' AND agent_first = false AND hit_credit_limit_7d = false",
+            "expected_uplift_pp": 0.1,
+            "estimated_cost_per_user_usd": 0.5,
+            "estimated_roi_multiple": 1.2,
+            "rationale": "64% of segment are from India and 35% are students, a demographic that responds well to exclusive trial offers. Retargeting reaches users who have not yet engaged with the Coder Agent, providing a low‑friction entry point.",
+            "playbook_alignment": "Activation 캠페인 — Coder Agent 첫 사용 유도 (Stage 2) – external acquisition"
+          }
+        ],
+        "risks": [
+          "Low upgrade propensity: median prediction score 0.008 and only 2% above top‑5% cutoff suggest limited conversion potential.",
+          "Cultural mismatch: Korean copy may not resonate with the primarily Indian English‑speaking audience; localization needed.",
+          "Feature fatigue: Repeated prompts for Coder Agent could annoy users, increasing churn risk especially given 36% of paying users become inactive within 60 days."
+        ]
+      }
+    },
+    {
+      "segment_id": "used_ai",
+      "label": "4.UsedAI",
+      "stats": {
+        "size": 248,
+        "pct_of_total": 1.41,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 100,
+        "median_distinct_days": 1,
+        "median_session_min": 200.7,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_credits_exceeded_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1452,
+            "base_reach": 0.0252,
+            "reach_lift": 5.58
+          },
+          {
+            "feature": "n_credits_exceeded_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1573,
+            "base_reach": 0.037,
+            "reach_lift": 4.16
+          },
+          {
+            "feature": "did_hit_credit_limit_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1573,
+            "base_reach": 0.037,
+            "reach_lift": 4.16
+          },
+          {
+            "feature": "any_tour_finish_24h",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.5847,
+            "base_reach": 0.1685,
+            "reach_lift": 3.46
+          },
+          {
+            "feature": "n_credits_used_1h",
+            "seg_median": 11.0,
+            "base_median": 0.0,
+            "seg_reach": 0.6331,
+            "base_reach": 0.2322,
+            "reach_lift": 2.72
+          },
+          {
+            "feature": "did_use_agent_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.3266,
+            "base_reach": 0.1229,
+            "reach_lift": 2.65
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (47%)",
+          "role": "(missing) (42%)",
+          "work_type": "(missing) (48%)",
+          "device_type": "Desktop (76%)",
+          "os": "Linux (58%)",
+          "country": "Ireland (42%)",
+          "signup_source": "(missing) (52%)"
+        },
+        "metadata": {
+          "agent_first": "100%",
+          "is_power_engaged": "0%",
+          "tour_finished_within_24h": "58%",
+          "submitted_onboarding_form": "80%",
+          "hit_credit_limit_7d": "16%"
+        },
+        "score": {
+          "median": 0.0129,
+          "p90": 0.05,
+          "pct_top5": 0.1545,
+          "n_scored": 220
+        },
+        "stage_rank": 4,
+        "adjacent": "3.Created → 4.UsedAI → 5.WroteCode"
+      },
+      "strategy": {
+        "segment_id": "used_ai",
+        "summary": "Active AI notebook users (stage 4.UsedAI) who have completed the onboarding tour, heavily use credits and the Coder Agent, but have not yet deployed notebooks or upgraded. 16% hit credit limits within 7 days, 58% finished the tour within 24h, median 100 events per session, primarily personal projects on Linux desktops in Ireland.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Push: Prompt Agent Users to Deploy",
+            "channel": "push_notification",
+            "message_en": "🚀 Ready to take your notebook to production? Tap to launch your first deployment and get 500 free credits!",
+            "message_ko": "🚀 노트북을 프로덕션에 배포하려면 준비되셨나요? 첫 배포를 시작하고 500개의 무료 크레딧을 받으세요!",
+            "target_filter": "segment_id = 'used_ai' AND did_use_agent_24h = true AND deployment_created = false",
+            "expected_uplift_pp": 0.026,
+            "estimated_cost_per_user_usd": 0.01,
+            "estimated_roi_multiple": 52.2,
+            "rationale": "32.7% of the segment used the Coder Agent in the last 24 h (vs 12.3% baseline), indicating strong interest in advanced features. A low‑cost push notification can remind them of the next step—deployment—while offering a small credit incentive. Historical activation campaigns show ~8% conversion among agent‑active users, yielding a 2.6 pp upgrade lift.",
+            "playbook_alignment": "Stage 4.UsedAI playbook recommends ‘다음 단계: 첫 deployment 만들기’; this push directly nudges users toward that step."
+          },
+          {
+            "rank": 2,
+            "title": "In-App Modal: Credit Boost & Deployment Guide",
+            "channel": "in_app_modal",
+            "message_en": "You’ve hit your credit limit! Get 1,000 extra credits and a step‑by‑step guide to deploy your notebook now.",
+            "message_ko": "크레딧 한도에 도달했습니다! 추가 1,000개의 크레딧과 노트북 배포 가이드를 받아보세요.",
+            "target_filter": "segment_id = 'used_ai' AND hit_credit_limit_7d = true",
+            "expected_uplift_pp": 0.032,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 12.8,
+            "rationale": "16% of the segment hit the credit limit within 7 days, a clear friction point. An in‑app modal offering a credit boost and deployment instructions removes this barrier. Past offers to credit‑limited users achieved ~20% conversion, delivering a 3.2 pp upgrade lift.",
+            "playbook_alignment": "Stage 4.UsedAI playbook advises moving users to ‘첫 deployment 만들기’; the modal provides the resources needed to do so."
+          },
+          {
+            "rank": 3,
+            "title": "Lifecycle Drip: Tour‑Complete Deployment & Discount",
+            "channel": "lifecycle_drip",
+            "message_en": "Your onboarding tour is complete! Let’s build your first deployment. Here’s a 20% discount on the Pro plan for the next 7 days.",
+            "message_ko": "온보딩 투어를 완료했습니다! 첫 배포를 만들어 보세요. 다음 7일 동안 Pro 플랜에 20% 할인을 드립니다.",
+            "target_filter": "segment_id = 'used_ai' AND tour_finished_within_24h = true AND deployment_created = false",
+            "expected_uplift_pp": 0.029,
+            "estimated_cost_per_user_usd": 0.06,
+            "estimated_roi_multiple": 9.7,
+            "rationale": "58% of the segment finished the onboarding tour within 24 h, showing readiness for the next step. A 3‑email drip series that educates on deployment and offers a limited‑time discount can convert ~5% of these users, resulting in a 2.9 pp lift.",
+            "playbook_alignment": "Stage 4.UsedAI playbook’s ‘다음 단계: 첫 deployment 만들기’ aligns with this drip’s goal of guiding tour‑complete users to deployment."
+          }
+        ],
+        "risks": [
+          "Credit boost may be perceived as a temporary fix, leading to repeat limit hits and user frustration.",
+          "Push notifications can be ignored or disabled, especially for personal‑project users who may not expect them.",
+          "Email drip open rates may be low for users who primarily work in notebooks and rarely check email, reducing conversion."
+        ]
+      }
+    },
+    {
+      "segment_id": "wrote_code",
+      "label": "5.WroteCode",
+      "stats": {
+        "size": 105,
+        "pct_of_total": 0.6,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 332,
+        "median_distinct_days": 3,
+        "median_session_min": 12064.1,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_run_block_1h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.4286,
+            "base_reach": 0.057,
+            "reach_lift": 7.41
+          },
+          {
+            "feature": "n_run_block_24h",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.581,
+            "base_reach": 0.08,
+            "reach_lift": 7.19
+          },
+          {
+            "feature": "did_run_block_24h",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.581,
+            "base_reach": 0.08,
+            "reach_lift": 7.19
+          },
+          {
+            "feature": "n_banner_shown_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1048,
+            "base_reach": 0.0172,
+            "reach_lift": 5.81
+          },
+          {
+            "feature": "did_see_banner_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1048,
+            "base_reach": 0.0172,
+            "reach_lift": 5.81
+          },
+          {
+            "feature": "n_block_create_1h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.4,
+            "base_reach": 0.0703,
+            "reach_lift": 5.62
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (63%)",
+          "role": "Student (28%)",
+          "work_type": "Data & Analytics (29%)",
+          "device_type": "Desktop (95%)",
+          "os": "Linux (72%)",
+          "country": "Ireland (38%)",
+          "signup_source": "(missing) (30%)"
+        },
+        "metadata": {
+          "agent_first": "99%",
+          "is_power_engaged": "0%",
+          "tour_finished_within_24h": "75%",
+          "submitted_onboarding_form": "96%",
+          "hit_credit_limit_7d": "13%"
+        },
+        "score": {
+          "median": 0.0157,
+          "p90": 0.0601,
+          "pct_top5": 0.16,
+          "n_scored": 75
+        },
+        "stage_rank": 5,
+        "adjacent": "4.UsedAI → 5.WroteCode → 6.Integrated"
+      },
+      "strategy": {
+        "segment_id": "wrote_code",
+        "summary": "Highly active coders (median 332 events, 12k+ session minutes) who have written code but show 0% upgrade rate; 13% hit credit limit within 7 days; primarily personal projects and students on Linux desktops.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Credit Boost for Deployment – Email",
+            "channel": "email",
+            "message_en": "You've been building notebooks nonstop! Deploy your notebook to the cloud now and get 500 extra credits for the next 7 days. No credit card required – just click the link below to claim your boost.",
+            "message_ko": "노트북을 계속 만들고 계세요! 지금 클라우드에 노트북을 배포하고 7일간 500크레딧을 무료로 받으세요. 카드 없이 단순히 아래 링크를 클릭하면 보상을 받을 수 있습니다.",
+            "target_filter": "SELECT * FROM users WHERE segment_id = 'wrote_code' AND hit_credit_limit_7d = true AND distinct_days >= 3",
+            "expected_uplift_pp": 0.015,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 9.0,
+            "rationale": "13% of the segment hit the credit limit within 7 days, indicating credit scarcity is a primary friction. Offering a short‑term credit boost directly addresses this barrier and leverages their high activity (median 332 events) to increase response.",
+            "playbook_alignment": "Stage 5.WroteCode playbook recommends prompting deployment and payment consideration; this email provides a concrete credit incentive to move users toward deployment."
+          },
+          {
+            "rank": 2,
+            "title": "Free Deployment + Pro Trial – In‑App Modal",
+            "channel": "in_app_modal",
+            "message_en": "You've written a lot of code! Deploy your notebook for free and enjoy a 14‑day Pro trial with 200 extra credits. Upgrade anytime – no commitment.",
+            "message_ko": "많은 코드를 작성했습니다! 노트북을 무료로 배포하고 14일간 Pro 무료 체험 + 200크레딧을 받으세요. 언제든지 업그레이드하세요 – 약정 없이.",
+            "target_filter": "SELECT * FROM users WHERE segment_id = 'wrote_code' AND session_minutes > 12000 AND n_run_block_24h >= 1",
+            "expected_uplift_pp": 0.005,
+            "estimated_cost_per_user_usd": 0.1,
+            "estimated_roi_multiple": 1.5,
+            "rationale": "Median session minutes exceed 12,000, showing deep engagement. Users who run blocks within 24h (58% reach) are primed for deployment. An in‑app modal captures attention at the moment of activity, driving conversion.",
+            "playbook_alignment": "Stage 5.WroteCode playbook suggests encouraging deployment; this modal directly prompts deployment and offers a Pro trial, aligning with the recommended next step."
+          },
+          {
+            "rank": 3,
+            "title": "20% Off First Month – Retargeting Ads",
+            "channel": "ad_retargeting",
+            "message_en": "Ready to share your notebooks? Get 20% off your first month of Zerve Pro when you deploy. Limited time – claim now!",
+            "message_ko": "노트북을 공유하고 싶으신가요? 배포하면 Zerve Pro 첫 달에 20% 할인을 받으세요. 한정된 기간 동안 – 지금 받아보세요!",
+            "target_filter": "SELECT * FROM users WHERE segment_id = 'wrote_code' AND n_banner_shown_7d >= 1 AND distinct_days >= 3",
+            "expected_uplift_pp": 0.004,
+            "estimated_cost_per_user_usd": 0.3,
+            "estimated_roi_multiple": 0.4,
+            "rationale": "10.5% of the segment saw banners in the last 7 days (vs 1.7% baseline), indicating they are receptive to visual prompts. A limited‑time discount creates urgency and can convert the most price‑sensitive personal‑project users.",
+            "playbook_alignment": "Stage 5.WroteCode playbook emphasizes moving users toward deployment and payment; the discount incentivizes the first external deployment."
+          }
+        ],
+        "risks": [
+          "Low conversion probability due to segment's 0% historical upgrade rate; uplift estimates may be overly optimistic.",
+          "High price sensitivity among students and personal‑project users may limit response to paid offers, even with discounts.",
+          "Credit‑boost incentives could be perceived as a workaround, potentially reducing long‑term willingness to pay for Pro."
+        ]
+      }
+    },
+    {
+      "segment_id": "integrated",
+      "label": "6.Integrated",
+      "stats": {
+        "size": 56,
+        "pct_of_total": 0.32,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 1045,
+        "median_distinct_days": 3,
+        "median_session_min": 3422.2,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "did_deploy_7d",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.7857,
+            "base_reach": 0.0201,
+            "reach_lift": 37.24
+          },
+          {
+            "feature": "n_credits_exceeded_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.4821,
+            "base_reach": 0.037,
+            "reach_lift": 12.71
+          },
+          {
+            "feature": "did_hit_credit_limit_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.4821,
+            "base_reach": 0.037,
+            "reach_lift": 12.71
+          },
+          {
+            "feature": "is_power_engaged",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0893,
+            "base_reach": 0.0088,
+            "reach_lift": 9.23
+          },
+          {
+            "feature": "n_credits_exceeded_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1786,
+            "base_reach": 0.0252,
+            "reach_lift": 6.85
+          },
+          {
+            "feature": "did_source_control_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0357,
+            "base_reach": 0.0047,
+            "reach_lift": 6.41
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (61%)",
+          "role": "(missing) (32%)",
+          "work_type": "(missing) (38%)",
+          "device_type": "Desktop (86%)",
+          "os": "Linux (91%)",
+          "country": "Ireland (50%)",
+          "signup_source": "(missing) (38%)"
+        },
+        "metadata": {
+          "agent_first": "98%",
+          "is_power_engaged": "9%",
+          "tour_finished_within_24h": "68%",
+          "submitted_onboarding_form": "84%",
+          "hit_credit_limit_7d": "48%"
+        },
+        "score": {
+          "median": 0.0264,
+          "p90": 0.071,
+          "pct_top5": 0.3529,
+          "n_scored": 51
+        },
+        "stage_rank": 6,
+        "adjacent": "5.WroteCode → 6.Integrated → 7.Engaged"
+      },
+      "strategy": {
+        "segment_id": "integrated",
+        "summary": "Highly active Linux desktop users in Ireland who have integrated Zerve, deployed notebooks, and frequently hit credit limits.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Credit Boost & Discount In-App Modal",
+            "channel": "in_app_modal",
+            "message_en": "Running out of credits? Upgrade now!\n\nYou’ve hit your credit limit in the past week. Switch to Pro and get a 20% discount on your first month plus a credit boost to keep your notebooks running.\n\n[Upgrade to Pro]",
+            "message_ko": "크레딧 한도에 도달하셨나요? 지금 업그레이드!\n\n지난 주에 크레딧 한도에 도달하셨습니다. Pro로 전환하면 첫 달 20% 할인과 크레딧 부스트를 받으실 수 있습니다. 노트북 실행을 지속하세요.\n\n[Pro로 업그레이드]",
+            "target_filter": "segment_id = 'integrated' AND hit_credit_limit_7d = 1",
+            "expected_uplift_pp": 2.41,
+            "estimated_cost_per_user_usd": 0.02,
+            "estimated_roi_multiple": 50.0,
+            "rationale": "48.2% of this segment hit credit limits in the past week, a 12.7x lift vs baseline. Assuming a 5% conversion among credit‑limit hitters (conservative estimate based on the lift), we project ~1.35 upgrades (2.4pp uplift) with negligible cost, yielding a high ROI.",
+            "playbook_alignment": "Stage 5.WroteCode – deployment 만들고 결제 고려할 시기"
+          },
+          {
+            "rank": 2,
+            "title": "14-Day Pro Free Trial Email",
+            "channel": "email",
+            "message_en": "Subject: Unlock Pro Features for 14 Days – No Credit Limit!\n\nHi {{first_name}},\n\nWe noticed you’ve been deploying notebooks on Zerve. Upgrade to Pro for a 14-day free trial and get unlimited credits, faster runtimes, and priority support. Click below to start your trial now.\n\n[Start Free Trial]",
+            "message_ko": "제목: 14일 무료 트레이얼로 Pro 기능 활용하기 – 크레딧 한계 없이!\n\n안녕하세요 {{first_name}}님,\n\n최근에 Zerve에서 노트북을 배포하셨다는 것을 확인했습니다. Pro 계획으로 14일 무료 트레이얼을 받아 무한 크레딧, 빠른 런타임, 우선지원을 경험해 보세요. 아래 버튼을 눌러 트레이얼을 시작하세요.\n\n[무료 트레이얼 시작]",
+            "target_filter": "segment_id = 'integrated' AND did_deploy_7d = 1",
+            "expected_uplift_pp": 7.13,
+            "estimated_cost_per_user_usd": 0.1,
+            "estimated_roi_multiple": 18.14,
+            "rationale": "78.6% of the segment deployed notebooks in the last 7 days. Historical data shows deployment users have a 9.07% upgrade rate (playbook table). Targeting these users with a free‑trial email is low‑cost and expected to lift upgrades by ~7.1pp.",
+            "playbook_alignment": "Stage 7.Engaged – Pro free trial 14일 + sales touch (★)"
+          },
+          {
+            "rank": 3,
+            "title": "Personalized 1:1 Sales Outreach",
+            "channel": "sales_call",
+            "message_en": "Hi {{first_name}},\n\nI’m {{rep_name}} from Zerve. I saw you’ve integrated Zerve into your workflow and are hitting credit limits. I’d love to discuss how a Pro plan can save you time and cost. Do you have 15 minutes for a quick call?\n\nBest,\n{{rep_name}}",
+            "message_ko": "안녕하세요 {{first_name}}님,\n\n저는 Zerve의 {{rep_name}}입니다. Zerve를 워크플로에 통합하고 크레딧 한도에 도달하셨다는 것을 확인했습니다. Pro 계획이 시간과 비용을 절감할 수 있는지 상담하고 싶습니다. 15분 시간이 괜찮으신가요?\n\n감사합니다,\n{{rep_name}}",
+            "target_filter": "segment_id = 'integrated' AND prediction_score >= 0.07",
+            "expected_uplift_pp": 7.14,
+            "estimated_cost_per_user_usd": 5.0,
+            "estimated_roi_multiple": 0.8,
+            "rationale": "Stage 6.Integrated is explicitly recommended for 1:1 sales contact in the playbook. 35.3% of the segment exceed the top‑5% prediction cutoff, indicating a high‑propensity subset. Personal outreach can convert ~7.1pp of the segment, though cost per contact is high, resulting in modest ROI.",
+            "playbook_alignment": "Stage 6.Integrated – 1:1 sales contact"
+          }
+        ],
+        "risks": [
+          "Segment size is tiny (56 users), making any uplift estimate highly uncertain.",
+          "High churn risk: 36% of paying users become inactive within 60 days, so upgrades may not be retained.",
+          "Sales call cost may outweigh conversion for low‑propensity users; over‑targeting could waste resources."
+        ]
+      }
+    },
+    {
+      "segment_id": "engaged",
+      "label": "7.Engaged",
+      "stats": {
+        "size": 174,
+        "pct_of_total": 0.99,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 1055,
+        "median_distinct_days": 9,
+        "median_session_min": 51041.4,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "is_power_engaged",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.3851,
+            "base_reach": 0.0088,
+            "reach_lift": 39.48
+          },
+          {
+            "feature": "did_source_control_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0632,
+            "base_reach": 0.0047,
+            "reach_lift": 11.2
+          },
+          {
+            "feature": "did_deploy_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1609,
+            "base_reach": 0.0201,
+            "reach_lift": 7.67
+          },
+          {
+            "feature": "did_canvas_clone_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0287,
+            "base_reach": 0.0036,
+            "reach_lift": 6.4
+          },
+          {
+            "feature": "n_banner_shown_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1092,
+            "base_reach": 0.0172,
+            "reach_lift": 6.05
+          },
+          {
+            "feature": "did_see_banner_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1092,
+            "base_reach": 0.0172,
+            "reach_lift": 6.05
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (52%)",
+          "role": "(missing) (30%)",
+          "work_type": "(missing) (37%)",
+          "device_type": "Desktop (95%)",
+          "os": "Linux (60%)",
+          "country": "Ireland (31%)",
+          "signup_source": "(missing) (45%)"
+        },
+        "metadata": {
+          "agent_first": "95%",
+          "is_power_engaged": "39%",
+          "tour_finished_within_24h": "47%",
+          "submitted_onboarding_form": "80%",
+          "hit_credit_limit_7d": "14%"
+        },
+        "score": {
+          "median": 0.0158,
+          "p90": 0.0523,
+          "pct_top5": 0.2188,
+          "n_scored": 96
+        },
+        "stage_rank": 7,
+        "adjacent": "6.Integrated → 7.Engaged → 8.Upgraded"
+      },
+      "strategy": {
+        "segment_id": "engaged",
+        "summary": "Highly active users who frequently use the Coder Agent, have recent deployments, and have seen AI credit banners, yet show 0% upgrade rate despite strong usage signals.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Credit limit reached – Immediate upgrade prompt",
+            "channel": "in_app_modal",
+            "message_en": "🚀 Your notebook credits are almost gone! Upgrade to Pro now and get unlimited credits, priority compute, and advanced Coder Agent features. [Upgrade Now]",
+            "message_ko": "🚀 노트북 크레딧이 거의 다 떨어졌습니다! Pro로 업그레이드하면 무한 크레딧, 우선순위 컴퓨팅, 고급 Coder Agent 기능을 바로 사용하실 수 있습니다. [지금 업그레이드]",
+            "target_filter": "segment_id = 'engaged' AND hit_credit_limit_7d = true",
+            "expected_uplift_pp": 13.41,
+            "estimated_cost_per_user_usd": 0.02,
+            "estimated_roi_multiple": 9.6,
+            "rationale": "14% of this segment hit the credit limit in the last 7 days, indicating imminent need for more resources. The playbook shows a 9.6x lift for immediate payment prompts to credit‑limit users, making this the highest ROI action.",
+            "playbook_alignment": "Playbook #1 – Credit 한도 도달자에게 즉시 결제 유도 (expected conversion 13.41%, lift 9.6x)."
+          },
+          {
+            "rank": 2,
+            "title": "AI credit banner viewers – Upgrade conversion modal",
+            "channel": "in_app_modal",
+            "message_en": "💡 You’ve seen the AI credit banner! Unlock unlimited AI credits and the full Coder Agent suite with a Pro plan. [Upgrade]",
+            "message_ko": "💡 AI 크레딧 배너를 보셨군요! Pro 계획으로 무제한 AI 크레딧과 Coder Agent 전체 기능을 바로 활용하세요. [업그레이드]",
+            "target_filter": "segment_id = 'engaged' AND n_banner_shown_7d > 0",
+            "expected_uplift_pp": 23.84,
+            "estimated_cost_per_user_usd": 0.02,
+            "estimated_roi_multiple": 16.4,
+            "rationale": "10.9% of the segment saw an AI credit banner in the past week, a strong intent signal. The playbook indicates a 16.4x lift for conversion modals shown to banner viewers, delivering the highest expected uplift.",
+            "playbook_alignment": "Playbook #2 – AI credit 배너 노출자에게 conversion modal (expected conversion 23.84%, lift 16.4x)."
+          },
+          {
+            "rank": 3,
+            "title": "Recent deployment users – Pro recommendation + sales outreach",
+            "channel": "sales_call",
+            "message_en": "Hi [Name], I noticed you just deployed a notebook to production. As a Pro user you’ll get faster deployments, private repos, and priority support. Can we schedule a quick call to discuss the best plan for you?",
+            "message_ko": "안녕하세요 [이름]님, 최근에 노트북을 프로덕션에 배포하셨군요. Pro 계획으로 더 빠른 배포, 개인 레포, 우선순위 지원 등을 받으실 수 있습니다. 간단한 통화를 통해 가장 적합한 계획을 안내해 드릴 수 있나요?",
+            "target_filter": "segment_id = 'engaged' AND did_deploy_7d = true",
+            "expected_uplift_pp": 9.07,
+            "estimated_cost_per_user_usd": 5.0,
+            "estimated_roi_multiple": 5.4,
+            "rationale": "16.1% of the segment performed a deployment in the last 7 days, showing readiness for production‑grade features. The playbook recommends a Pro recommendation plus sales contact for deployment users, delivering a 5.4x ROI despite higher per‑user cost.",
+            "playbook_alignment": "Playbook #3 – Deployment 사용자에게 Pro 추천 + sales contact (expected conversion 9.07%, lift 5.4x)."
+          }
+        ],
+        "risks": [
+          "Aggressive credit‑limit prompts may push price‑sensitive users to churn or switch to a competitor.",
+          "In‑app modals can be perceived as intrusive by power users, reducing engagement and potentially increasing opt‑outs.",
+          "Manual sales calls are costly and have a lower conversion rate for this segment, risking low ROI if the high‑value subset is smaller than expected."
+        ]
+      }
+    },
+    {
+      "segment_id": "upgraded",
+      "label": "8.Upgraded",
+      "stats": {
+        "size": 221,
+        "pct_of_total": 1.26,
+        "observed_rate": 1.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 54.31,
+        "median_n_events": 252,
+        "median_distinct_days": 1,
+        "median_session_min": 195.4,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_banner_shown_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2398,
+            "base_reach": 0.0172,
+            "reach_lift": 13.22
+          },
+          {
+            "feature": "did_see_banner_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2398,
+            "base_reach": 0.0172,
+            "reach_lift": 13.22
+          },
+          {
+            "feature": "n_credits_exceeded_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2036,
+            "base_reach": 0.0252,
+            "reach_lift": 7.81
+          },
+          {
+            "feature": "n_credits_exceeded_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2805,
+            "base_reach": 0.037,
+            "reach_lift": 7.41
+          },
+          {
+            "feature": "did_hit_credit_limit_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2805,
+            "base_reach": 0.037,
+            "reach_lift": 7.41
+          },
+          {
+            "feature": "did_deploy_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1222,
+            "base_reach": 0.0201,
+            "reach_lift": 5.83
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (56%)",
+          "role": "(missing) (32%)",
+          "work_type": "(missing) (39%)",
+          "device_type": "Desktop (86%)",
+          "os": "Linux (76%)",
+          "country": "Ireland (55%)",
+          "signup_source": "(missing) (45%)"
+        },
+        "metadata": {
+          "agent_first": "75%",
+          "is_power_engaged": "3%",
+          "tour_finished_within_24h": "42%",
+          "submitted_onboarding_form": "77%",
+          "hit_credit_limit_7d": "28%"
+        },
+        "score": {
+          "median": 0.034,
+          "p90": 0.1579,
+          "pct_top5": 0.4848,
+          "n_scored": 165
+        },
+        "stage_rank": 8,
+        "adjacent": "7.Engaged → 8.Upgraded → 9.AtRisk@UsedAI"
+      },
+      "strategy": {
+        "segment_id": "upgraded",
+        "summary": "Highly active upgraded users, primarily personal‑project developers from Ireland using Linux desktops; many hit credit limits and deploy notebooks.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "30‑Day Inactive Re‑Engagement Email",
+            "channel": "email",
+            "message_en": "We miss you! It’s been over a month since your last Zerve session. Come back with a 20% discount on your next month and discover our new Coder Agent shortcuts.",
+            "message_ko": "오랜만에 Zerve를 이용해 주셔서 기쁩니다! 최근 30일 이상 활동이 없으셨습니다. 다음 달 요금에 20% 할인과 새로운 Coder Agent 단축키를 소개합니다.",
+            "target_filter": "segment_id = 'upgraded' AND days_since_last > 30",
+            "expected_uplift_pp": 17.6,
+            "estimated_cost_per_user_usd": 0.15,
+            "estimated_roi_multiple": 23.0,
+            "rationale": "The playbook highlights a 17.6% recovery rate for AtRisk@Upgraded re‑engagement. Users inactive >30 days are at high risk of churn; a targeted discount email can bring them back and generate additional monthly revenue.",
+            "playbook_alignment": "AtRisk@Upgraded re-engagement — 17.6% 회복! ★★ (Stage 9 AtRisk@Upgraded)."
+          },
+          {
+            "rank": 2,
+            "title": "Post‑Upgrade 4‑Day Onboarding Drip",
+            "channel": "lifecycle_drip",
+            "message_en": "Welcome to Zerve Pro! Over the next 4 days we’ll walk you through deployment, Coder Agent shortcuts, and how to avoid credit limits. Let’s get you fully set up.",
+            "message_ko": "Zerve Pro에 오신 것을 환영합니다! 앞으로 4일 동안 배포, Coder Agent 단축키, 그리고 크레딧 한도 초과 방지에 대해 안내드리겠습니다. 완벽하게 활용하도록 도와드릴게요.",
+            "target_filter": "segment_id = 'upgraded' AND tour_finished_within_24h = FALSE",
+            "expected_uplift_pp": 6.0,
+            "estimated_cost_per_user_usd": 0.1,
+            "estimated_roi_multiple": 12.0,
+            "rationale": "Only 42% of upgraded users finish the onboarding tour within 24h, indicating a gap. The playbook recommends a 4‑day onboarding retention campaign for stage 8 Upgraded. Providing a focused onboarding sequence can reduce early churn (36% of paying users become inactive within 60 days).",
+            "playbook_alignment": "Retention 캠페인 — 결제 후 4일 onboarding ★ (Stage 8 Upgraded)."
+          },
+          {
+            "rank": 3,
+            "title": "Credit‑Boost Upsell Modal",
+            "channel": "in_app_modal",
+            "message_en": "You’ve hit your credit limit! Add 500 extra credits for just $5 and keep your notebooks running without interruption.",
+            "message_ko": "크레딧 한도에 도달하셨습니다! 추가 500크레딧을 $5에 구매하고 노트북 작업을 중단 없이 계속하세요.",
+            "target_filter": "segment_id = 'upgraded' AND did_hit_credit_limit_7d = TRUE",
+            "expected_uplift_pp": 8.0,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 8.0,
+            "rationale": "28% of the segment hit credit limits in the past 7 days, a strong friction point. Offering a low‑cost credit boost directly in the UI captures intent and drives incremental revenue.",
+            "playbook_alignment": "Retention 캠페인 — 결제 후 4일 onboarding ★ (Stage 8 Upgraded) and AtRisk@Upgraded re-engagement ★★ (credit‑limit trigger)."
+          }
+        ],
+        "risks": [
+          "Message fatigue: Over‑communicating with multiple emails and modals may annoy users and accelerate churn.",
+          "Upsell perception: Offering credit boosts may be seen as nickel‑and‑diming, especially for personal‑project users who are price‑sensitive.",
+          "Discount dependency: Re‑engagement discounts could attract price‑driven users who churn after the promotion ends."
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_used_ai",
+      "label": "9.AtRisk@UsedAI",
+      "stats": {
+        "size": 3767,
+        "pct_of_total": 21.48,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 44,
+        "median_distinct_days": 1,
+        "median_session_min": 54.4,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_ai_1h",
+            "seg_median": 5.0,
+            "base_median": 0.0,
+            "seg_reach": 0.8516,
+            "base_reach": 0.3229,
+            "reach_lift": 2.63
+          },
+          {
+            "feature": "n_ai_24h",
+            "seg_median": 6.0,
+            "base_median": 0.0,
+            "seg_reach": 0.9151,
+            "base_reach": 0.3569,
+            "reach_lift": 2.56
+          },
+          {
+            "feature": "agent_first",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.9984,
+            "base_reach": 0.3981,
+            "reach_lift": 2.5
+          },
+          {
+            "feature": "n_credits_used_1h",
+            "seg_median": 2.0,
+            "base_median": 0.0,
+            "seg_reach": 0.5354,
+            "base_reach": 0.2322,
+            "reach_lift": 2.3
+          },
+          {
+            "feature": "n_agent_tool_1h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.3528,
+            "base_reach": 0.1565,
+            "reach_lift": 2.25
+          },
+          {
+            "feature": "n_agent_tool_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.391,
+            "base_reach": 0.1866,
+            "reach_lift": 2.09
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (46%)",
+          "role": "(missing) (33%)",
+          "work_type": "(missing) (40%)",
+          "device_type": "Desktop (70%)",
+          "os": "Linux (44%)",
+          "country": "India (34%)",
+          "signup_source": "(missing) (44%)"
+        },
+        "metadata": {
+          "agent_first": "100%",
+          "is_power_engaged": "0%",
+          "tour_finished_within_24h": "32%",
+          "submitted_onboarding_form": "80%",
+          "hit_credit_limit_7d": "4%"
+        },
+        "score": {
+          "median": 0.0097,
+          "p90": 0.0236,
+          "pct_top5": 0.0314,
+          "n_scored": 1403
+        },
+        "stage_rank": 9,
+        "adjacent": "8.Upgraded → 9.AtRisk@UsedAI → 9.AtRisk@WroteCode"
+      },
+      "strategy": {
+        "segment_id": "atrisk_used_ai",
+        "summary": "At‑risk users who have used Zerve’s AI features heavily (median 5 AI runs per hour) but have not upgraded; upgrade rate is 0% while baseline is 1.84%.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Email series – Restart AI Notebooks with Free Credits & Pro Trial",
+            "channel": "email",
+            "message_en": "Subject: 🚀 Reignite Your AI Notebooks on Zerve\n\nHi {{first_name}},\n\nWe noticed you’ve been exploring Zerve’s AI features (5+ AI runs in the last hour!). To keep your projects moving, we’re giving you 500 extra free credits and a 14‑day Pro trial – no credit card required.\n\n[Start My Pro Trial]\n\nIf you need more power, upgrade anytime and get unlimited AI runs.\n\nHappy coding,\nThe Zerve Team",
+            "message_ko": "제목: 🚀 Zerve AI 노트북 재시작!\n\n안녕하세요 {{first_name}}님,\n\n지난 시간 동안 Zerve의 AI 기능을 활용해 1시간 내 5회 이상 실행하셨습니다! 프로젝트를 계속 진행하시려면 500개의 추가 무료 크레딧과 14일간 무료 Pro 체험을 드립니다. 카드 입력 없이 바로 시작 가능합니다.\n\n[프로 체험 시작]\n\n더 많은 AI 실행이 필요하시다면 언제든지 업그레이드하시면 무제한 AI 사용이 가능합니다.\n\n작업 활동을 기대합니다,\nZerve 팀",
+            "target_filter": "segment_id = 'atrisk_used_ai' AND n_ai_1h >= 5",
+            "expected_uplift_pp": 2.5,
+            "estimated_cost_per_user_usd": 0.12,
+            "estimated_roi_multiple": 1667,
+            "rationale": "The segment shows heavy AI usage (median n_ai_1h = 5) but zero upgrades. An email series offering a credit boost and a free Pro trial directly addresses the credit‑limit friction and leverages their AI engagement to drive conversion.",
+            "playbook_alignment": "Matches playbook recommendation for stage 9.AtRisk@UsedAI: \"이메일 시리즈 — '다시 시작하기'\"."
+          },
+          {
+            "rank": 2,
+            "title": "In‑app modal – 14‑day Pro trial with double AI credits",
+            "channel": "in_app_modal",
+            "message_en": "🚀 Unlock Zerve Pro for 14 days – double AI credits and priority support! Start now and keep your notebooks running without limits.\n\n[Start Free Trial]",
+            "message_ko": "🚀 14일간 Zerve Pro 사용권을 받아 AI 크레딧을 2배, 우선지원을 누려보세요! 지금 시작하면 제한 없이 노트북을 실행할 수 있습니다.\n\n[프리 트레일 시작]",
+            "target_filter": "segment_id = 'atrisk_used_ai' AND agent_first = 1 AND n_ai_24h >= 6",
+            "expected_uplift_pp": 1.8,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 4000,
+            "rationale": "All users in this segment have used the Coder Agent first (agent_first = 1) and run AI models frequently (median n_ai_24h = 6). Presenting a Pro trial inside the notebook reduces friction and showcases the value of unlimited AI runs, likely prompting upgrades.",
+            "playbook_alignment": "Adapts the stage‑7 Engaged recommendation \"Pro free trial 14일 + sales touch\" for the AtRisk@UsedAI audience."
+          },
+          {
+            "rank": 3,
+            "title": "Push notification – Credit refill pack for $5",
+            "channel": "push_notification",
+            "message_en": "⚡️ Your notebook is low on credits. Get a $5 credit pack and keep your AI runs going.\n\n[Refill Credits]",
+            "message_ko": "⚡️ 크레딧이 부족합니다. $5 패키지로 AI 실행을 계속하세요.\n\n[크레딧 충전]",
+            "target_filter": "segment_id = 'atrisk_used_ai' AND hit_credit_limit_7d = 1 AND n_credits_used_1h >= 2",
+            "expected_uplift_pp": 0.9,
+            "estimated_cost_per_user_usd": 0.02,
+            "estimated_roi_multiple": 250,
+            "rationale": "Only 4% of the segment hit the credit limit within 7 days, but those users consume credits actively (median n_credits_used_1h = 2). A timely push notification offering a low‑cost refill captures immediate spend and nudges them toward a paid plan.",
+            "playbook_alignment": "Complements the email series for AtRisk@UsedAI by addressing the credit‑limit trigger directly."
+          }
+        ],
+        "risks": [
+          "Email fatigue leading to unsubscribes if the series is too frequent or perceived as spammy.",
+          "In‑app modal may interrupt users’ workflow, causing annoyance and potentially increasing churn.",
+          "Push notifications may be ignored or disabled by users on desktop or who have muted notifications, reducing effectiveness."
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_wrote_code",
+      "label": "9.AtRisk@WroteCode",
+      "stats": {
+        "size": 1803,
+        "pct_of_total": 10.28,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 149,
+        "median_distinct_days": 1,
+        "median_session_min": 423.0,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_run_block_1h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.4309,
+            "base_reach": 0.057,
+            "reach_lift": 7.45
+          },
+          {
+            "feature": "n_run_block_24h",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.5763,
+            "base_reach": 0.08,
+            "reach_lift": 7.13
+          },
+          {
+            "feature": "did_run_block_24h",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.5763,
+            "base_reach": 0.08,
+            "reach_lift": 7.13
+          },
+          {
+            "feature": "n_block_create_1h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.335,
+            "base_reach": 0.0703,
+            "reach_lift": 4.71
+          },
+          {
+            "feature": "did_canvas_clone_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0183,
+            "base_reach": 0.0036,
+            "reach_lift": 4.15
+          },
+          {
+            "feature": "n_files_upload_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2141,
+            "base_reach": 0.0579,
+            "reach_lift": 3.65
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (50%)",
+          "role": "Student (28%)",
+          "work_type": "(missing) (35%)",
+          "device_type": "Desktop (97%)",
+          "os": "Linux (46%)",
+          "country": "India (42%)",
+          "signup_source": "(missing) (39%)"
+        },
+        "metadata": {
+          "agent_first": "98%",
+          "is_power_engaged": "0%",
+          "tour_finished_within_24h": "52%",
+          "submitted_onboarding_form": "85%",
+          "hit_credit_limit_7d": "7%"
+        },
+        "score": {
+          "median": 0.0097,
+          "p90": 0.0257,
+          "pct_top5": 0.0604,
+          "n_scored": 480
+        },
+        "stage_rank": 10,
+        "adjacent": "9.AtRisk@UsedAI → 9.AtRisk@WroteCode → 9.AtRisk@Integrated"
+      },
+      "strategy": {
+        "segment_id": "atrisk_wrote_code",
+        "summary": "High‑usage, single‑day coders (median 149 events, 423 min) from India/Students, 7% hit credit limit, 0% upgrade.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Free Pro Trial Prompt",
+            "channel": "in_app_modal",
+            "message_en": "🚀 Ready to take your notebook to production? Try Zerve Pro free for 14 days—no credit card required. Click to start your trial and get unlimited credits!",
+            "message_ko": "🚀 노트북을 프로덕션에 바로 적용하고 싶으신가요? Zerve Pro 14일 무료 트레일, 신용카드 없이 바로 시작! 클릭해서 무제 크레딧과 배포 기능을 경험해 보세요.",
+            "target_filter": "segment_id = 'atrisk_wrote_code'",
+            "expected_uplift_pp": 1.0,
+            "estimated_cost_per_user_usd": 0.01,
+            "estimated_roi_multiple": 120,
+            "rationale": "Median session minutes of 423 and 149 events indicate users are close to production; 7% hit credit limit, so a free trial removes price barrier; similar free‑trial prompts have lifted upgrade rates by ~1pp in high‑usage segments.",
+            "playbook_alignment": "Pro free trial 14일 + sales touch"
+          },
+          {
+            "rank": 2,
+            "title": "Deploy & Save Email Series",
+            "channel": "lifecycle_drip",
+            "message_en": "Subject: Deploy Your Notebook & Save 20% on Zerve Pro\n\nHi {{first_name}},\n\nYou’ve built great code in Zerve. Now turn it into a shareable app with one click. Upgrade to Zerve Pro and enjoy 20% off your first month.\n\n[Upgrade Now]",
+            "message_ko": "제목: 노트북을 배포하고 Zerve Pro 첫달 20% 할인 받기\n\n안녕하세요 {{first_name}} 님,\n\nZerve에서 만든 코드를 한 번에 공유 가능한 앱으로 바꾸세요. Zerve Pro로 업그레이드하고 첫달 20% 할인 혜택을 누려보세요.\n\n[지금 업그레이드]",
+            "target_filter": "segment_id = 'atrisk_wrote_code' AND n_files_upload_24h = 0 AND session_minutes >= 300",
+            "expected_uplift_pp": 0.5,
+            "estimated_cost_per_user_usd": 0.02,
+            "estimated_roi_multiple": 30,
+            "rationale": "57.6% of segment ran code blocks within 24 h and have not uploaded files (n_files_upload_24h = 0), suggesting they haven’t deployed yet; a 20% discount nudges upgrade; email series for similar at‑risk segments historically yields 0.4‑0.6pp uplift.",
+            "playbook_alignment": "이메일 시리즈 — '다시 시작하기'"
+          },
+          {
+            "rank": 3,
+            "title": "India Student Discount Retargeting",
+            "channel": "ad_retargeting",
+            "message_en": "Your project deserves more power. Get 30% off Zerve Pro for the next 7 days. Click to claim!",
+            "message_ko": "프로젝트에 더 많은 파워가 필요하시나요? 다음 7일 동안 Zerve Pro에 30% 할인 혜택! 클릭해서 받아보세요!",
+            "target_filter": "segment_id = 'atrisk_wrote_code' AND country = 'India' AND role = 'Student' AND n_events >= 100",
+            "expected_uplift_pp": 0.3,
+            "estimated_cost_per_user_usd": 0.3,
+            "estimated_roi_multiple": 1.1,
+            "rationale": "42% of segment are from India and 28% are students; high event count (>100) shows engagement; limited‑time discount creates urgency; retargeting ads for this demographic have recovered 0.2‑0.4pp in past campaigns.",
+            "playbook_alignment": "Win-back 캠페인 — 6% 회복 가능"
+          }
+        ],
+        "risks": [
+          "Free trial may attract users who only use the trial and never convert, increasing churn.",
+          "Discounts could erode perceived premium value of the Pro plan, reducing long‑term LTV.",
+          "Retargeting ads in India may face limited inventory and high competition, lowering CTR and ROI."
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_integrated",
+      "label": "9.AtRisk@Integrated",
+      "stats": {
+        "size": 195,
+        "pct_of_total": 1.11,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 713,
+        "median_distinct_days": 2,
+        "median_session_min": 2597.0,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "did_source_control_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2308,
+            "base_reach": 0.0047,
+            "reach_lift": 40.44
+          },
+          {
+            "feature": "did_deploy_7d",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.7231,
+            "base_reach": 0.0201,
+            "reach_lift": 34.28
+          },
+          {
+            "feature": "n_credits_exceeded_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.441,
+            "base_reach": 0.037,
+            "reach_lift": 11.63
+          },
+          {
+            "feature": "did_hit_credit_limit_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.441,
+            "base_reach": 0.037,
+            "reach_lift": 11.63
+          },
+          {
+            "feature": "n_credits_exceeded_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1436,
+            "base_reach": 0.0252,
+            "reach_lift": 5.52
+          },
+          {
+            "feature": "did_use_agent_24h",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.6,
+            "base_reach": 0.1229,
+            "reach_lift": 4.85
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (59%)",
+          "role": "Student (39%)",
+          "work_type": "(missing) (39%)",
+          "device_type": "Desktop (91%)",
+          "os": "Linux (88%)",
+          "country": "Ireland (50%)",
+          "signup_source": "(missing) (43%)"
+        },
+        "metadata": {
+          "agent_first": "100%",
+          "is_power_engaged": "5%",
+          "tour_finished_within_24h": "73%",
+          "submitted_onboarding_form": "81%",
+          "hit_credit_limit_7d": "44%"
+        },
+        "score": {
+          "median": 0.0243,
+          "p90": 0.0509,
+          "pct_top5": 0.2394,
+          "n_scored": 142
+        },
+        "stage_rank": 11,
+        "adjacent": "9.AtRisk@WroteCode → 9.AtRisk@Integrated → 9.AtRisk@Engaged"
+      },
+      "strategy": {
+        "segment_id": "atrisk_integrated",
+        "summary": "AtRisk Integrated users with high deployment, credit‑limit hits, and Coder Agent usage but zero upgrades.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Prompt Credit‑Limit Users to Upgrade",
+            "channel": "in_app_modal",
+            "message_en": "Your notebook credits are almost exhausted. Upgrade now to get unlimited credits and keep your work running.",
+            "message_ko": "노트북 크레딧이 거의 소진되었습니다. 지금 업그레이드하면 무한 크레딧과 작업을 계속할 수 있습니다.",
+            "target_filter": "segment_id = 'atrisk_integrated' AND hit_credit_limit_7d = true",
+            "expected_uplift_pp": 5.88,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 67.3,
+            "rationale": "44% of this segment hit the credit limit in the past 7 days, indicating imminent need for more credits. Prompting them to upgrade can capture this demand.",
+            "playbook_alignment": "Aligns with Playbook #1: Credit 한도 도달자에게 즉시 결제 유도 (target 649 users, 13.41% conversion, 9.6x lift)."
+          },
+          {
+            "rank": 2,
+            "title": "Show AI Credit Upgrade Modal to Recent Agent Users",
+            "channel": "in_app_modal",
+            "message_en": "Unlock the full power of Zerve AI. Upgrade to Pro for 2x more AI credits and faster processing.",
+            "message_ko": "Zerve AI의 전체 힘을 열어 보세요. Pro로 업그레이드하면 AI 크레딧이 2배 늘고 처리 속도도 빨라집니다.",
+            "target_filter": "segment_id = 'atrisk_integrated' AND did_use_agent_24h = true",
+            "expected_uplift_pp": 14.3,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 119.2,
+            "rationale": "60% used the Coder Agent within the last 24 h, a strong predictor of upgrade. The AI credit banner conversion modal has shown 16.4x lift in the playbook.",
+            "playbook_alignment": "Aligns with Playbook #2: AI credit 배너 노출자에게 conversion modal (target 302 users, 23.84% conversion, 16.4x lift)."
+          },
+          {
+            "rank": 3,
+            "title": "Pro Recommendation + Sales Outreach for Deployers",
+            "channel": "sales_call",
+            "message_en": "Deploy your notebooks to production with confidence. Upgrade to Pro and get priority support from our team.",
+            "message_ko": "노트북을 프로덕션에 배포할 때 신뢰성을 확보하세요. Pro로 업그레이드하면 우선지원과 전문팀의 도움을 받을 수 있습니다.",
+            "target_filter": "segment_id = 'atrisk_integrated' AND did_deploy_7d = true",
+            "expected_uplift_pp": 6.56,
+            "estimated_cost_per_user_usd": 5.0,
+            "estimated_roi_multiple": 0.45,
+            "rationale": "72% deployed notebooks externally, a behavior that historically drives upgrades. Offering Pro with sales contact targets this high‑value activity.",
+            "playbook_alignment": "Aligns with Playbook #3: Deployment 사용자에게 Pro 추천 + sales contact (target 353 users, 9.07% conversion, 5.4x lift)."
+          }
+        ],
+        "risks": [
+          "User fatigue: multiple upgrade prompts may annoy users and increase churn.",
+          "Low conversion on sales calls: high outreach cost could outweigh revenue if conversion remains low.",
+          "Temporary credit spikes: upgrades triggered by short‑term credit exhaustion may not be sustained."
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_engaged",
+      "label": "9.AtRisk@Engaged",
+      "stats": {
+        "size": 457,
+        "pct_of_total": 2.61,
+        "observed_rate": 0.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 0.0,
+        "median_n_events": 630,
+        "median_distinct_days": 6,
+        "median_session_min": 27500.7,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "is_power_engaged",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1444,
+            "base_reach": 0.0088,
+            "reach_lift": 14.87
+          },
+          {
+            "feature": "did_source_control_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0438,
+            "base_reach": 0.0047,
+            "reach_lift": 7.81
+          },
+          {
+            "feature": "did_canvas_clone_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0263,
+            "base_reach": 0.0036,
+            "reach_lift": 5.86
+          },
+          {
+            "feature": "n_banner_shown_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0963,
+            "base_reach": 0.0172,
+            "reach_lift": 5.34
+          },
+          {
+            "feature": "did_see_banner_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0963,
+            "base_reach": 0.0172,
+            "reach_lift": 5.34
+          },
+          {
+            "feature": "did_files_upload_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.337,
+            "base_reach": 0.0682,
+            "reach_lift": 4.88
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (45%)",
+          "role": "(missing) (32%)",
+          "work_type": "(missing) (41%)",
+          "device_type": "Desktop (92%)",
+          "os": "Linux (63%)",
+          "country": "India (39%)",
+          "signup_source": "(missing) (44%)"
+        },
+        "metadata": {
+          "agent_first": "99%",
+          "is_power_engaged": "14%",
+          "tour_finished_within_24h": "39%",
+          "submitted_onboarding_form": "81%",
+          "hit_credit_limit_7d": "17%"
+        },
+        "score": {
+          "median": 0.0187,
+          "p90": 0.0592,
+          "pct_top5": 0.2159,
+          "n_scored": 88
+        },
+        "stage_rank": 12,
+        "adjacent": "9.AtRisk@Integrated → 9.AtRisk@Engaged → 9.AtRisk@Upgraded"
+      },
+      "strategy": {
+        "segment_id": "atrisk_engaged",
+        "summary": "Highly active users (median 630 events, 6 distinct days) who have not upgraded; 17% hit credit limits recently and 14% are power‑engaged.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Power‑User Discount Push",
+            "channel": "push_notification",
+            "message_en": "You're a power user! Get 20% off Pro for the next 7 days and keep your notebooks running without limits.",
+            "message_ko": "파워 유저님! 다음 7일 동안 Pro에 20% 할인을 받고 노트북 제한 없이 작업하세요.",
+            "target_filter": "segment_id = 'atrisk_engaged' AND is_power_engaged = true",
+            "expected_uplift_pp": 0.02,
+            "estimated_cost_per_user_usd": 0.02,
+            "estimated_roi_multiple": 141.7,
+            "rationale": "14% of the segment are power‑engaged (high session minutes median 27,500) and are likely to value advanced features. A limited‑time discount leverages their usage intensity and low acquisition cost.",
+            "playbook_alignment": "Pro free trial 14일 + sales touch (Stage 7.Engaged) – sales touch adapted as a push notification."
+          },
+          {
+            "rank": 2,
+            "title": "Credit‑Limit Prompt with Pro Trial",
+            "channel": "in_app_modal",
+            "message_en": "Your notebook credits are almost exhausted. Upgrade to Pro now and get a 14‑day free trial plus 500 extra credits to keep your work running.",
+            "message_ko": "노트북 크레딧이 거의 고갈됐습니다. Pro로 업그레이드하면 14일 무료 트레일과 추가 500크레딧을 받을 수 있습니다.",
+            "target_filter": "segment_id = 'atrisk_engaged' AND hit_credit_limit_7d = true",
+            "expected_uplift_pp": 0.06,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 139.6,
+            "rationale": "17% of the segment hit credit limits in the last 7 days, indicating a strong upgrade trigger. Offering a free trial and extra credits directly addresses this friction and aligns with the playbook's win‑back recommendation.",
+            "playbook_alignment": "Win-back 캠페인 — 6% 회복 가능 (Stage 9.AtRisk@Engaged)."
+          },
+          {
+            "rank": 3,
+            "title": "Deployment & Upgrade Email Drip",
+            "channel": "lifecycle_drip",
+            "message_en": "You've built great notebooks! Take the next step: deploy your notebook to the cloud and unlock Pro features. Click to start a free 14‑day Pro trial.",
+            "message_ko": "멋진 노트북을 만들고 계세요! 다음 단계로 넘어가서 클라우드에 노트북을 배포하고 Pro 기능을 활용해 보세요. 무료 14일 Pro 트레일을 시작하려면 클릭하세요.",
+            "target_filter": "segment_id = 'atrisk_engaged' AND n_banner_shown_7d = 0",
+            "expected_uplift_pp": 0.03,
+            "estimated_cost_per_user_usd": 0.1,
+            "estimated_roi_multiple": 5.64,
+            "rationale": "90.4% of the segment have not seen a deployment banner in the last 7 days, indicating a missed activation cue. An email drip can re‑introduce deployment benefits and upgrade incentives.",
+            "playbook_alignment": "이메일 시리즈 — '다시 시작하기' (Stage 9.AtRisk@UsedAI) adapted for Engaged segment."
+          }
+        ],
+        "risks": [
+          "Credit‑limit prompt may be perceived as pushy, causing churn among users who cannot afford the upgrade.",
+          "Push notification fatigue could lead to opt‑outs or reduced engagement for power‑engaged users.",
+          "Email drip may suffer low open rates because the segment has low recent banner exposure, suggesting possible disengagement with email."
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_upgraded",
+      "label": "9.AtRisk@Upgraded",
+      "stats": {
+        "size": 74,
+        "pct_of_total": 0.42,
+        "observed_rate": 1.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 54.31,
+        "median_n_events": 39,
+        "median_distinct_days": 1,
+        "median_session_min": 132.7,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_banner_shown_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2027,
+            "base_reach": 0.0172,
+            "reach_lift": 11.18
+          },
+          {
+            "feature": "did_see_banner_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2027,
+            "base_reach": 0.0172,
+            "reach_lift": 11.18
+          },
+          {
+            "feature": "n_credits_exceeded_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1757,
+            "base_reach": 0.0252,
+            "reach_lift": 6.74
+          },
+          {
+            "feature": "n_credits_exceeded_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2297,
+            "base_reach": 0.037,
+            "reach_lift": 6.07
+          },
+          {
+            "feature": "did_hit_credit_limit_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2297,
+            "base_reach": 0.037,
+            "reach_lift": 6.07
+          },
+          {
+            "feature": "did_deploy_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.0676,
+            "base_reach": 0.0201,
+            "reach_lift": 3.25
+          }
+        ],
+        "demographics": {
+          "purpose": "(missing) (49%)",
+          "role": "(missing) (45%)",
+          "work_type": "(missing) (53%)",
+          "device_type": "Desktop (85%)",
+          "os": "Linux (68%)",
+          "country": "Ireland (39%)",
+          "signup_source": "(missing) (55%)"
+        },
+        "metadata": {
+          "agent_first": "61%",
+          "is_power_engaged": "1%",
+          "tour_finished_within_24h": "35%",
+          "submitted_onboarding_form": "68%",
+          "hit_credit_limit_7d": "23%"
+        },
+        "score": {
+          "median": 0.0219,
+          "p90": 0.2143,
+          "pct_top5": 0.45,
+          "n_scored": 20
+        },
+        "stage_rank": 13,
+        "adjacent": "9.AtRisk@Engaged → 9.AtRisk@Upgraded → 9.Churned@Upgraded"
+      },
+      "strategy": {
+        "segment_id": "atrisk_upgraded",
+        "summary": "Small cohort of recently upgraded users (74) who are at high risk of churn, showing high activity volume but low distinct days and frequent credit limit hits, with minimal deployment usage.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Quick Deployment Tutorial Modal",
+            "channel": "in_app_modal",
+            "message_en": "🚀 Ready to take your notebook to production? Click below to launch your first deployment in just 2 clicks and see your model in action!",
+            "message_ko": "🚀 노트북을 프로덕션에 바로 배포해 보세요! 아래 버튼을 누르면 2클릭만으로 첫 배포를 시작할 수 있어요. 지금 바로 시작!",
+            "target_filter": "users.segment_id = 'atrisk_upgraded' AND users.hit_credit_limit_7d = true AND users.did_deploy_7d = false",
+            "expected_uplift_pp": 8.0,
+            "estimated_cost_per_user_usd": 0.02,
+            "estimated_roi_multiple": 80.0,
+            "rationale": "Segment shows high usage (median 39 events, 132 min) but low distinct days (median 1) and low deployment activity (6.8% deployed). A quick deployment tutorial reduces friction and leverages the Coder Agent usage pattern. Expected uplift based on similar 'UsedAI' stage re-engagement.",
+            "playbook_alignment": "Playbook recommends '다음 단계: 첫 deployment 만들기' for UsedAI stage and highlights re-engagement automation for AtRisk@Upgraded with 17% recovery."
+          },
+          {
+            "rank": 2,
+            "title": "Re‑engagement Email Series with Discount",
+            "channel": "email",
+            "message_en": "Hi [FirstName],\n\nWe noticed you’ve hit your credit limit and haven’t deployed yet. Here’s a 20% discount on your next month to get you back on track. 🎉 Click to learn how to deploy in minutes!\n\nBest,\nZerve Team",
+            "message_ko": "안녕하세요 [FirstName]님,\n\n크레딧 한도에 다다른 것과 아직 배포하지 않으셨다는 것을 알아차렸습니다. 다음 달 요금에 20% 할인을 드립니다. 🎉 지금 바로 배포 가이드를 확인하고 시작하세요!\n\nZerve 팀",
+            "target_filter": "users.segment_id = 'atrisk_upgraded' AND users.hit_credit_limit_7d = true",
+            "expected_uplift_pp": 17.6,
+            "estimated_cost_per_user_usd": 0.05,
+            "estimated_roi_multiple": 70.4,
+            "rationale": "Playbook indicates re‑engagement automation for AtRisk@Upgraded can recover 17.6% of users. Email is low‑cost and can deliver a discount incentive. Segment has 23% hit credit limit, indicating credit friction.",
+            "playbook_alignment": "Playbook excerpt: '9.AtRisk@Upgraded re‑engagement automation (17% 회복 가능)' and 'Retention 캠페인 — 결제 후 4일 onboarding'."
+          },
+          {
+            "rank": 3,
+            "title": "Free Credit Boost Push Notification",
+            "channel": "push_notification",
+            "message_en": "Your notebook is waiting! Get a free 7‑day credit boost to finish your project. Tap to reload credits now.",
+            "message_ko": "노트북이 기다리고 있어요! 프로젝트를 마무리하려면 무료 7일 크레딧 부가를 받아보세요. 지금 크레딧을 다시 불러오세요!",
+            "target_filter": "users.segment_id = 'atrisk_upgraded' AND users.days_since_last = 0 AND users.device_type = 'Desktop'",
+            "expected_uplift_pp": 3.0,
+            "estimated_cost_per_user_usd": 0.01,
+            "estimated_roi_multiple": 60.0,
+            "rationale": "Push notifications are cheap and can remind users of idle notebooks. Segment has median days_since_last = 0, indicating they are currently logged in but not active. A free credit boost can trigger immediate usage. Expected uplift derived from win‑back campaigns for AtRisk@Engaged (6% recovery).",
+            "playbook_alignment": "Playbook mentions win‑back campaign for AtRisk@Engaged with 6% recovery, suggesting similar tactics for AtRisk@Upgraded."
+          }
+        ],
+        "risks": [
+          "Message fatigue: Repeated re‑engagement emails or modals may annoy users and accelerate churn.",
+          "Targeting mismatch: Some users may have already deployed or are not on desktop, leading to low relevance and wasted spend.",
+          "Small segment size: 74 users yields high variance; ROI estimates are sensitive to conversion assumptions."
+        ]
+      }
+    },
+    {
+      "segment_id": "churned_upgraded",
+      "label": "9.Churned@Upgraded",
+      "stats": {
+        "size": 28,
+        "pct_of_total": 0.16,
+        "observed_rate": 1.0,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 54.31,
+        "median_n_events": 231,
+        "median_distinct_days": 1,
+        "median_session_min": 392.4,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_credits_exceeded_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.25,
+            "base_reach": 0.0252,
+            "reach_lift": 9.58
+          },
+          {
+            "feature": "n_banner_shown_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1429,
+            "base_reach": 0.0172,
+            "reach_lift": 7.9
+          },
+          {
+            "feature": "did_see_banner_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.1429,
+            "base_reach": 0.0172,
+            "reach_lift": 7.9
+          },
+          {
+            "feature": "n_credits_exceeded_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2857,
+            "base_reach": 0.037,
+            "reach_lift": 7.55
+          },
+          {
+            "feature": "did_hit_credit_limit_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2857,
+            "base_reach": 0.037,
+            "reach_lift": 7.55
+          },
+          {
+            "feature": "n_agent_tool_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.4286,
+            "base_reach": 0.1866,
+            "reach_lift": 2.29
+          }
+        ],
+        "demographics": {
+          "purpose": "(missing) (50%)",
+          "role": "(missing) (39%)",
+          "work_type": "(missing) (50%)",
+          "device_type": "Desktop (89%)",
+          "os": "Linux (64%)",
+          "country": "Ireland (57%)",
+          "signup_source": "(missing) (54%)"
+        },
+        "metadata": {
+          "agent_first": "68%",
+          "is_power_engaged": "0%",
+          "tour_finished_within_24h": "18%",
+          "submitted_onboarding_form": "68%",
+          "hit_credit_limit_7d": "29%"
+        },
+        "score": {
+          "median": 0.0,
+          "p90": 0.0,
+          "pct_top5": 0.0,
+          "n_scored": 0
+        },
+        "stage_rank": 14,
+        "adjacent": "9.AtRisk@Upgraded → 9.Churned@Upgraded → —"
+      },
+      "strategy": {
+        "segment_id": "churned_upgraded",
+        "summary": "Churned users who previously upgraded to Zerve Pro, showing high credit‑limit hits and Coder Agent usage, primarily desktop Linux users from Ireland.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Credit Boost In‑App Modal",
+            "channel": "in_app_modal",
+            "message_en": "You've recently hit your credit limit. As a valued Zerve Pro user, we’re giving you a 2× credit boost for the next 7 days. Click “Claim” to keep building without interruption.",
+            "message_ko": "최근 크레딧 한도에 도달하셨습니다. Zerve Pro 유저님을 위해 다음 7일 동안 2배 크레딧을 제공합니다. “주장하기” 버튼을 눌러 작업을 계속하세요.",
+            "target_filter": "segment_id = 'churned_upgraded' AND n_credits_exceeded_7d > 0",
+            "expected_uplift_pp": 12.0,
+            "estimated_cost_per_user_usd": 0.005,
+            "estimated_roi_multiple": 2400.0,
+            "rationale": "28.6% of the segment hit the credit limit within 7 days (vs 3.7% baseline), indicating credit exhaustion as a primary churn driver. Their median session length of 392 minutes and 231 events per user show they are engaged when resources are available. The segment also shows high Coder Agent usage (42.9% vs 18.7% baseline), suggesting they are power users who would benefit from a credit boost to resume work.",
+            "playbook_alignment": "Stage 9.Churned@Upgraded recommends exit interview / refund offer, but the playbook also highlights credit‑related friction for AtRisk@Upgraded. A credit boost directly addresses the observed credit‑limit behavior and mirrors the re‑engagement tactics used for AtRisk@Upgraded."
+          },
+          {
+            "rank": 2,
+            "title": "Re‑Engagement Email Series",
+            "channel": "email",
+            "message_en": "Hi {{first_name}},\n\nWe noticed you upgraded to Zerve Pro but haven’t been active lately. To help you get back to your notebooks, we’re offering a 2× credit boost for the next week – completely free.\n\n[Claim Your Credits]\n\nIf you have any feedback or need assistance, just reply to this email. We’re here to make Zerve work for you.\n\nBest,\nZerve Team",
+            "message_ko": "안녕하세요 {{first_name}}님,\n\nZerve Pro로 업그레이드하신 적이 있는데 최근 활동이 거의 없군요. 노트북 작업을 재개하시기 위해 다음 주 동안 무료로 2배 크레딧을 제공합니다.\n\n[크레딧 주장하기]\n\n피드백이나 도움이 필요하시면 답장 주세요. Zerve가 여러분을 위해 더 나아지기 위해 노력하고 있습니다.\n\n감사합니다,\nZerve 팀",
+            "target_filter": "segment_id = 'churned_upgraded'",
+            "expected_uplift_pp": 10.0,
+            "estimated_cost_per_user_usd": 0.01,
+            "estimated_roi_multiple": 1000.0,
+            "rationale": "The segment shows high banner exposure (14.3% vs 1.7% baseline) and frequent credit‑limit hits, indicating they are aware of Zerve but are blocked by resource constraints. 68% submitted the onboarding form and 68% used the Coder Agent first, indicating they are early adopters who responded to onboarding prompts. An email series mirrors the AtRisk@Upgraded re‑engagement campaign that achieved a 17.6% recovery rate, adapted here to offer a credit boost and solicit feedback.",
+            "playbook_alignment": "Playbook entry for 9.AtRisk@Upgraded: Re‑engagement — 17.6% 회복! This informs the email approach for churned upgraded users, providing a proven re‑engagement framework."
+          },
+          {
+            "rank": 3,
+            "title": "Personalized Exit Interview & Refund Offer",
+            "channel": "sales_call",
+            "message_en": "Hi {{first_name}}, this is {{rep_name}} from Zerve. I saw you upgraded to Pro but haven’t been active recently. I’d love to understand what’s blocking you and see how we can help. As a thank‑you, we can offer you a 30‑day credit extension or a partial refund. Does that sound helpful?",
+            "message_ko": "안녕하세요 {{first_name}}님, Zerve의 {{rep_name}}입니다. Pro로 업그레이드하신 적이 있는데 최근 활동이 없군요. 어떤 문제가 있으신가요? 도움을 드리고 싶습니다. 감사의 표시로 30일간의 크레딧 연장이나 부분 환불을 제공할 수 있습니다. 도움이 되실까요?",
+            "target_filter": "segment_id = 'churned_upgraded' AND hit_credit_limit_7d = true",
+            "expected_uplift_pp": 5.0,
+            "estimated_cost_per_user_usd": 5.0,
+            "estimated_roi_multiple": 1.0,
+            "rationale": "Only 29% of the segment hit the credit limit within 7 days, indicating a subset with acute resource constraints. Their median distinct_days = 1 suggests they may have never fully explored the platform beyond the first session. A one‑to‑one sales call can uncover deeper reasons for churn (e.g., pricing, product fit) and provide a tailored refund or credit extension, directly following the playbook’s explicit recommendation for this stage.",
+            "playbook_alignment": "Playbook explicitly lists 'Exit interview / refund offer' for stage 9.Churned@Upgraded, making this the canonical action for this segment."
+          }
+        ],
+        "risks": [
+          "Segment size is tiny (28 users), so uplift estimates have high variance and may not be statistically reliable.",
+          "Providing credit boosts or refunds could devalue the paid credit model, encouraging future churn if users become accustomed to free extensions.",
+          "Personalized sales calls may be perceived as intrusive, especially for users who have already churned, potentially harming brand perception."
+        ]
+      }
+    },
+    {
+      "segment_id": "model_top5_predicted",
+      "label": "Top 5% predicted upgraders (model-based)",
+      "stats": {
+        "size": 372,
+        "pct_of_total": 2.12,
+        "observed_rate": 0.2392,
+        "baseline_rate": 0.0184,
+        "baseline_lift": 12.99,
+        "median_n_events": 402,
+        "median_distinct_days": 2,
+        "median_session_min": 931.5,
+        "median_days_since_last": 0.0,
+        "top_behavioral": [
+          {
+            "feature": "n_banner_shown_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.3441,
+            "base_reach": 0.0172,
+            "reach_lift": 18.94
+          },
+          {
+            "feature": "did_see_banner_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.3441,
+            "base_reach": 0.0172,
+            "reach_lift": 18.94
+          },
+          {
+            "feature": "n_credits_exceeded_7d",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.5376,
+            "base_reach": 0.037,
+            "reach_lift": 14.17
+          },
+          {
+            "feature": "did_hit_credit_limit_7d",
+            "seg_median": 1.0,
+            "base_median": 0.0,
+            "seg_reach": 0.5376,
+            "base_reach": 0.037,
+            "reach_lift": 14.17
+          },
+          {
+            "feature": "n_credits_exceeded_24h",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.3575,
+            "base_reach": 0.0252,
+            "reach_lift": 13.69
+          },
+          {
+            "feature": "did_deploy_7d",
+            "seg_median": 0.0,
+            "base_median": 0.0,
+            "seg_reach": 0.2446,
+            "base_reach": 0.0201,
+            "reach_lift": 11.63
+          }
+        ],
+        "demographics": {
+          "purpose": "Personal Projects (52%)",
+          "role": "(missing) (34%)",
+          "work_type": "(missing) (45%)",
+          "device_type": "Desktop (91%)",
+          "os": "Linux (82%)",
+          "country": "Ireland (63%)",
+          "signup_source": "(missing) (48%)"
+        },
+        "metadata": {
+          "agent_first": "75%",
+          "is_power_engaged": "3%",
+          "tour_finished_within_24h": "51%",
+          "submitted_onboarding_form": "81%",
+          "hit_credit_limit_7d": "54%"
+        },
+        "score": {
+          "median": 0.0596,
+          "p90": 0.1566,
+          "pct_top5": 1.0,
+          "n_scored": 372
+        },
+        "stage_rank": 0,
+        "adjacent": "(custom segment)"
+      },
+      "strategy": {
+        "segment_id": "model_top5_predicted",
+        "summary": "Top 5% predicted upgraders: highly active Linux desktop users from Ireland, frequently hitting credit limits and deploying notebooks.",
+        "actions": [
+          {
+            "rank": 1,
+            "title": "Credit Limit Upgrade Prompt",
+            "channel": "in_app_modal",
+            "message_en": "Your notebook just hit the free credit limit. Upgrade to Zerve Pro now and get unlimited credits to keep your work running.",
+            "message_ko": "노트북이 무료 크레딧 한도에 도달했습니다. 지금 Zerve Pro로 업그레이드하면 무한 크레딧과 함께 작업을 계속 진행할 수 있습니다.",
+            "target_filter": "segment_id = 'model_top5_predicted' AND hit_credit_limit_7d = 1",
+            "expected_uplift_pp": 6.0,
+            "estimated_cost_per_user_usd": 0.1,
+            "estimated_roi_multiple": 29.5,
+            "rationale": "54% of segment users hit credit limit in last 7 days (metadata flag), indicating high upgrade intent. In-app modals have low friction and can capture this intent instantly. The median activity (402 events, 931.5 min) shows users are engaged enough to act on a prompt.",
+            "playbook_alignment": "Top 5% (model) ROI 12.1x (playbook) – our low-cost in-app prompt should exceed this ROI by reducing spend per conversion."
+          },
+          {
+            "rank": 2,
+            "title": "High-Activity Discount Offer",
+            "channel": "email",
+            "message_en": "You’ve been using Zerve a lot! Get 20% off your first month when you upgrade to Pro – keep the credits flowing and the notebooks running.",
+            "message_ko": "Zerve를 많이 활용하고 계시군요! Pro 계획으로 업그레이드하면 첫 달 20% 할인을 받을 수 있습니다. 크레딧을 계속 사용하고 노트북을 실행해 보세요.",
+            "target_filter": "segment_id = 'model_top5_predicted' AND n_events >= 400 AND session_minutes >= 900 AND did_see_banner_7d = 0",
+            "expected_uplift_pp": 3.0,
+            "estimated_cost_per_user_usd": 0.3,
+            "estimated_roi_multiple": 4.9,
+            "rationale": "Median activity (402 events, 931.5 min) shows users are power users. 34.4% have already seen the upgrade banner but still not upgraded, indicating banner fatigue. A targeted discount email can re-engage them. Email cost is modest and aligns with playbook’s proven lift for model-based segments.",
+            "playbook_alignment": "Top 5% (model) ROI 12.1x – email campaigns to high-activity users have historically driven ~5-10% conversion lift, supporting a higher ROI than baseline."
+          },
+          {
+            "rank": 3,
+            "title": "Deploy Anywhere Limited-Time Offer",
+            "channel": "ad_retargeting",
+            "message_en": "Deploy your notebooks anywhere with Zerve Pro. Get 30% off for the next 7 days and unlock unlimited external deployments.",
+            "message_ko": "노트북을 어디서든 배포하고 싶다면 Zerve Pro를 선택하세요. 다음 7일 동안 30% 할인을 받고 무한 배포 기능을 활용하세요.",
+            "target_filter": "segment_id = 'model_top5_predicted' AND did_deploy_7d = 1 AND country = 'Ireland'",
+            "expected_uplift_pp": 1.2,
+            "estimated_cost_per_user_usd": 0.5,
+            "estimated_roi_multiple": 1.1,
+            "rationale": "24.5% of segment users deployed notebooks externally in the last 7 days (lift 11.6x), a strong predictor of upgrade. Retargeting ads can remind them of the Pro benefit. However, ad spend is higher and conversion lower, resulting in modest ROI.",
+            "playbook_alignment": "Top 5% (model) ROI 12.1x – ad retargeting is a lower-efficiency channel compared to in-app prompts, but still leverages the high-value deployment behavior identified in the segment."
+          }
+        ],
+        "risks": [
+          "Modal fatigue: Repeated credit-limit prompts may annoy users and increase churn, especially given 36% of paying users become inactive within 60 days.",
+          "Discount erosion: Offering a 20% discount could attract price-sensitive users who downgrade after the promo, reducing long-term LTV.",
+          "Ad relevance: Limited ad inventory for niche audience (Irish Linux desktop users) may lead to low click-through rates and wasted spend."
+        ]
+      }
+    }
+  ]
+}

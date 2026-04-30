@@ -1,0 +1,24 @@
+[load] feature matrix...
+       17,541 users x 217 cols
+[load] funnel v4 labels...
+[load] v3 predictions...
+[load] joined: (17541, 219), with stage=17,541, with score=7,437
+[load] business playbook...
+[run]  new                       n= 2,155  observed=0.00%
+[run]  exploring                 n= 8,181  observed=0.00%
+[run]  used_ai                   n=   248  observed=0.00%
+[run]  wrote_code                n=   105  observed=0.00%
+  [warn] wrote_code attempt 1: shape mismatch, retrying
+[run]  integrated                n=    56  observed=0.00%
+[run]  engaged                   n=   174  observed=0.00%
+[run]  upgraded                  n=   221  observed=100.00%
+[run]  atrisk_used_ai            n= 3,767  observed=0.00%
+  [warn] atrisk_used_ai attempt 1: shape mismatch, retrying
+[run]  atrisk_wrote_code         n= 1,803  observed=0.00%
+[run]  atrisk_integrated         n=   195  observed=0.00%
+[run]  atrisk_engaged            n=   457  observed=0.00%
+[run]  atrisk_upgraded           n=    74  observed=100.00%
+[run]  churned_upgraded          n=    28  observed=100.00%
+[run]  model_top5_predicted      n=   372  observed=23.92%
+
+WROTE: /Users/hunjunsin/Desktop/zerve/zerve-odsc-ai-datathon/web/public/data/strategies.json  (99,209 bytes)
