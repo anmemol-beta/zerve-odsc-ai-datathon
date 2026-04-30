@@ -6,20 +6,19 @@ import DiscoveryCards from "@/components/DiscoveryCards";
 import FunnelView from "@/components/FunnelView";
 import TransitionHeatmap from "@/components/TransitionHeatmap";
 import SignalCombo from "@/components/SignalCombo";
-import LeakageAudit from "@/components/LeakageAudit";
 import ModelComparison from "@/components/ModelComparison";
-import FeatureImportance from "@/components/FeatureImportance";
 import TopKSimulator from "@/components/TopKSimulator";
+import FeatureImportance from "@/components/FeatureImportance";
+import LeakageAudit from "@/components/LeakageAudit";
 import LivePredict from "@/components/LivePredict";
 import PlaybookList from "@/components/PlaybookList";
 import InsightsCard from "@/components/InsightsCard";
 import VersionBadge from "@/components/VersionBadge";
-import ShaderBackgroundLazy from "@/components/ShaderBackgroundLazy";
+import CanvasDAGLazy from "@/components/canvas/CanvasDAGLazy";
 
 export default function Page() {
   return (
     <main className="relative mx-auto max-w-[1400px] space-y-16 px-6 pb-24 lg:px-8">
-      <ShaderBackgroundLazy />
       <Hero />
 
       <div className="-mt-4 flex justify-end">
@@ -28,6 +27,18 @@ export default function Page() {
 
       <HeroStats />
 
+      {/* §00 — prologue: the canvas establishes the workshop before we walk
+          through findings. Every subsequent section's data comes from a node
+          you can see in this graph. */}
+      <Section
+        kicker="00"
+        title="The canvas, in your browser"
+        subtitle="Everything you'll see below was assembled in one Zerve canvas — 32 blocks, 42 edges. Coordinates, kinds, and descriptions all read straight from canvas.yaml. Each section ahead is a slice of this graph."
+      >
+        <CanvasDAGLazy />
+      </Section>
+
+      {/* §01 — storyboard scenes 2-3 (Discovery: lifetime + top events) */}
       <Section
         kicker="01"
         title="What the data is screaming"
@@ -36,6 +47,7 @@ export default function Page() {
         <DiscoveryCards />
       </Section>
 
+      {/* §02 — storyboard scenes 4-5 (15-stage funnel + post-upgrade) */}
       <Section
         kicker="02"
         title="The 9-stage funnel"
@@ -44,14 +56,16 @@ export default function Page() {
         <FunnelView />
       </Section>
 
+      {/* §03 — storyboard scene 6 (transitions) */}
       <Section
         kicker="03"
         title="Stage-to-stage transitions"
-        subtitle="Row-stochastic matrix derived from the user_features_v4 cohort. Pink-bordered cells are the transitions worth investing in — Connected → Engaged is the strongest natural progression."
+        subtitle="Row-stochastic matrix derived from the user_features_v4 cohort. Highlighted cells are the transitions worth investing in — Connected → Engaged is the strongest natural progression."
       >
         <TransitionHeatmap />
       </Section>
 
+      {/* §04 — storyboard scene 7 (3-flag combo) */}
       <Section
         kicker="04"
         title="Signal combinations · live recompute"
@@ -60,56 +74,64 @@ export default function Page() {
         <SignalCombo />
       </Section>
 
+      {/* §05 — storyboard scene 8 (model comparison · 11× random) */}
       <Section
         kicker="05"
-        title="Leakage audit"
-        subtitle="Every guardrail green. The mechanical 21-check sweep across cutoffs, blacklists, splits, and calibration — and the obs_days story behind why we dropped 39 features."
-      >
-        <LeakageAudit />
-      </Section>
-
-      <Section
-        kicker="06"
         title="Model comparison"
         subtitle="Five models, same test cohort. The calibrated ensemble takes the crown on PR-AUC and Brier. Curves are PR (precision-recall) and reliability (predicted vs observed) overlaid before/after isotonic calibration."
       >
         <ModelComparison />
       </Section>
 
+      {/* §06 — storyboard scene 9 (Top-K · 5% catches 90 of 185)  ★ */}
       <Section
-        kicker="06.5"
-        title="Feature importance · marketing bridge"
-        subtitle="SHAP top-10 for the champion ensemble. Each top-3 feature already has a corresponding playbook action — the bridge from prediction to revenue."
-      >
-        <FeatureImportance />
-      </Section>
-
-      <Section
-        kicker="07"
+        kicker="06"
         title="Top-K simulator ★"
         subtitle="Drag the slider — pick what fraction of the user base to target by score. The curve is exact for the synthetic test cohort; the right pane recomputes precision, recall, lift, and net ROI in real time."
       >
         <TopKSimulator />
       </Section>
 
+      {/* §07 — storyboard scene 10 (SHAP top-10 + marketing bridge) */}
+      <Section
+        kicker="07"
+        title="Feature importance · marketing bridge"
+        subtitle="SHAP top-10 for the champion ensemble. Each top-3 feature already has a corresponding playbook action — the bridge from prediction to revenue."
+      >
+        <FeatureImportance />
+      </Section>
+
+      {/* §08 — storyboard scene 11 (guardrails: 21 audits, calibration, drift) */}
       <Section
         kicker="08"
+        title="Guardrails · leakage audit"
+        subtitle="Every block runs a mechanical 21-check sweep — cutoffs, blacklists, splits, calibration. Plus the obs_days story behind why we dropped 39 leaky features and live with an honest 0.265 PR-AUC instead of a fantasy 0.37."
+      >
+        <LeakageAudit />
+      </Section>
+
+      {/* §09 — bridge between guardrails and playbook: a calibrated probability
+          that "really means twenty-three percent". */}
+      <Section
+        kicker="09"
         title="Inference · scoring any user"
-        subtitle="Pick any test-set row index — the calibrated ensemble produces an upgrade probability, predicted funnel stage, and the three features that drove the score. Same model, same calibration, same probabilities the playbook is sized against."
+        subtitle="Pick any test-set row index — the calibrated ensemble produces an upgrade probability, predicted funnel stage, and the three features that drove the score. The probability is what the playbook is sized against."
       >
         <LivePredict />
       </Section>
 
+      {/* §10 — storyboard scene 12 (playbook · 7 ranked actions) */}
       <Section
-        kicker="09"
+        kicker="10"
         title="Playbook · 7 ranked actions"
         subtitle="ROI-ranked. Top-3 are the must-ship moves; the rest cover retention and B2B. Every row maps back to a SHAP-positive feature, and the target counts come straight from the per-segment performance table."
       >
         <PlaybookList />
       </Section>
 
+      {/* §11 — storyboard scene 14 (Insights · the fan-in, closer) */}
       <Section
-        kicker="10"
+        kicker="11"
         title="Insights · the fan-in"
         subtitle="The final canvas node — fan-in from diagnostics, SHAP, model comparison, per-segment performance, strategies, and ROI ranking. Headline metrics, funnel widths, and playbook priorities collapsed into a single artifact."
       >

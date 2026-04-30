@@ -57,7 +57,7 @@ export default function TopKSimulator() {
             step={0.5}
             value={k}
             onChange={(e) => setK(Number(e.target.value))}
-            className="w-full accent-pink-400"
+            className="w-full accent-blue-400"
             aria-label="Top-K percent"
           />
           <div className="mt-1 flex justify-between text-[10px] font-mono text-slate-500">
@@ -193,7 +193,7 @@ function PrecisionRecallCurve({
       <motion.path
         d={path}
         fill="none"
-        stroke="#ec4899"
+        stroke="#3b82f6"
         strokeWidth={2}
         initial={{ pathLength: 0 }}
         whileInView={{ pathLength: 1 }}
@@ -207,10 +207,10 @@ function PrecisionRecallCurve({
         x2={x(current.k)}
         y1={PAD.top}
         y2={H - PAD.bottom}
-        stroke="#ec4899"
+        stroke="#3b82f6"
         strokeOpacity={0.4}
       />
-      <circle cx={x(current.k)} cy={y(current.precision)} r={5} fill="#ec4899" />
+      <circle cx={x(current.k)} cy={y(current.precision)} r={5} fill="#3b82f6" />
 
       {/* axis labels */}
       <text x={W / 2} y={H - 6} fontSize={10} fill="#64748b" textAnchor="middle">

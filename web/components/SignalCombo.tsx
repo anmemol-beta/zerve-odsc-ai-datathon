@@ -60,7 +60,7 @@ export default function SignalCombo() {
 
         <div className="mt-5 rounded-md border border-slate-700 bg-slate-900/60 p-3 font-mono text-[10px] text-slate-400">
           combo key →{" "}
-          <span className="text-pink-300">{key}</span>
+          <span className="text-blue-300">{key}</span>
           <span className="ml-3 text-slate-500">
             (power · agent · onboarding)
           </span>
@@ -91,14 +91,14 @@ export default function SignalCombo() {
         <div className="mt-6">
           <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-slate-500">
             <span>vs all-flags-off baseline ({fmtPct(baseline.rate, 2)})</span>
-            <span className={`font-mono ${lift > 5 ? "text-pink-300" : "text-slate-400"}`}>
+            <span className={`font-mono ${lift > 5 ? "text-blue-300" : "text-slate-400"}`}>
               {lift.toFixed(1)}× lift
             </span>
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
             <motion.div
               key={key}
-              className="h-full bg-gradient-to-r from-violet-500 to-pink-500"
+              className="h-full bg-gradient-to-r from-indigo-500 to-cyan-500"
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(100, (lift / 60) * 100)}%` }}
               transition={{ duration: 0.6 }}
@@ -142,19 +142,19 @@ function FlagSwitch({
       onClick={() => onChange(!on)}
       className={`group flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition ${
         on
-          ? "border-pink-400/40 bg-pink-500/15"
+          ? "border-blue-500/40 bg-blue-500/15"
           : "border-slate-700 bg-slate-900/60 hover:border-slate-700"
       }`}
     >
       <div>
-        <div className={`text-sm font-medium ${on ? "text-pink-100" : "text-slate-300"}`}>
+        <div className={`text-sm font-medium ${on ? "text-blue-100" : "text-slate-300"}`}>
           {flag.label}
         </div>
         <div className="text-[10px] text-slate-500">{flag.detail}</div>
       </div>
       <div
         className={`relative h-5 w-9 rounded-full transition ${
-          on ? "bg-pink-500/150" : "bg-slate-800"
+          on ? "bg-blue-500/15" : "bg-slate-800"
         }`}
       >
         <motion.div

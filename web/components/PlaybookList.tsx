@@ -67,7 +67,7 @@ function PlaybookRow({
           </span>
           <span className="text-3xl">{action.icon}</span>
           {action.is_top && (
-            <span className="rounded-full bg-pink-500/15 px-2 py-0.5 text-[8px] uppercase tracking-[0.18em] text-pink-300">
+            <span className="rounded-full bg-blue-500/15 px-2 py-0.5 text-[8px] uppercase tracking-[0.18em] text-blue-300">
               top
             </span>
           )}

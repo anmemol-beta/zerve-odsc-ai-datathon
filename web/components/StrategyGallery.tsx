@@ -35,9 +35,9 @@ type SegmentEntry = {
 
 const CHANNEL_COLOR: Record<string, string> = {
   email:             "text-cyan-300 border-cyan-400/40 bg-cyan-500/15",
-  in_app_modal:      "text-pink-300 border-pink-400/40 bg-pink-500/15",
+  in_app_modal:      "text-blue-300 border-blue-500/40 bg-blue-500/15",
   sales_call:        "text-amber-300 border-amber-400/40 bg-amber-500/15",
-  push_notification: "text-violet-300 border-violet-400/40 bg-violet-500/15",
+  push_notification: "text-indigo-300 border-indigo-500/40 bg-indigo-500/15",
   ad_retargeting:    "text-emerald-300 border-emerald-400/40 bg-emerald-500/15",
   lifecycle_drip:    "text-blue-300 border-blue-400/40 bg-blue-500/15",
 };
@@ -118,7 +118,7 @@ function SegmentList({
               onClick={() => onSelect(s.segment_id)}
               className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-xs transition ${
                 isSel
-                  ? "bg-pink-500/15 text-pink-100 ring-1 ring-pink-400/40"
+                  ? "bg-blue-500/15 text-blue-100 ring-1 ring-blue-400/40"
                   : "text-slate-300 hover:bg-slate-900"
               }`}
             >
@@ -213,7 +213,7 @@ function ActionCard({ action }: { action: StrategyAction }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-pink-300">
+            <span className="text-[10px] font-mono text-blue-300">
               #{action.rank ?? "?"}
             </span>
             <span className="font-medium text-slate-100">{action.title ?? "—"}</span>

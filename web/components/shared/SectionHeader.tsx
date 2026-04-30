@@ -13,7 +13,7 @@ export default function SectionHeader({
   return (
     <div className="mb-4">
       {kicker && (
-        <div className="font-mono text-[10px] tracking-[0.3em] text-pink-300">
+        <div className="font-mono text-[10px] tracking-[0.3em] text-blue-300">
           {kicker}
         </div>
       )}

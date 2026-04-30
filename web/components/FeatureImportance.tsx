@@ -99,8 +99,8 @@ function ShapRow({
           <motion.div
             className={`h-full rounded-full ${
               positive
-                ? "bg-gradient-to-r from-amber-500 to-pink-500"
-                : "bg-gradient-to-r from-cyan-500 to-violet-500"
+                ? "bg-gradient-to-r from-amber-500 to-cyan-500"
+                : "bg-gradient-to-r from-cyan-500 to-indigo-500"
             }`}
             initial={{ width: 0 }}
             whileInView={{ width: `${pct * 100}%` }}
@@ -114,7 +114,7 @@ function ShapRow({
       </div>
       <div
         className={`w-10 text-right text-[10px] uppercase tracking-[0.12em] ${
-          positive ? "text-pink-300" : "text-cyan-300"
+          positive ? "text-blue-300" : "text-cyan-300"
         }`}
       >
         {positive ? "+" : "–"}

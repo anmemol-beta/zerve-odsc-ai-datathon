@@ -113,7 +113,7 @@ export default function LivePredict() {
           <button
             onClick={() => run(idx)}
             disabled={loading}
-            className="rounded-md border border-pink-400/40 bg-pink-500/15 px-4 py-2 text-sm font-medium text-pink-100 transition hover:bg-pink-500/15 disabled:opacity-40"
+            className="rounded-md border border-blue-500/40 bg-blue-500/15 px-4 py-2 text-sm font-medium text-blue-100 transition hover:bg-blue-500/15 disabled:opacity-40"
           >
             {loading ? "predicting…" : "Predict"}
           </button>
@@ -187,7 +187,7 @@ function ResultPane({ result, loading }: { result: Result | null; loading: boole
               <Stat
                 label="actual label"
                 value={result.actual_label === 1 ? "upgraded" : "no upgrade"}
-                accent={result.actual_label === 1 ? "text-pink-300" : "text-slate-300"}
+                accent={result.actual_label === 1 ? "text-blue-300" : "text-slate-300"}
               />
               <Stat label="features" value={result.feature_count.toString()} />
             </div>
@@ -209,12 +209,12 @@ function ProbabilityGauge({ value }: { value: number }) {
       <div
         className="relative h-[140px] w-[140px] flex-shrink-0 rounded-full"
         style={{
-          background: `conic-gradient(#ec4899 ${deg}deg, rgba(241, 245, 249, 0.6) ${deg}deg)`,
+          background: `conic-gradient(#3b82f6 ${deg}deg, rgba(241, 245, 249, 0.6) ${deg}deg)`,
         }}
       >
         <div className="absolute inset-3 flex items-center justify-center rounded-full bg-slate-950 text-center">
           <div>
-            <div className="text-2xl font-bold tabular-nums text-pink-300">
+            <div className="text-2xl font-bold tabular-nums text-blue-300">
               {(pct * 100).toFixed(1)}%
             </div>
             <div className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-500">
@@ -274,7 +274,7 @@ function TopFeatures({
               <span className="w-40 truncate text-[11px] text-slate-300">{f.name}</span>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-900">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-pink-500"
+                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-cyan-500"
                   initial={{ width: 0 }}
                   animate={{ width: `${pct * 100}%` }}
                   transition={{ duration: 0.5 }}

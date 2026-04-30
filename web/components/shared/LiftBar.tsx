@@ -13,7 +13,7 @@ export default function LiftBar({
   return (
     <div className={`h-2 w-full overflow-hidden rounded-full bg-slate-900 ${className}`}>
       <div
-        className="h-full rounded-full bg-gradient-to-r from-violet-500 to-pink-500"
+        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500"
         style={{ width: `${pct * 100}%` }}
       />
     </div>

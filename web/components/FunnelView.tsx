@@ -150,7 +150,7 @@ export default function FunnelView() {
             Funnel · strict-nested cohorts
           </div>
           <div className="flex items-center gap-3 text-[10px] text-slate-400">
-            <Legend swatch="bg-gradient-to-r from-violet-500 to-pink-500" label="advance" />
+            <Legend swatch="bg-gradient-to-r from-indigo-500 to-cyan-500" label="advance" />
             <Legend swatch="bg-amber-500/15" label="stall" />
             <Legend swatch="bg-slate-900/600/40" label="stayed" />
           </div>
@@ -158,8 +158,8 @@ export default function FunnelView() {
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Funnel sankey">
           <defs>
             <linearGradient id="advance-grad" x1="0" x2="1" y1="0" y2="0">
-              <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.55" />
-              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.55" />
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.55" />
+              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.55" />
             </linearGradient>
           </defs>
 
@@ -191,7 +191,7 @@ export default function FunnelView() {
               const isDrop = n.id === "_drop";
               const c = STAGE_COLOR[n.id];
               const fill = isMain
-                ? "#8b5cf6"
+                ? "#6366f1"
                 : n.id.startsWith("9.AtRisk")
                 ? "#f59e0b"
                 : "#475569";
@@ -234,7 +234,7 @@ export default function FunnelView() {
         </svg>
         <div className="mt-3 text-xs leading-relaxed text-slate-500">
           17,541 users enter at <span className="text-slate-300">Signed up</span>; 323
-          (1.84%) make it to <span className="text-pink-300">Paying</span>. The amber
+          (1.84%) make it to <span className="text-blue-300">Paying</span>. The amber
           ribbons mark cohorts that reach a stage and stall — those are the ones the
           model will single out.
         </div>

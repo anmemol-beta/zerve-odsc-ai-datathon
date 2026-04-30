@@ -13,9 +13,9 @@ export default function ShaderBackground() {
     <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden>
       {/* Drifting blobs */}
       <div className="absolute -top-32 -left-24 w-[640px] h-[640px] rounded-full opacity-60 blur-[140px]"
-           style={{ background: "radial-gradient(circle, #ec4899, transparent 65%)", animation: "blobA 24s ease-in-out infinite" }} />
+           style={{ background: "radial-gradient(circle, #3b82f6, transparent 65%)", animation: "blobA 24s ease-in-out infinite" }} />
       <div className="absolute top-10 right-0 w-[560px] h-[560px] rounded-full opacity-50 blur-[140px]"
-           style={{ background: "radial-gradient(circle, #8b5cf6, transparent 65%)", animation: "blobB 30s ease-in-out infinite" }} />
+           style={{ background: "radial-gradient(circle, #6366f1, transparent 65%)", animation: "blobB 30s ease-in-out infinite" }} />
       <div className="absolute top-1/3 left-1/3 w-[520px] h-[520px] rounded-full opacity-45 blur-[140px]"
            style={{ background: "radial-gradient(circle, #06b6d4, transparent 70%)", animation: "blobC 28s ease-in-out infinite" }} />
       <div className="absolute bottom-0 -right-24 w-[600px] h-[600px] rounded-full opacity-30 blur-[140px]"

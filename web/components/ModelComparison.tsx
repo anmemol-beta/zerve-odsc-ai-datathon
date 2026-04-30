@@ -9,8 +9,8 @@ const MODEL_COLOR: Record<string, string> = {
   Majority: "#64748b",
   Random:   "#94a3b8",
   Logit:    "#22d3ee",
-  LightGBM: "#8b5cf6",
-  Ensemble: "#ec4899",
+  LightGBM: "#6366f1",
+  Ensemble: "#3b82f6",
 };
 
 export default function ModelComparison() {
@@ -49,7 +49,7 @@ function ModelTable({ rows }: { rows: typeof FALLBACK_MODEL_COMPARISON.rows }) {
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
               className={`border-t border-slate-700/50 ${
-                r.is_champion ? "bg-pink-500/15" : ""
+                r.is_champion ? "bg-blue-500/15" : ""
               }`}
             >
               <td className="px-4 py-3">
@@ -60,13 +60,13 @@ function ModelTable({ rows }: { rows: typeof FALLBACK_MODEL_COMPARISON.rows }) {
                   />
                   <span
                     className={
-                      r.is_champion ? "font-semibold text-pink-200" : "text-slate-200"
+                      r.is_champion ? "font-semibold text-blue-200" : "text-slate-200"
                     }
                   >
                     {r.name}
                   </span>
                   {r.is_champion && (
-                    <span className="rounded-full bg-pink-500/15 px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-pink-300">
+                    <span className="rounded-full bg-blue-500/15 px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-blue-300">
                       champion
                     </span>
                   )}
@@ -86,7 +86,7 @@ function ModelTable({ rows }: { rows: typeof FALLBACK_MODEL_COMPARISON.rows }) {
               </td>
               <td
                 className={`px-3 py-3 text-right font-mono tabular-nums ${
-                  r.is_champion ? "text-pink-300" : "text-slate-300"
+                  r.is_champion ? "text-blue-300" : "text-slate-300"
                 }`}
               >
                 {fmtLift(r.lift_vs_random)}

@@ -37,9 +37,9 @@ export default function Hero() {
         transition={{ duration: 0.6 }}
         className="text-[10px] uppercase tracking-[0.4em] text-slate-400 mb-6 font-mono flex items-center gap-3"
       >
-        <span className="w-8 h-px bg-gradient-to-r from-transparent to-pink-400" />
+        <span className="w-8 h-px bg-gradient-to-r from-transparent to-blue-400" />
         ODSC × Zerve AI Datathon · April 2026
-        <span className="w-8 h-px bg-gradient-to-r from-pink-400 to-transparent" />
+        <span className="w-8 h-px bg-gradient-to-r from-blue-400 to-transparent" />
       </motion.div>
 
       <h1 className="text-6xl md:text-8xl font-black leading-[0.92] tracking-[-0.04em]">

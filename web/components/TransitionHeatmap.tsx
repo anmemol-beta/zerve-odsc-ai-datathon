@@ -75,7 +75,7 @@ export default function TransitionHeatmap() {
                     height={CELL - 2}
                     fill={bg}
                     rx={4}
-                    stroke={isHi ? "#ec4899" : "transparent"}
+                    stroke={isHi ? "#3b82f6" : "transparent"}
                     strokeWidth={isHi ? 2 : 0}
                   />
                   {p > 0.02 && (
@@ -103,7 +103,7 @@ export default function TransitionHeatmap() {
             key={`${h.from}>>${h.to}`}
             className={`glass rounded-xl border p-4 ${ACCENT.pink.border}`}
           >
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-pink-300">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
               {STAGE_LABEL[h.from]} → {STAGE_LABEL[h.to]}
             </div>
             <p className="mt-2 text-xs leading-relaxed text-slate-300">{h.note}</p>
