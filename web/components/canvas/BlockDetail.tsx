@@ -6,19 +6,6 @@ import { api, figureUrl } from "@/lib/api";
 import { blockById, KIND_COLORS } from "@/lib/canvas";
 import type { RunStatus } from "./BlockNode";
 
-const VARIABLE_QUERY: Partial<Record<string, () => Promise<unknown>>> = {
-  "train-model-v3":          api.metrics,
-  "build-strategies":        api.strategies,
-  "compare-models":          () => api.validate("Compare Models"),
-  "per-segment-performance": () => api.validate("Per-Segment Performance"),
-  "roi-ranking":             api.roiTop10,
-  "strategy-heatmap":        api.roiHeatmap,
-  "insights-card":           api.insights,
-  "validate-events":         () => api.validate("Validate Events"),
-  "validate-funnel-v4":      () => api.validate("Validate Funnel v4"),
-  "validate-features-v3":    () => api.validate("Validate Features v3"),
-};
-
 export default function BlockDetail({
   blockId,
   onClose,
@@ -32,7 +19,6 @@ export default function BlockDetail({
   const [bust, setBust] = useState(0);
   const [pulled, setPulled] = useState(false);
 
-  // Mark this node "running" while we pull, "done" after, "error" on fail.
   const lastSig = useRef<string>("");
   useEffect(() => {
     if (!block) return;
@@ -44,31 +30,22 @@ export default function BlockDetail({
   }, [block, bust, onStatus]);
 
   const variableQuery = useQuery({
-    queryKey: ["block-var", block?.id, bust],
-    queryFn: VARIABLE_QUERY[block?.id ?? ""] ?? (async () => null),
-    enabled: !!block && block.id in VARIABLE_QUERY,
+    queryKey: ["block-vars", block?.name, bust],
+    queryFn: () => api.blockVars(block!.name),
+    enabled: !!block,
   });
 
-  // Track variable + figure load completion to flip the status badge.
+  // Status badge: roll up var-fetch + figure-load completion.
   useEffect(() => {
-    if (!block) return;
-    if (pulled) return;
-
-    const wantsFigure = block.hasFigure;
-    const wantsVar = block.id in VARIABLE_QUERY;
-    if (!wantsFigure && !wantsVar) {
-      onStatus(block.id, "done");
+    if (!block || pulled) return;
+    if (variableQuery.isError) {
+      onStatus(block.id, "error");
       setPulled(true);
       return;
     }
-    if (wantsVar) {
-      if (variableQuery.isError) {
-        onStatus(block.id, "error");
-        setPulled(true);
-      } else if (variableQuery.isSuccess && !wantsFigure) {
-        onStatus(block.id, "done");
-        setPulled(true);
-      }
+    if (variableQuery.isSuccess && !block.hasFigure) {
+      onStatus(block.id, "done");
+      setPulled(true);
     }
   }, [block, variableQuery.isSuccess, variableQuery.isError, pulled, onStatus]);
 
@@ -116,27 +93,19 @@ export default function BlockDetail({
           />
         )}
 
-        {block.id in VARIABLE_QUERY && (
-          <section>
-            <SectionTitle>Live variables</SectionTitle>
-            {variableQuery.isLoading && <Skeleton />}
-            {variableQuery.isError && (
-              <ErrorBanner error={variableQuery.error} />
-            )}
-            {variableQuery.isSuccess && (
-              <pre className="max-h-[280px] overflow-auto rounded-md border border-slate-800 bg-slate-900/60 p-3 text-[11px] leading-relaxed text-slate-300">
-                {JSON.stringify(variableQuery.data, null, 2)}
-              </pre>
-            )}
-          </section>
-        )}
-
-        {!block.hasFigure && !(block.id in VARIABLE_QUERY) && (
-          <p className="text-xs text-slate-400">
-            This block produces upstream artifacts that downstream nodes consume.
-            Click a downstream block to inspect its output.
-          </p>
-        )}
+        <section>
+          <SectionTitle>Live variables · zerve.variable()</SectionTitle>
+          {variableQuery.isLoading && <Skeleton />}
+          {variableQuery.isError && <ErrorBanner error={variableQuery.error} />}
+          {variableQuery.isSuccess &&
+            (Object.keys(variableQuery.data).length === 0 ? (
+              <p className="text-xs text-slate-500">
+                no non-figure variables registered for this block.
+              </p>
+            ) : (
+              <VariablePreview vars={variableQuery.data} />
+            ))}
+        </section>
       </div>
 
       <footer className="border-t border-slate-800 p-4">
@@ -147,6 +116,26 @@ export default function BlockDetail({
           ↻ Re-pull from canvas
         </button>
       </footer>
+    </div>
+  );
+}
+
+function VariablePreview({ vars }: { vars: Record<string, unknown> }) {
+  return (
+    <div className="space-y-3">
+      {Object.entries(vars).map(([slot, value]) => (
+        <div
+          key={slot}
+          className="rounded-md border border-slate-800 bg-slate-900/60"
+        >
+          <div className="border-b border-slate-800 px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider text-slate-400">
+            {slot}
+          </div>
+          <pre className="max-h-[260px] overflow-auto p-3 text-[11px] leading-relaxed text-slate-300">
+            {JSON.stringify(value, null, 2)}
+          </pre>
+        </div>
+      ))}
     </div>
   );
 }

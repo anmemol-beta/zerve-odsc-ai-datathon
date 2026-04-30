@@ -9,7 +9,8 @@ export type CanvasBlockKind =
   | "viz"
   | "validate"
   | "strategy"
-  | "report";
+  | "report"
+  | "ops";
 
 export type CanvasBlock = {
   id: string;
@@ -52,7 +53,7 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     description:
       "Top events, base upgrade rate, and likely-leakage event flags that must be excluded from upgrade-prediction features.",
     x: 0, y: 500, width: 1600, height: 1000,
-    kind: "transform", hasFigure: false,
+    kind: "transform", hasFigure: true,
   },
   {
     id: "funnel-stages",
@@ -60,7 +61,7 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     description:
       "Builds per-user features and assigns each user to one of six funnel stages. Outputs `user_features`.",
     x: 0, y: 1000, width: 1600, height: 1000,
-    kind: "transform", hasFigure: false,
+    kind: "transform", hasFigure: true,
   },
   {
     id: "build-features",
@@ -179,7 +180,7 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     description:
       "Joins each test user's v3 prediction with their v4 funnel stage, then computes per-segment PR-AUC, top-5% precision, and lift over base rate.",
     x: 1700, y: 4000, width: 1600, height: 1000,
-    kind: "report", hasFigure: false,
+    kind: "report", hasFigure: true,
   },
   {
     id: "strategy-heatmap",
@@ -187,7 +188,7 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     description:
       "14 segments × 6 channels heatmap of best ROI per cell, plus action-count heatmap (how often K2 picked each channel).",
     x: 850, y: 4500, width: 1600, height: 1000,
-    kind: "viz", hasFigure: false,
+    kind: "viz", hasFigure: true,
   },
   {
     id: "roi-ranking",
@@ -195,7 +196,7 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     description:
       "Flattens K2 actions into a long table, ranks by ROI, charts top-10, per-channel boxplot, and best-per-segment.",
     x: 2500, y: 4500, width: 1600, height: 1000,
-    kind: "report", hasFigure: false,
+    kind: "report", hasFigure: true,
   },
   {
     id: "insights-card",
@@ -205,6 +206,95 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     x: 1700, y: 5000, width: 1600, height: 1000,
     kind: "report", hasFigure: true,
   },
+  // ── AutoML / time-rolling / inference tier ─────────────────────────────
+  {
+    id: "train-mlp-v3",
+    name: "Train MLP v3",
+    description:
+      "PyTorch tabular MLP — deep-learning candidate for the AutoML pool. 3-layer net with BatchNorm/GELU/Dropout, class-weighted BCE, cosine LR, isotonic post-hoc calibration.",
+    x: 5100, y: 2500, width: 1600, height: 1000,
+    kind: "model", hasFigure: false,
+  },
+  {
+    id: "train-gbm-v3",
+    name: "Train GBM v3",
+    description:
+      "Bias-diverse GBM candidate — sklearn GradientBoosting (CART) wrapped in isotonic CalibratedClassifierCV(cv=3). catboost optional.",
+    x: 5100, y: 3000, width: 1600, height: 1000,
+    kind: "model", hasFigure: false,
+  },
+  {
+    id: "time-rolling-splits",
+    name: "Time-Rolling Splits",
+    description:
+      "Defines monthly evaluation cohorts by slicing the test set by user-signup-month. Outputs `rolling_splits` plus `user_signup_month`. No retraining — just isolates 'does this model still work next month?'.",
+    x: 5100, y: 2000, width: 1600, height: 1000,
+    kind: "transform", hasFigure: false,
+  },
+  {
+    id: "train-across-time",
+    name: "Train Across Time",
+    description:
+      "AutoML core. Evaluates every candidate (xgb_v3, rf_v3, hgb_v3, ensemble_v3, mlp_v3, gbm_v3) on every rolling cohort. Outputs `rolling_metrics_v3` (cohort × model → PR-AUC, ROC-AUC, Brier, top-K, lift).",
+    x: 5100, y: 3500, width: 1600, height: 1000,
+    kind: "model", hasFigure: false,
+  },
+  {
+    id: "performance-drift",
+    name: "Performance Drift",
+    description:
+      "Drift detection over rolling cohorts. Per-model stability score (CV-based), OLS slope, alerts (negative_drift / high_variance / wide_range).",
+    x: 5100, y: 4000, width: 1600, height: 1000,
+    kind: "viz", hasFigure: true,
+  },
+  {
+    id: "champion-selector",
+    name: "Champion Selector",
+    description:
+      "Production model picker. Weighted score = 0.5 latest cohort PR-AUC + 0.3 cross-cohort mean + 0.2 stability. Outputs `current_champion` + `champion_summary`.",
+    x: 5100, y: 4500, width: 1600, height: 1000,
+    kind: "strategy", hasFigure: true,
+  },
+  {
+    id: "weekly-data-slices",
+    name: "Weekly Data Slices",
+    description:
+      "ISO-week slicing of `events`. Per-(week, user) feature snapshot. Outputs `weekly_slices`, `weekly_summary`, `weekly_baseline_id`. Head of the data-drift / weekly-inference branch.",
+    x: 6800, y: 0, width: 1600, height: 1000,
+    kind: "transform", hasFigure: false,
+  },
+  {
+    id: "data-drift-monitor",
+    name: "Data Drift Monitor",
+    description:
+      "Data-drift detection without labels. Per-(week, feature) PSI + KS test vs first-4-weeks baseline. Thresholds 0.10 / 0.25. Heatmap + line plot dashboard.",
+    x: 6800, y: 500, width: 1600, height: 1000,
+    kind: "viz", hasFigure: true,
+  },
+  {
+    id: "persist-models",
+    name: "Persist Models",
+    description:
+      "End of TRAIN tier. Pickles every candidate + meta.json (champion + metrics + trained_at) into /tmp/zerve-models/v3/. Schedule weekly via Zerve cron.",
+    x: 5100, y: 5000, width: 1600, height: 1000,
+    kind: "ops", hasFigure: false,
+  },
+  {
+    id: "load-models",
+    name: "Load Models",
+    description:
+      "Head of INFER tier. Loads from /tmp/zerve-models/v3 if available, else pulls from GitHub raw (models/v3/*.joblib + meta.json). Outputs `loaded_models`, `loaded_meta`, `model_age_hours`, `inference_ready`.",
+    x: 6800, y: 1000, width: 1600, height: 1000,
+    kind: "ops", hasFigure: false,
+  },
+  {
+    id: "weekly-inference",
+    name: "Weekly Inference",
+    description:
+      "Per-week champion-model inference. Joins predictions with v4 stage → `weekly_predictions` (user-level), `weekly_pred_summary` (week-level), `weekly_pred_by_stage` (week × stage). Decoupled from training.",
+    x: 6800, y: 1500, width: 1600, height: 1000,
+    kind: "report", hasFigure: true,
+  },
 ];
 
 export const CANVAS_EDGES: CanvasEdge[] = [
@@ -212,6 +302,8 @@ export const CANVAS_EDGES: CanvasEdge[] = [
   ["example-dataset", "validate-events"],
   ["example-dataset", "funnel-v4"],
   ["example-dataset", "build-features-v3"],
+  ["example-dataset", "time-rolling-splits"],
+  ["example-dataset", "weekly-data-slices"],
   ["eda-summary", "funnel-stages"],
   ["eda-summary", "build-features"],
   ["funnel-stages", "visualize-funnel"],
@@ -224,11 +316,32 @@ export const CANVAS_EDGES: CanvasEdge[] = [
   ["funnel-v4", "per-segment-performance"],
   ["build-features-v3", "train-model-v3"],
   ["build-features-v3", "validate-features-v3"],
+  ["build-features-v3", "train-mlp-v3"],
+  ["build-features-v3", "train-gbm-v3"],
+  ["build-features-v3", "time-rolling-splits"],
   ["train-model-v3", "build-strategies"],
   ["train-model-v3", "diagnose-v3"],
   ["train-model-v3", "shap-v3"],
   ["train-model-v3", "compare-models"],
   ["train-model-v3", "per-segment-performance"],
+  ["train-model-v3", "train-across-time"],
+  ["train-model-v3", "persist-models"],
+  ["train-mlp-v3", "train-across-time"],
+  ["train-mlp-v3", "persist-models"],
+  ["train-gbm-v3", "train-across-time"],
+  ["train-gbm-v3", "persist-models"],
+  ["time-rolling-splits", "train-across-time"],
+  ["train-across-time", "performance-drift"],
+  ["train-across-time", "champion-selector"],
+  ["performance-drift", "champion-selector"],
+  ["champion-selector", "persist-models"],
+  ["champion-selector", "insights-card"],
+  ["persist-models", "load-models"],
+  ["load-models", "weekly-inference"],
+  ["weekly-data-slices", "data-drift-monitor"],
+  ["weekly-data-slices", "weekly-inference"],
+  ["weekly-inference", "insights-card"],
+  ["data-drift-monitor", "insights-card"],
   ["build-strategies", "roi-ranking"],
   ["build-strategies", "strategy-heatmap"],
   ["build-strategies", "insights-card"],
@@ -251,6 +364,7 @@ export const KIND_COLORS: Record<CanvasBlockKind, { bg: string; ring: string; la
   validate:  { bg: "rgba(245,158,11,0.15)",  ring: "#fbbf24", label: "validate" },
   strategy:  { bg: "rgba(16,185,129,0.15)",  ring: "#34d399", label: "strategy" },
   report:    { bg: "rgba(244,114,182,0.15)", ring: "#f9a8d4", label: "report" },
+  ops:       { bg: "rgba(148,163,184,0.18)", ring: "#94a3b8", label: "ops" },
 };
 
 export const blockByName = (name: string) =>
@@ -259,7 +373,6 @@ export const blockByName = (name: string) =>
 export const blockById = (id: string) =>
   CANVAS_BLOCKS.find((b) => b.id === id);
 
-// Canvas extents for fit-to-view.
 export const CANVAS_EXTENT = {
   minX: Math.min(...CANVAS_BLOCKS.map((b) => b.x)),
   maxX: Math.max(...CANVAS_BLOCKS.map((b) => b.x + b.width)),

@@ -49,6 +49,22 @@ export const api = {
       feature_count: number;
     }>(`/predict/sample/${idx}`),
   reload:        () => post<{ ok: boolean }>("/admin/reload"),
+  blockVars:     (block: string) =>
+    get<Record<string, unknown>>(`/block/${encodeURIComponent(block)}/vars`),
+  champion:      () => get<{
+    current: string;
+    summary: unknown;
+    win_counts: unknown;
+    per_cohort: unknown;
+  }>("/champion"),
+  rollingMetrics: () => get<Array<Record<string, unknown>>>("/rolling/metrics"),
+  perfDrift:     () => get<{ summary: unknown; alerts: unknown }>("/drift/performance"),
+  dataDrift:     () => get<{
+    weekly_index: unknown;
+    alerts: unknown;
+    baseline_id: unknown;
+  }>("/drift/data"),
+  weeklyInference: () => get<{ summary: unknown; by_stage: unknown }>("/inference/weekly"),
 };
 
 export const figureUrl = (block: string, bust?: number | string) =>
