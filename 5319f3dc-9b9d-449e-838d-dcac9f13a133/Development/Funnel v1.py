@@ -1,7 +1,7 @@
 # pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
-# Strict-nested funnel — every higher stage requires all lower stages to be
+# Strict-nested funnel — every higher fv1_stage requires all lower stages to be
 # satisfied as well. This guarantees monotone-decreasing reach (the property
 # the kickoff guide §6 example assumes) and gives meaningful "conversion from
 # prior" numbers.
@@ -17,12 +17,12 @@
 #
 # `now_ts` = latest timestamp in the dataset. Used for at_risk recency.
 
-CREATED_EVENTS = {
+fv1_CREATED_EVENTS = {
     "agent_tool_call_create_block_tool",
     "run_block",
     "new_canvas_created",
 }
-AI_EVENTS = {
+fv1_AI_EVENTS = {
     "$ai_generation",
     "agent_new_chat",
     "agent_worker_created",
@@ -33,17 +33,17 @@ AT_RISK_DAYS  = 14
 
 now_ts = events["timestamp"].max()
 
-flags = pd.DataFrame({
+fv1_flags = pd.DataFrame({
     "person_id":  events["person_id"],
     "is_signin":  events["event"].eq(SIGNIN_EVENT),
-    "is_created": events["event"].isin(CREATED_EVENTS),
-    "is_ai":      events["event"].isin(AI_EVENTS),
+    "is_created": events["event"].isin(fv1_CREATED_EVENTS),
+    "is_ai":      events["event"].isin(fv1_AI_EVENTS),
     "is_upgrade": events["event"].eq(UPGRADE_EVENT),
     "date":       events["timestamp"].dt.date,
     "ts":         events["timestamp"],
 })
 
-user_features = flags.groupby("person_id", sort=False).agg(
+user_features = fv1_flags.groupby("person_id", sort=False).agg(
     n_signins       = ("is_signin",  "sum"),
     n_created       = ("is_created", "sum"),
     n_ai            = ("is_ai",      "sum"),
@@ -56,21 +56,21 @@ user_features = flags.groupby("person_id", sort=False).agg(
 user_features["days_since_last_event"] = (now_ts - user_features["last_event_ts"]).dt.total_seconds() / 86400
 user_features["account_age_days"] = (user_features["last_event_ts"] - user_features["first_event_ts"]).dt.total_seconds() / 86400
 
-# Strict-nested stage assignment. Each rule depends on the previous mask.
+# Strict-nested fv1_stage assignment. Each rule depends on the previous mask.
 is_active   = (user_features["n_signins"] >= 2) | (user_features["n_distinct_days"] >= 2)
 is_created  = is_active  & (user_features["n_created"] > 0)
 is_ai       = is_created & (user_features["n_ai"] > 0)
 is_engaged  = is_ai      & (user_features["n_distinct_days"] >= 3)
 is_at_risk  = is_engaged & (user_features["days_since_last_event"] > AT_RISK_DAYS) & (~user_features["upgraded"])
 
-stage = pd.Series("1_signed_up", index=user_features.index)
-stage[is_active]  = "2_active"
-stage[is_created] = "3_created_content"
-stage[is_ai]      = "4_used_ai"
-stage[is_engaged] = "5_engaged"
-stage[is_at_risk] = "5b_at_risk"
-stage[user_features["upgraded"]] = "6_upgraded"
-user_features["stage"] = stage
+fv1_stage = pd.Series("1_signed_up", index=user_features.index)
+fv1_stage[is_active]  = "2_active"
+fv1_stage[is_created] = "3_created_content"
+fv1_stage[is_ai]      = "4_used_ai"
+fv1_stage[is_engaged] = "5_engaged"
+fv1_stage[is_at_risk] = "5b_at_risk"
+fv1_stage[user_features["upgraded"]] = "6_upgraded"
+user_features["fv1_stage"] = fv1_stage
 
 stage_order = [
     "1_signed_up",
@@ -85,7 +85,7 @@ stage_order = [
 # Cumulative reach — monotone decreasing by construction since each mask is
 # AND of the previous. at_risk is broken out as a side-pocket of engaged.
 # Exported as `funnel_reach` so the visualization block reuses it.
-# Plain dict so the value survives Zerve's cross-block serialization unchanged.
+# Plain dict so the value survives Zerve'fv1_s cross-block serialization unchanged.
 # (When this was a pd.Series Zerve sometimes restored it with a RangeIndex,
 # breaking string-key access in downstream blocks.)
 funnel_reach = {
@@ -98,30 +98,30 @@ funnel_reach = {
     "6_upgraded":        int(user_features["upgraded"].sum()),
 }
 reach = funnel_reach  # alias kept for downstream readability
-total = int(funnel_reach["1_signed_up"])
+fv1_total = int(funnel_reach["1_signed_up"])
 
 print(f"reference 'now'         : {now_ts}")
 print(f"at-risk inactivity gate : >{AT_RISK_DAYS} days since last event")
 print()
-print("Funnel — cumulative reach (each higher stage AND of all lower)")
-print(f"{'stage':<22}{'users':>8}  {'% of total':>11}  {'conv from prior':>17}")
+print("Funnel — cumulative reach (each higher fv1_stage AND of all lower)")
+print(f"{'fv1_stage':<22}{'users':>8}  {'% of fv1_total':>11}  {'conv from prior':>17}")
 prior_chain = ["1_signed_up", "2_active", "3_created_content", "4_used_ai", "5_engaged", "6_upgraded"]
-prev = total
-for s in prior_chain:
-    c = int(reach[s])
-    pct = 100 * c / total if total else 0.0
+prev = fv1_total
+for fv1_s in prior_chain:
+    c = int(reach[fv1_s])
+    pct = 100 * c / fv1_total if fv1_total else 0.0
     conv = 100 * c / prev if prev else 0.0
-    print(f"{s:<22}{c:>8,}  {pct:>10.2f}%  {conv:>16.2f}%")
+    print(f"{fv1_s:<22}{c:>8,}  {pct:>10.2f}%  {conv:>16.2f}%")
     prev = c
-print(f"{'5b_at_risk (lateral)':<22}{int(reach['5b_at_risk']):>8,}  {100*reach['5b_at_risk']/total:>10.2f}%  (subset of 5_engaged who went inactive)")
+print(f"{'5b_at_risk (lateral)':<22}{int(reach['5b_at_risk']):>8,}  {100*reach['5b_at_risk']/fv1_total:>10.2f}%  (subset of 5_engaged who went inactive)")
 
 print()
-print("Current-stage distribution (each user's terminal stage):")
-counts = user_features["stage"].value_counts().reindex(stage_order, fill_value=0).astype(int)
-for s in stage_order:
-    c = int(counts[s])
-    pct = 100 * c / total if total else 0.0
-    print(f"  {s:<22}{c:>8,}  ({pct:>5.2f}%)")
+print("Current-fv1_stage distribution (each user'fv1_s terminal fv1_stage):")
+fv1_counts = user_features["fv1_stage"].value_counts().reindex(stage_order, fill_value=0).astype(int)
+for fv1_s in stage_order:
+    c = int(fv1_counts[fv1_s])
+    pct = 100 * c / fv1_total if fv1_total else 0.0
+    print(f"  {fv1_s:<22}{c:>8,}  ({pct:>5.2f}%)")
 
 # ── Visualization on the canvas node: pie of mutually-exclusive current
 # stages + horizontal bar of strict-nested cumulative reach.
@@ -148,14 +148,14 @@ nice = {
 
 # Order from "stuck" to "deepest" so the pie reads clockwise from churn → conversion.
 pie_order = ["1_signed_up", "2_active", "3_created_content", "4_used_ai", "5_engaged", "5b_at_risk", "6_upgraded"]
-pie_labels = [nice[s] for s in pie_order]
-pie_values = [int(counts[s]) for s in pie_order]
-pie_colors = [stage_color[s] for s in pie_order]
+pie_labels = [nice[fv1_s] for fv1_s in pie_order]
+pie_values = [int(fv1_counts[fv1_s]) for fv1_s in pie_order]
+pie_colors = [stage_color[fv1_s] for fv1_s in pie_order]
 
 fs_fig, (fs_ax1, fs_ax2) = plt.subplots(1, 2, figsize=(15, 7), gridspec_kw={"width_ratios": [1, 1.2]})
 
 # Donut pie (mutually exclusive — sums to 100%)
-wedges, _, autotexts = fs_ax1.pie(
+wedges, fv1__, autotexts = fs_ax1.pie(
     pie_values,
     labels=None,
     colors=pie_colors,
@@ -166,26 +166,26 @@ wedges, _, autotexts = fs_ax1.pie(
     wedgeprops={"width": 0.42, "edgecolor": "#020617", "linewidth": 1.2},
     textprops={"color": "white", "fontsize": 9, "fontweight": "bold"},
 )
-fs_ax1.text(0, 0.06, f"{total:,}", ha="center", va="center", fontsize=22, fontweight="bold")
+fs_ax1.text(0, 0.06, f"{fv1_total:,}", ha="center", va="center", fontsize=22, fontweight="bold")
 fs_ax1.text(0, -0.10, "USERS", ha="center", va="center", fontsize=9, color="#94a3b8")
-fs_ax1.set_title("Current stage breakdown — mutually exclusive (sums to 100%)")
+fs_ax1.set_title("Current fv1_stage breakdown — mutually exclusive (sums to 100%)")
 fs_ax1.legend(wedges, [f"{l}  ({c:,})" for l, c in zip(pie_labels, pie_values)],
            loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=9, frameon=False)
 
 # Strict-nested funnel (cumulative reach)
 funnel_order = ["1_signed_up", "2_active", "3_created_content", "4_used_ai", "5_engaged", "6_upgraded"]
-funnel_labels = [s.split("_", 1)[1].replace("_", " ") for s in funnel_order]
-funnel_counts = [int(funnel_reach[s]) for s in funnel_order]
-funnel_colors = [stage_color[s] for s in funnel_order]
+funnel_labels = [fv1_s.split("fv1__", 1)[1].replace("fv1__", " ") for fv1_s in funnel_order]
+funnel_counts = [int(funnel_reach[fv1_s]) for fv1_s in funnel_order]
+funnel_colors = [stage_color[fv1_s] for fv1_s in funnel_order]
 fs_ax2.barh(range(len(funnel_counts)), funnel_counts, color=funnel_colors, edgecolor="#020617")
 fs_ax2.set_yticks(range(len(funnel_counts)))
 fs_ax2.set_yticklabels(funnel_labels)
 fs_ax2.invert_yaxis()
 fs_ax2.set_xlabel("users (cumulative reach, strict-nested)")
-fs_ax2.set_title("Strict-nested funnel — every higher stage requires all lower")
-for i, fv in enumerate(funnel_counts):
-    pct = 100 * fv / total if total else 0.0
-    fs_ax2.text(fv, i, f"  {fv:,}  ({pct:.1f}%)", va="center", fontsize=9)
+fs_ax2.set_title("Strict-nested funnel — every higher fv1_stage requires all lower")
+for fv1_i, fv in enumerate(funnel_counts):
+    pct = 100 * fv / fv1_total if fv1_total else 0.0
+    fs_ax2.text(fv, fv1_i, f"  {fv:,}  ({pct:.1f}%)", va="center", fontsize=9)
 
 plt.tight_layout()
 plt.show()

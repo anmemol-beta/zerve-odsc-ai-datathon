@@ -27,7 +27,7 @@ new_users_per_day = user_first_day.value_counts().sort_index()
 
 # Cumulative reach per day. We approximate "as-of T" reach by counting
 # users whose first_event ≤ T who eventually reached the stage.
-flags = pd.DataFrame({
+ct_flags = pd.DataFrame({
     "first_day": user_first_day.reindex(user_features.index).values,
     "active":    is_active.values,
     "engaged":   is_engaged.values,
@@ -35,7 +35,7 @@ flags = pd.DataFrame({
     "upgraded":  user_features["upgraded"].values,
 }, index=user_features.index)
 
-daily_new = flags.groupby("first_day").agg(
+daily_new = ct_flags.groupby("first_day").agg(
     n=("active", "size"),
     n_active=("active", "sum"),
     n_engaged=("engaged", "sum"),
@@ -45,9 +45,9 @@ daily_new = flags.groupby("first_day").agg(
 daily_cum = daily_new.cumsum()
 
 # ── Cohort weekly upgrade rate
-weeks = user_first.dt.to_period("W").dt.start_time
+ct_weeks = user_first.dt.to_period("W").dt.start_time
 cohort_df = pd.DataFrame({
-    "week":     weeks.reindex(user_features.index).values,
+    "week":     ct_weeks.reindex(user_features.index).values,
     "upgraded": user_features["upgraded"].values,
 })
 cohort_grp = cohort_df.groupby("week", observed=True).agg(
@@ -109,20 +109,20 @@ vc_ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %y"))
 
 # Bottom-right: hourly heatmap
 vc_ax = vc_axes[1, 1]
-im = vc_ax.imshow(heat.values, aspect="auto", cmap="viridis", origin="lower")
+ct_im = vc_ax.imshow(heat.values, aspect="auto", cmap="viridis", origin="lower")
 vc_ax.set_yticks(range(7))
 vc_ax.set_yticklabels(DOW_NAMES)
 vc_ax.set_xticks(range(0, 24, 3))
 vc_ax.set_xticklabels([f"{h:02d}" for h in range(0, 24, 3)])
 vc_ax.set_xlabel("hour of day (UTC)")
 vc_ax.set_title("Activity heatmap — events by day-of-week × hour")
-vc_fig.colorbar(im, ax=vc_ax, fraction=0.046, pad=0.04, label="events")
+vc_fig.colorbar(ct_im, ax=vc_ax, fraction=0.046, pad=0.04, label="events")
 
 plt.tight_layout()
 plt.show()
 
 
-print(f"  cohorts (weeks)   : {len(cohort_grp)}")
+print(f"  cohorts (ct_weeks)   : {len(cohort_grp)}")
 print(f"  cohort rate range : {cohort_grp['rate'].min():.2f}% → {cohort_grp['rate'].max():.2f}%")
 print(f"  latest cohort rate: {cohort_grp['rate'].iloc[-1]:.2f}%   cumulative {cohort_grp['cum_rate'].iloc[-1]:.2f}%")
 print(f"  peak hour (UTC)   : {heat.values.sum(axis=0).argmax():02d}:00")

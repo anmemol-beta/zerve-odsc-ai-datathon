@@ -23,14 +23,14 @@ import matplotlib.pyplot as plt
 
 # ─── 1. flatten ───────────────────────────────────────────────────────────
 roi_rows = []
-for seg in strategies["segments"]:
-    if not seg.get("strategy") or not seg["strategy"].get("actions"):
+for rr_seg in strategies["segments"]:
+    if not rr_seg.get("strategy") or not rr_seg["strategy"].get("actions"):
         continue
-    label = seg["label"]
-    seg_id = seg["segment_id"]
-    seg_size = seg["stats"]["size"]
-    pos_rate = seg["stats"]["observed_rate"]
-    for a in seg["strategy"]["actions"]:
+    label = rr_seg["label"]
+    seg_id = rr_seg["segment_id"]
+    seg_size = rr_seg["stats"]["size"]
+    pos_rate = rr_seg["stats"]["observed_rate"]
+    for a in rr_seg["strategy"]["actions"]:
         roi_rows.append({
             "segment_id": seg_id,
             "segment_label": label,

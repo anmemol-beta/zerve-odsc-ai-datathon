@@ -36,8 +36,8 @@ import pandas as pd
 INFERENCE_WINDOW_DAYS = int(os.environ.get("INFERENCE_WINDOW_DAYS", "28"))
 
 # ─── 1. recency filter ───────────────────────────────────────────────────
-data_now = events_pipeline["timestamp"].max()
-recency_cutoff = data_now - pd.Timedelta(days=INFERENCE_WINDOW_DAYS)
+bip_data_now = events_pipeline["timestamp"].max()
+recency_cutoff = bip_data_now - pd.Timedelta(days=INFERENCE_WINDOW_DAYS)
 last_seen = events_pipeline.groupby("person_id")["timestamp"].max()
 recent_users = last_seen[last_seen >= recency_cutoff].index
 
@@ -50,7 +50,7 @@ inference_pool = events_pipeline[
 inference_pool_meta = {
     "purpose": "inference",
     "inference_window_days": INFERENCE_WINDOW_DAYS,
-    "data_now": str(data_now),
+    "bip_data_now": str(bip_data_now),
     "recency_cutoff": str(recency_cutoff),
     "n_rows": int(len(inference_pool)),
     "n_users": int(inference_pool["person_id"].nunique()),
@@ -68,7 +68,7 @@ print()
 print("=" * 80)
 print(f"BUILD INFERENCE POOL  (window={INFERENCE_WINDOW_DAYS} days)")
 print("=" * 80)
-print(f"  data_now            : {inference_pool_meta['data_now']}")
+print(f"  bip_data_now            : {inference_pool_meta['bip_data_now']}")
 print(f"  recency cutoff      : {inference_pool_meta['recency_cutoff']}")
 print(f"  full pool users     : {inference_pool_meta['n_users_full_pool']:>10,}")
 print(f"  inference users     : {inference_pool_meta['n_users']:>10,}  "

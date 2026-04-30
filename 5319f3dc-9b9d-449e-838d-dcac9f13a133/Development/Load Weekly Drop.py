@@ -27,13 +27,13 @@ import urllib.request
 import urllib.error
 import pandas as pd
 
-REPO_RAW = (
+lwd_REPO_RAW = (
     "https://raw.githubusercontent.com/"
     "anmemol-beta/zerve-odsc-ai-datathon/main"
 )
 DROP_URL_TEMPLATE = os.environ.get(
     "WEEKLY_DROP_URL_TEMPLATE",
-    f"{REPO_RAW}/data/weekly_drops/events_week_{{week}}.csv",
+    f"{lwd_REPO_RAW}/data/weekly_drops/events_week_{{week}}.csv",
 )
 
 # Catalog of weeks we have demo drops committed for. In production this

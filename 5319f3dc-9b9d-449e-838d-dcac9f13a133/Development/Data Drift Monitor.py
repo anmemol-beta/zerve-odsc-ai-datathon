@@ -49,12 +49,12 @@ KS_PVAL_THRESHOLD = 0.05
 
 # ─── 1. build baseline by pooling first 4 weeks ──────────────────────────
 all_weeks = sorted(weekly_slices.keys())
-baseline_weeks = all_weeks[:4]
+ddm_baseline_weeks = all_weeks[:4]
 baseline_df = pd.concat(
-    [weekly_slices[w][MONITORED_FEATURES] for w in baseline_weeks],
+    [weekly_slices[w][MONITORED_FEATURES] for w in ddm_baseline_weeks],
     axis=0, ignore_index=True,
 )
-print(f"[drift] baseline pooled from {len(baseline_weeks)} weeks → "
+print(f"[drift] baseline pooled from {len(ddm_baseline_weeks)} weeks → "
       f"{len(baseline_df):,} user-ddm_rows")
 
 
@@ -96,18 +96,18 @@ def _ks_pvalue(a: np.ndarray, b: np.ndarray) -> float:
 
 # ─── 3. compute drift per (week, feature) ────────────────────────────────
 ddm_rows = []
-for w_id in all_weeks:
-    snap = weekly_slices[w_id]
-    for feat in MONITORED_FEATURES:
-        if feat not in snap.columns:
+for ddm_w_id in all_weeks:
+    snap = weekly_slices[ddm_w_id]
+    for ddm_feat in MONITORED_FEATURES:
+        if ddm_feat not in snap.columns:
             continue
-        baseline_vals = baseline_df[feat].values.astype(float)
-        current_vals = snap[feat].values.astype(float)
+        baseline_vals = baseline_df[ddm_feat].values.astype(float)
+        current_vals = snap[ddm_feat].values.astype(float)
         psi = _psi(baseline_vals, current_vals)
         ks_p = _ks_pvalue(baseline_vals, current_vals)
         ddm_rows.append({
-            "week": w_id,
-            "feature": feat,
+            "week": ddm_w_id,
+            "feature": ddm_feat,
             "n_current": len(current_vals),
             "psi": psi,
             "ks_pvalue": ks_p,
@@ -144,7 +144,7 @@ weekly_drift_index["status"] = pd.cut(
 
 # ─── 5. alerts ───────────────────────────────────────────────────────────
 drift_alerts = []
-for _, ddm_r in weekly_drift_index.iterrows():
+for ddm__, ddm_r in weekly_drift_index.iterrows():
     if ddm_r["status"] == "red":
         drift_alerts.append({
             "week": ddm_r["week"],
@@ -169,11 +169,11 @@ fp["streak"] = (
     .transform(lambda s: s.groupby((~s).cumsum()).cumsum())
 )
 chronic = fp[fp["streak"] >= 3]
-for feat, g in chronic.groupby("feature"):
+for ddm_feat, g in chronic.groupby("feature"):
     drift_alerts.append({
         "week": str(g["week"].iloc[-1]),
         "kind": "chronic_drift",
-        "detail": f"feature `{feat}` has drifted PSI > {PSI_THRESHOLD_MODERATE} "
+        "detail": f"feature `{ddm_feat}` has drifted PSI > {PSI_THRESHOLD_MODERATE} "
                   f"for {int(g['streak'].max())} consecutive weeks.",
     })
 
@@ -202,7 +202,7 @@ ddm_ax = ddm_axes[0]
 pivot = drift_per_week_per_feature.pivot_table(
     index="feature", columns="week", values="psi"
 ).reindex(index=MONITORED_FEATURES, columns=all_weeks)
-im = ddm_ax.imshow(pivot.values, aspect="auto", cmap="RdPu",
+ddm_im = ddm_ax.imshow(pivot.values, aspect="auto", cmap="RdPu",
                vmin=0, vmax=max(0.5, np.nanmax(pivot.values) if pivot.notna().any().any() else 0.5))
 ddm_ax.set_xticks(range(len(all_weeks)))
 ddm_ax.set_xticklabels(all_weeks, rotation=60, ha="right", fontsize=7)
@@ -210,23 +210,23 @@ ddm_ax.set_yticks(range(len(MONITORED_FEATURES)))
 ddm_ax.set_yticklabels(MONITORED_FEATURES, fontsize=9)
 ddm_ax.set_title("PSI per (feature × week) vs baseline\n"
              "(red = drifted > 0.25, pink = moderate 0.10-0.25, faded = stable)")
-plt.colorbar(im, ax=ddm_ax, label="PSI")
+plt.colorbar(ddm_im, ax=ddm_ax, label="PSI")
 # annotate cells with PSI value if drifted
-for i, feat in enumerate(MONITORED_FEATURES):
+for ddm_i, ddm_feat in enumerate(MONITORED_FEATURES):
     for j, w in enumerate(all_weeks):
-        v = pivot.values[i, j] if i < pivot.shape[0] and j < pivot.shape[1] else float("nan")
+        v = pivot.values[ddm_i, j] if ddm_i < pivot.shape[0] and j < pivot.shape[1] else float("nan")
         if not np.isnan(v) and v > PSI_THRESHOLD_MODERATE:
-            ddm_ax.text(j, i, f"{v:.2f}", ha="center", va="center",
+            ddm_ax.text(j, ddm_i, f"{v:.2f}", ha="center", va="center",
                     fontsize=7, color="white" if v > 0.3 else "black")
 
 # [Bottom] line plot — overall drift over time
 ddm_ax = ddm_axes[1]
-xs = range(len(weekly_drift_index))
-ddm_ax.plot(xs, weekly_drift_index["mean_psi"], "o-", color="#06b6d4", label="mean PSI")
-ddm_ax.plot(xs, weekly_drift_index["max_psi"], "s-", color="#ec4899", label="max PSI")
+ddm_xs = range(len(weekly_drift_index))
+ddm_ax.plot(ddm_xs, weekly_drift_index["mean_psi"], "o-", color="#06b6d4", label="mean PSI")
+ddm_ax.plot(ddm_xs, weekly_drift_index["max_psi"], "s-", color="#ec4899", label="max PSI")
 ddm_ax.axhline(PSI_THRESHOLD_MODERATE, linestyle="--", color="#f59e0b", linewidth=1, label="moderate (0.10)")
 ddm_ax.axhline(PSI_THRESHOLD_MATERIAL, linestyle="--", color="#ef4444", linewidth=1, label="material (0.25)")
-ddm_ax.set_xticks(xs)
+ddm_ax.set_xticks(ddm_xs)
 ddm_ax.set_xticklabels(weekly_drift_index["week"], rotation=60, ha="right", fontsize=7)
 ddm_ax.set_ylabel("PSI")
 ddm_ax.set_title("Weekly drift index over time")

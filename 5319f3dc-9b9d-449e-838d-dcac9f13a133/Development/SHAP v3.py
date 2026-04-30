@@ -22,7 +22,7 @@ Two execution paths, picked at runtime:
 Either way, outputs are interchangeable:
 
     shap_values_v3        np.ndarray  (n_explain, n_features)
-    shap_summary_v3       pd.DataFrame  — top-20 mean |φ|
+    shap_summary_v3       pd.DataFrame  — shp_top-20 mean |φ|
     interpret_method      str  — "shap_tree" | "sampling_pure_numpy"
 
 Inputs (canvas namespace):
@@ -51,16 +51,16 @@ ensemble_model = models_v3.get("xgb_v3", None)  # use XGB base for explanations
 if ensemble_model is None:
     raise RuntimeError("models_v3['xgb_v3'] missing — Train Model v3 must run first")
 
-X_train_arr = X_v3_train.fillna(0).values
-X_test_arr = X_v3_test.fillna(0).values
-y_test_arr = np.asarray(y_v3_test).astype(int)
+shp_X_train_arr = X_v3_train.fillna(0).values
+shp_X_test_arr = X_v3_test.fillna(0).values
+shp_y_test_arr = np.asarray(y_v3_test).astype(int)
 
 # Sample size for explanations (don't blow compute on 3.5k test rows)
-SAMPLE_N = min(200, len(X_test_arr))
+SAMPLE_N = min(200, len(shp_X_test_arr))
 rng = np.random.default_rng(42)
-sample_idx = rng.choice(len(X_test_arr), size=SAMPLE_N, replace=False)
-X_explain = X_test_arr[sample_idx]
-y_explain = y_test_arr[sample_idx]
+sample_idx = rng.choice(len(shp_X_test_arr), size=SAMPLE_N, replace=False)
+X_explain = shp_X_test_arr[sample_idx]
+y_explain = shp_y_test_arr[sample_idx]
 
 
 # ═══ Path A: shap library ════════════════════════════════════════════════
@@ -83,14 +83,14 @@ if SHAP_OK:
 
 # ═══ Path B: pure-numpy sampling SHAP ═══════════════════════════════════
 else:
-    BG_SIZE = min(100, len(X_train_arr))
+    BG_SIZE = min(100, len(shp_X_train_arr))
     N_PERM = 20  # Monte Carlo iterations per sample
     print(f"[SHAP v3] sampling SHAP — n_explain={SAMPLE_N}, "
           f"bg={BG_SIZE}, n_perm={N_PERM}, n_feat={X_explain.shape[1]}")
 
     # Pre-pick background distribution from train pool
-    bg_idx = rng.choice(len(X_train_arr), size=BG_SIZE, replace=False)
-    X_bg = X_train_arr[bg_idx]
+    bg_idx = rng.choice(len(shp_X_train_arr), size=BG_SIZE, replace=False)
+    X_bg = shp_X_train_arr[bg_idx]
 
     n_explain, n_feat = X_explain.shape
 
@@ -143,17 +143,17 @@ print("=" * 70)
 print(f"INTERPRETABILITY v3 — method={interpret_method}")
 print("=" * 70)
 denom = shap_summary_v3["mean_abs_shap"].max() or 1
-for _, row in shap_summary_v3.head(20).iterrows():
-    bar = "█" * int(row["mean_abs_shap"] / denom * 30)
-    print(f"  {row['feature']:<35} {row['mean_abs_shap']:.4f}  {bar}")
+for shp__, shp_row in shap_summary_v3.head(20).iterrows():
+    bar = "█" * int(shp_row["mean_abs_shap"] / denom * 30)
+    print(f"  {shp_row['feature']:<35} {shp_row['mean_abs_shap']:.4f}  {bar}")
 
 
 # ═══ plots ═══════════════════════════════════════════════════════════════
 shp_fig, shp_axes = plt.subplots(1, 2, figsize=(14, 8))
 
-# [L] top-20 bar
-top = shap_summary_v3.head(20).iloc[::-1]
-shp_axes[0].barh(top["feature"], top["mean_abs_shap"], color="#ec4899")
+# [L] shp_top-20 bar
+shp_top = shap_summary_v3.head(20).iloc[::-1]
+shp_axes[0].barh(shp_top["feature"], shp_top["mean_abs_shap"], color="#ec4899")
 shp_axes[0].set_xlabel("mean |SHAP value|")
 shp_axes[0].set_title(f"Top-20 features driving v3 ensemble\n({interpret_method})")
 shp_axes[0].tick_params(axis="y", labelsize=9)
@@ -175,7 +175,7 @@ if len(pos_idx) and len(neg_idx):
     shp_ax.set_yticklabels([feature_cols_v3[i] for i in top10], fontsize=9)
     shp_ax.axvline(0, color="#475569", linewidth=0.8)
     shp_ax.set_xlabel("SHAP value  (push toward upgrade →)")
-    shp_ax.set_title("Two contrasting cases (top-10 by |SHAP|)")
+    shp_ax.set_title("Two contrasting cases (shp_top-10 by |SHAP|)")
     shp_ax.legend(fontsize=9)
     shp_ax.grid(alpha=0.3, axis="x")
     shp_ax.invert_yaxis()
@@ -189,5 +189,5 @@ plt.show()
 
 print()
 print(f"interpret_method      : {interpret_method}")
-print(f"shap_summary_v3       : top-20 features dataframe")
+print(f"shap_summary_v3       : shp_top-20 features dataframe")
 print(f"shap_values_v3        : np.ndarray {shap_values_v3.shape}")

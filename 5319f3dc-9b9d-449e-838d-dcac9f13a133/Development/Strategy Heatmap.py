@@ -19,13 +19,13 @@ CHANNELS = ["email", "in_app_modal", "sales_call",
 
 # build flat table (avoid depending on ROI Ranking having run)
 sh_rows = []
-for seg in strategies["segments"]:
-    if not seg.get("strategy") or not seg["strategy"].get("actions"):
+for sh_seg in strategies["segments"]:
+    if not sh_seg.get("strategy") or not sh_seg["strategy"].get("actions"):
         continue
-    for a in seg["strategy"]["actions"]:
+    for a in sh_seg["strategy"]["actions"]:
         sh_rows.append({
-            "segment": seg["label"],
-            "segment_rank": seg["stats"].get("stage_rank", 99),
+            "segment": sh_seg["label"],
+            "segment_rank": sh_seg["stats"].get("stage_rank", 99),
             "channel": a.get("channel", ""),
             "roi_multiple": float(a.get("estimated_roi_multiple", 0)),
             "expected_uplift_pp": float(a.get("expected_uplift_pp", 0)),
@@ -60,21 +60,21 @@ sh_fig, sh_axes = plt.subplots(1, 2, figsize=(16, 8))
 # [L] ROI heatmap
 sh_ax = sh_axes[0]
 data = strategy_heatmap_data.fillna(0).values
-im = sh_ax.imshow(data, aspect="auto", cmap="RdPu",
+sh_im = sh_ax.imshow(data, aspect="auto", cmap="RdPu",
                vmin=0, vmax=max(data.max(), 1))
 sh_ax.set_xticks(range(len(CHANNELS)))
 sh_ax.set_xticklabels(CHANNELS, rotation=30, ha="right")
 sh_ax.set_yticks(range(len(strategy_heatmap_data.index)))
 sh_ax.set_yticklabels(strategy_heatmap_data.index, fontsize=9)
-for i in range(data.shape[0]):
+for sh_i in range(data.shape[0]):
     for j in range(data.shape[1]):
-        v = data[i, j]
+        v = data[sh_i, j]
         if v > 0:
-            sh_ax.text(j, i, f"{v:.0f}",
+            sh_ax.text(j, sh_i, f"{v:.0f}",
                     ha="center", va="center", fontsize=8,
                     color="white" if v > data.max() * 0.6 else "#1e293b")
 sh_ax.set_title("ROI heatmap\n(blank = K2 didn't recommend that channel for this segment)")
-plt.colorbar(im, ax=sh_ax, label="ROI multiple")
+plt.colorbar(sh_im, ax=sh_ax, label="ROI multiple")
 
 # [R] action count per cell
 sh_ax = sh_axes[1]
@@ -91,11 +91,11 @@ sh_ax.set_xticks(range(len(CHANNELS)))
 sh_ax.set_xticklabels(CHANNELS, rotation=30, ha="right")
 sh_ax.set_yticks(range(len(count_data.index)))
 sh_ax.set_yticklabels(count_data.index, fontsize=9)
-for i in range(data2.shape[0]):
+for sh_i in range(data2.shape[0]):
     for j in range(data2.shape[1]):
-        v = int(data2[i, j])
+        v = int(data2[sh_i, j])
         if v > 0:
-            sh_ax.text(j, i, str(v), ha="center", va="center", fontsize=9,
+            sh_ax.text(j, sh_i, str(v), ha="center", va="center", fontsize=9,
                     color="white" if v >= 2 else "#1e293b")
 sh_ax.set_title("Action count per (segment, channel)\n(how often K2 picked each channel)")
 plt.colorbar(im2, ax=sh_ax, label="number of actions")

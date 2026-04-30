@@ -11,7 +11,7 @@ Behavior:
           parses JSON, validates schema. Result is FRESH at run time.
     else:
         → cache fallback. Pulls the last-committed strategies.json from
-          this repo's github raw URL so the canvas stays runnable for
+          this repo'bs_s github raw URL so the canvas stays runnable for
           anyone without an API key (executable-without-errors guarantee).
 
 Outputs in namespace:
@@ -40,12 +40,12 @@ K2_API_KEY = os.environ.get("K2_API_KEY", "")
 K2_API_BASE = os.environ.get("K2_API_BASE", "https://api.k2think.ai/v1")
 K2_MODEL = os.environ.get("K2_MODEL", "MBZUAI-IFM/K2-Think-v2")
 
-REPO_RAW = (
+bs_REPO_RAW = (
     "https://raw.githubusercontent.com/"
     "anmemol-beta/zerve-odsc-ai-datathon/main"
 )
-CACHED_STRATEGIES_URL = f"{REPO_RAW}/web/public/data/strategies.json"
-PLAYBOOK_URL = f"{REPO_RAW}/docs/business_playbook.md"
+CACHED_STRATEGIES_URL = f"{bs_REPO_RAW}/web/public/data/strategies.json"
+PLAYBOOK_URL = f"{bs_REPO_RAW}/docs/business_playbook.md"
 
 
 # ═══ 2. K2 client (inlined; no llm_client.py import needed) ═════════════
@@ -104,11 +104,11 @@ def _k2_json(user_prompt: str, system: str, temperature: float = 0.2) -> dict:
 # ═══ 3. prompt template (inlined from prompts.py) ════════════════════════
 STRATEGIST_SYSTEM = """\
 You are a senior growth strategist at Zerve, a cloud AI notebook platform
-(competitors: Google Colab, Hex, Deepnote). You help Zerve's product and
+(competitors: Google Colab, Hex, Deepnote). You help Zerve'bs_s product and
 marketing teams turn user-segment data into specific, ROI-justified
 campaigns.
 
-Zerve's monetization: free tier with credit-based usage. Users upgrade to
+Zerve'bs_s monetization: free tier with credit-based usage. Users upgrade to
 the paid plan when they hit credit limits, deploy notebooks externally,
 or use the Coder Agent intensively. Most upgrades happen within 7 days
 of signup; ~36% of paying users go inactive within 60 days.
@@ -217,7 +217,7 @@ SEGMENTS = [
     {"id": "model_top5_predicted", "filter": ("score_top_pct", 5.0)},
 ]
 
-STAGE_ORDER = [
+bs_STAGE_ORDER = [
     "0.NoEvent", "1.New", "2.Exploring", "3.Created", "4.UsedAI",
     "5.WroteCode", "6.Integrated", "7.Engaged", "8.Upgraded",
     "9.AtRisk@UsedAI", "9.AtRisk@WroteCode", "9.AtRisk@Integrated",
@@ -259,17 +259,17 @@ def _top_behavioral(feat: pd.DataFrame, mask: pd.Series, k: int = 6) -> list:
     if seg_n == 0:
         return rows
     for col in [c for c in BEHAVIORAL_FEATURES if c in feat.columns]:
-        s = feat[col].fillna(0)
-        seg = s[mask]
+        bs_s = feat[col].fillna(0)
+        seg = bs_s[mask]
         seg_reach = float((seg > 0).sum() / seg_n)
-        base_reach = float((s > 0).sum() / base_n)
+        base_reach = float((bs_s > 0).sum() / base_n)
         if seg_reach == 0 and base_reach == 0:
             continue
         lift = (seg_reach + 1e-3) / (base_reach + 1e-3)
         rows.append({
             "feature": col,
             "seg_median": float(seg.median()),
-            "base_median": float(s.median()),
+            "base_median": float(bs_s.median()),
             "seg_reach": seg_reach, "base_reach": base_reach,
             "reach_lift": lift,
         })
@@ -335,11 +335,11 @@ def _score_stats(feat: pd.DataFrame, mask: pd.Series) -> dict:
 
 
 def _adjacent(label: str) -> str:
-    if label not in STAGE_ORDER:
+    if label not in bs_STAGE_ORDER:
         return "(custom segment)"
-    i = STAGE_ORDER.index(label)
-    prev = STAGE_ORDER[i - 1] if i > 0 else "—"
-    nxt = STAGE_ORDER[i + 1] if i + 1 < len(STAGE_ORDER) else "—"
+    i = bs_STAGE_ORDER.index(label)
+    prev = bs_STAGE_ORDER[i - 1] if i > 0 else "—"
+    nxt = bs_STAGE_ORDER[i + 1] if i + 1 < len(bs_STAGE_ORDER) else "—"
     return f"{prev} → {label} → {nxt}"
 
 
@@ -347,12 +347,12 @@ def _playbook_excerpt(playbook: str, segment_id: str, label: str) -> str:
     if not playbook or len(playbook) < 50:
         return "(playbook unavailable — generate generic recommendations)"
     keywords = [label, segment_id, label.split(".", 1)[-1].replace("@", " ")]
-    paragraphs = re.split(r"\n\s*\n", playbook)
+    paragraphs = re.split(r"\n\bs_s*\n", playbook)
     scored = []
     for p in paragraphs:
-        s = sum(1 for kw in keywords if kw and kw.lower() in p.lower())
-        if s > 0:
-            scored.append((s, len(p), p))
+        bs_s = sum(1 for kw in keywords if kw and kw.lower() in p.lower())
+        if bs_s > 0:
+            scored.append((bs_s, len(p), p))
     scored.sort(key=lambda t: (-t[0], t[1]))
     chunks = []
     used = 0
@@ -396,22 +396,22 @@ def _build_segment_stats(feat: pd.DataFrame, spec: dict) -> dict | None:
         "demographics": _top_demographics(feat, mask),
         "metadata": _metadata_flags(feat, mask),
         "score": _score_stats(feat, mask),
-        "stage_rank": STAGE_ORDER.index(label) if label in STAGE_ORDER else 0,
+        "stage_rank": bs_STAGE_ORDER.index(label) if label in bs_STAGE_ORDER else 0,
         "adjacent": _adjacent(label),
     }
 
 
-def _compact_stats(s: dict) -> dict:
+def _compact_stats(bs_s: dict) -> dict:
     return {
-        "size": s["size"],
-        "pct_of_total": round(s["pct_of_total"], 2),
-        "observed_rate": round(s["observed_rate"], 4),
-        "baseline_rate": round(s["baseline_rate"], 4),
-        "baseline_lift": round(s["baseline_lift"], 2),
-        "median_n_events": s["median_n_events"],
-        "median_distinct_days": s["median_distinct_days"],
-        "median_session_min": round(s["median_session_min"], 1),
-        "median_days_since_last": round(s["median_days_since_last"], 1),
+        "size": bs_s["size"],
+        "pct_of_total": round(bs_s["pct_of_total"], 2),
+        "observed_rate": round(bs_s["observed_rate"], 4),
+        "baseline_rate": round(bs_s["baseline_rate"], 4),
+        "baseline_lift": round(bs_s["baseline_lift"], 2),
+        "median_n_events": bs_s["median_n_events"],
+        "median_distinct_days": bs_s["median_distinct_days"],
+        "median_session_min": round(bs_s["median_session_min"], 1),
+        "median_days_since_last": round(bs_s["median_days_since_last"], 1),
         "top_behavioral": [
             {**r,
              "seg_median": round(r["seg_median"], 2),
@@ -419,14 +419,14 @@ def _compact_stats(s: dict) -> dict:
              "seg_reach": round(r["seg_reach"], 4),
              "base_reach": round(r["base_reach"], 4),
              "reach_lift": round(r["reach_lift"], 2)}
-            for r in s["top_behavioral"]
+            for r in bs_s["top_behavioral"]
         ],
-        "demographics": s["demographics"],
-        "metadata": s["metadata"],
+        "demographics": bs_s["demographics"],
+        "metadata": bs_s["metadata"],
         "score": {k: (round(v, 4) if isinstance(v, float) else v)
-                  for k, v in s["score"].items()},
-        "stage_rank": s["stage_rank"],
-        "adjacent": s["adjacent"],
+                  for k, v in bs_s["score"].items()},
+        "stage_rank": bs_s["stage_rank"],
+        "adjacent": bs_s["adjacent"],
     }
 
 
@@ -514,10 +514,10 @@ else:
 
 # ═══ 7. summary + namespace export ═══════════════════════════════════════
 strategies_segments = strategies["segments"]
-n_with_strategy = sum(1 for s in strategies_segments if s.get("strategy"))
+n_with_strategy = sum(1 for bs_s in strategies_segments if bs_s.get("strategy"))
 print(f"\n=== strategies ready: {strategies['n_segments']} segments "
       f"({n_with_strategy} with K2 strategy) — source: {strategies.get('_source')} ===")
-for s in strategies_segments[:5]:
-    n_actions = len(s["strategy"]["actions"]) if s.get("strategy") else 0
-    print(f"  - {s['label']:<32} → {n_actions} actions")
+for bs_s in strategies_segments[:5]:
+    n_actions = len(bs_s["strategy"]["actions"]) if bs_s.get("strategy") else 0
+    print(f"  - {bs_s['label']:<32} → {n_actions} actions")
 print(f"  ... ({len(strategies_segments)} segments total)")
