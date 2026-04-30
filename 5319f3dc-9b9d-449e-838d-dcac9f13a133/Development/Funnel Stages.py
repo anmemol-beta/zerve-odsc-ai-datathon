@@ -84,15 +84,18 @@ stage_order = [
 # Cumulative reach — monotone decreasing by construction since each mask is
 # AND of the previous. at_risk is broken out as a side-pocket of engaged.
 # Exported as `funnel_reach` so the visualization block reuses it.
-funnel_reach = pd.Series({
-    "1_signed_up":       len(user_features),
+# Plain dict so the value survives Zerve's cross-block serialization unchanged.
+# (When this was a pd.Series Zerve sometimes restored it with a RangeIndex,
+# breaking string-key access in downstream blocks.)
+funnel_reach = {
+    "1_signed_up":       int(len(user_features)),
     "2_active":          int(is_active.sum()),
     "3_created_content": int(is_created.sum()),
     "4_used_ai":         int(is_ai.sum()),
     "5_engaged":         int(is_engaged.sum()),
     "5b_at_risk":        int(is_at_risk.sum()),
     "6_upgraded":        int(user_features["upgraded"].sum()),
-})
+}
 reach = funnel_reach  # alias kept for downstream readability
 total = int(funnel_reach["1_signed_up"])
 
