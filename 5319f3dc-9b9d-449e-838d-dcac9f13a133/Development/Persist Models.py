@@ -89,8 +89,8 @@ except Exception as joblib_err:
 
 # ─── 2. write metadata ───────────────────────────────────────────────────
 def _serialize_metrics(d):
-    return {k: (float(v) if isinstance(v, (int, float, np.floating)) else v)
-            for k, v in d.items() if not callable(v)}
+    return {kk: (float(vv) if isinstance(vv, (int, float, np.floating)) else vv)
+            for kk, vv in d.items() if not callable(vv)}
 
 
 metrics_v3_dict = (
@@ -104,8 +104,8 @@ artifacts_meta = {
     "n_features": len(feature_cols_v3),
     "current_champion": current_champion,
     "champion_summary": {
-        k: (float(v) if isinstance(v, (int, float, np.floating)) else v)
-        for k, v in champion_summary.items() if not isinstance(v, dict)
+        ck: (float(cv) if isinstance(cv, (int, float, np.floating)) else cv)
+        for ck, cv in champion_summary.items() if not isinstance(cv, dict)
     },
     "v3_metrics": metrics_v3_dict,
     "gbm_metrics": _serialize_metrics(gbm_metrics_v3),
