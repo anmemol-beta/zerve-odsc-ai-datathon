@@ -116,7 +116,7 @@ vc_ax.set_xticks(range(0, 24, 3))
 vc_ax.set_xticklabels([f"{h:02d}" for h in range(0, 24, 3)])
 vc_ax.set_xlabel("hour of day (UTC)")
 vc_ax.set_title("Activity heatmap — events by day-of-week × hour")
-vc_fig.colorbar(im, vc_ax=vc_ax, fraction=0.046, pad=0.04, label="events")
+vc_fig.colorbar(im, ax=vc_ax, fraction=0.046, pad=0.04, label="events")
 
 plt.tight_layout()
 plt.show()

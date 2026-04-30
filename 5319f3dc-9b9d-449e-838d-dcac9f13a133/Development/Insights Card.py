@@ -174,7 +174,7 @@ insights_payload = {
 }
 
 # ─── 4. visual card ───────────────────────────────────────────────────────
-ic_fig, ic_ax = plt.subplots(figsize=(12, 8))
+ic_fig, ax = plt.subplots(figsize=(12, 8))
 ic_ax.axis("off")
 ic_ax.text(0.5, 0.97, "Zerve Upgrade Prediction & Funnel — Final Insights",
         fontsize=18, fontweight="bold", ha="center", va="top",

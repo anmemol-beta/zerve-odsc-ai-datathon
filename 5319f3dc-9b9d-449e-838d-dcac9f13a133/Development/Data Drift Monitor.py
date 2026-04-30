@@ -210,7 +210,7 @@ ddm_ax.set_yticks(range(len(MONITORED_FEATURES)))
 ddm_ax.set_yticklabels(MONITORED_FEATURES, fontsize=9)
 ddm_ax.set_title("PSI per (feature × week) vs baseline\n"
              "(red = drifted > 0.25, pink = moderate 0.10-0.25, faded = stable)")
-plt.colorbar(im, ddm_ax=ddm_ax, label="PSI")
+plt.colorbar(im, ax=ddm_ax, label="PSI")
 # annotate cells with PSI value if drifted
 for i, feat in enumerate(MONITORED_FEATURES):
     for j, w in enumerate(all_weeks):

@@ -74,7 +74,7 @@ for i in range(data.shape[0]):
                     ha="center", va="center", fontsize=8,
                     color="white" if v > data.max() * 0.6 else "#1e293b")
 sh_ax.set_title("ROI heatmap\n(blank = K2 didn't recommend that channel for this segment)")
-plt.colorbar(im, sh_ax=sh_ax, label="ROI multiple")
+plt.colorbar(im, ax=sh_ax, label="ROI multiple")
 
 # [R] action count per cell
 sh_ax = sh_axes[1]
@@ -98,7 +98,7 @@ for i in range(data2.shape[0]):
             sh_ax.text(j, i, str(v), ha="center", va="center", fontsize=9,
                     color="white" if v >= 2 else "#1e293b")
 sh_ax.set_title("Action count per (segment, channel)\n(how often K2 picked each channel)")
-plt.colorbar(im2, sh_ax=sh_ax, label="number of actions")
+plt.colorbar(im2, ax=sh_ax, label="number of actions")
 
 plt.suptitle("K2 strategy distribution across 14 segments × 6 channels",
              fontsize=13, y=1.02)
