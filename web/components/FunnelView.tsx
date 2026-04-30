@@ -151,7 +151,7 @@ export default function FunnelView() {
           </div>
           <div className="flex items-center gap-3 text-[10px] text-slate-400">
             <Legend swatch="bg-gradient-to-r from-violet-500 to-pink-500" label="advance" />
-            <Legend swatch="bg-amber-500/60" label="stall" />
+            <Legend swatch="bg-amber-50" label="stall" />
             <Legend swatch="bg-slate-500/40" label="stayed" />
           </div>
         </div>
@@ -234,7 +234,7 @@ export default function FunnelView() {
         </svg>
         <div className="mt-3 text-xs leading-relaxed text-slate-500">
           17,541 users enter at <span className="text-slate-300">Signed up</span>; 323
-          (1.84%) make it to <span className="text-pink-300">Paying</span>. The amber
+          (1.84%) make it to <span className="text-pink-600">Paying</span>. The amber
           ribbons mark cohorts that reach a stage and stall — those are the ones the
           model will single out.
         </div>
@@ -280,7 +280,7 @@ function PostUpgradeDonut() {
       <div className="mt-4 flex items-center justify-center">
         <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
           <g transform={`translate(${SIZE / 2} ${SIZE / 2}) rotate(-90)`}>
-            <circle r={R} fill="none" stroke="rgba(30,41,59,0.5)" strokeWidth={STROKE} />
+            <circle r={R} fill="none" stroke="rgba(241, 245, 249, 0.6)" strokeWidth={STROKE} />
             {segs.map((s) => {
               const frac = s.value / total;
               const dash = `${frac * C} ${C}`;
@@ -308,7 +308,7 @@ function PostUpgradeDonut() {
             y={SIZE / 2 - 4}
             textAnchor="middle"
             fontSize={28}
-            fill="#f1f5f9"
+            fill="#0f172a"
             className="font-bold tabular-nums"
           >
             {total}

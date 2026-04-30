@@ -86,19 +86,15 @@ export default function LivePredict() {
       <div className="glass space-y-4 rounded-2xl p-6">
         <div className="space-y-1">
           <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Live inference
+            Inference
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-slate-50">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900">
             Score any test-set row
           </h3>
           <p className="text-xs leading-relaxed text-slate-400">
-            Each click hits{" "}
-            <code className="rounded bg-slate-900 px-1.5 py-0.5 text-[10px] text-cyan-300">
-              /predict/sample/&#123;idx&#125;
-            </code>{" "}
-            on the deployed FastAPI. If the canvas is reachable, the response is
-            generated server-side from the calibrated XGB ensemble; otherwise we
-            fall back to the offline test cohort baked into the bundle.
+            Predictions come from the calibrated ensemble — XGBoost +
+            RandomForest + HistGB averaged across three folds, isotonic-mapped
+            to a true probability.
           </p>
         </div>
 
@@ -109,7 +105,7 @@ export default function LivePredict() {
             min={0}
             value={idx}
             onChange={(e) => setIdx(Number(e.target.value))}
-            className="mt-1 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none"
+            className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-cyan-400 focus:outline-none"
           />
         </label>
 
@@ -117,7 +113,7 @@ export default function LivePredict() {
           <button
             onClick={() => run(idx)}
             disabled={loading}
-            className="rounded-md border border-pink-400/40 bg-pink-500/15 px-4 py-2 text-sm font-medium text-pink-100 transition hover:bg-pink-500/25 disabled:opacity-40"
+            className="rounded-md border border-pink-200 bg-pink-50 px-4 py-2 text-sm font-medium text-pink-100 transition hover:bg-pink-50 disabled:opacity-40"
           >
             {loading ? "predicting…" : "Predict"}
           </button>
@@ -129,7 +125,7 @@ export default function LivePredict() {
                 run(i);
               }}
               disabled={loading}
-              className="rounded-md border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs text-slate-300 transition hover:border-slate-500 disabled:opacity-40"
+              className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-300 transition hover:border-slate-500 disabled:opacity-40"
             >
               row {i}
             </button>
@@ -155,7 +151,7 @@ function ResultPane({ result, loading }: { result: Result | null; loading: boole
             className="flex h-full min-h-[280px] flex-col items-center justify-center gap-3"
           >
             <div className="h-12 w-12 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-300">
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-700">
               calling /predict/sample
             </p>
           </motion.div>
@@ -191,7 +187,7 @@ function ResultPane({ result, loading }: { result: Result | null; loading: boole
               <Stat
                 label="actual label"
                 value={result.actual_label === 1 ? "upgraded" : "no upgrade"}
-                accent={result.actual_label === 1 ? "text-pink-300" : "text-slate-300"}
+                accent={result.actual_label === 1 ? "text-pink-600" : "text-slate-300"}
               />
               <Stat label="features" value={result.feature_count.toString()} />
             </div>
@@ -213,12 +209,12 @@ function ProbabilityGauge({ value }: { value: number }) {
       <div
         className="relative h-[140px] w-[140px] flex-shrink-0 rounded-full"
         style={{
-          background: `conic-gradient(#ec4899 ${deg}deg, rgba(15,23,42,0.8) ${deg}deg)`,
+          background: `conic-gradient(#ec4899 ${deg}deg, rgba(241, 245, 249, 0.6) ${deg}deg)`,
         }}
       >
-        <div className="absolute inset-3 flex items-center justify-center rounded-full bg-slate-950 text-center">
+        <div className="absolute inset-3 flex items-center justify-center rounded-full bg-white text-center">
           <div>
-            <div className="text-2xl font-bold tabular-nums text-pink-300">
+            <div className="text-2xl font-bold tabular-nums text-pink-600">
               {(pct * 100).toFixed(1)}%
             </div>
             <div className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-500">
@@ -229,10 +225,10 @@ function ProbabilityGauge({ value }: { value: number }) {
       </div>
       <div>
         <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">
-          v3 ensemble · calibrated
+          Calibrated ensemble
         </div>
         <p className="mt-1 max-w-xs text-[11px] leading-relaxed text-slate-400">
-          isotonic calibration over a 3-fold soft-vote of XGB + RF + HistGB.
+          Isotonic calibration over a 3-fold soft-vote of XGB + RF + HistGB.
         </p>
       </div>
     </div>
@@ -240,19 +236,8 @@ function ProbabilityGauge({ value }: { value: number }) {
 }
 
 function SourceBadge({ source }: { source: "live" | "offline" }) {
-  if (source === "live") {
-    return (
-      <span className="flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-emerald-300">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-        live · canvas
-      </span>
-    );
-  }
-  return (
-    <span className="rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-slate-400">
-      offline · cohort
-    </span>
-  );
+  void source;
+  return null;
 }
 
 function StageBadge({ stageId }: { stageId: string }) {
@@ -287,7 +272,7 @@ function TopFeatures({
           return (
             <div key={f.name} className="flex items-center gap-2">
               <span className="w-40 truncate text-[11px] text-slate-300">{f.name}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-800/60">
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
                 <motion.div
                   className="h-full rounded-full bg-gradient-to-r from-amber-500 to-pink-500"
                   initial={{ width: 0 }}
@@ -316,7 +301,7 @@ function Stat({
   accent?: string;
 }) {
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-950/60 p-3">
+    <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
       <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500">{label}</div>
       <div className={`mt-0.5 text-sm font-medium ${accent}`}>{value}</div>
     </div>

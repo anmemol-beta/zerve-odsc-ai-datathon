@@ -43,12 +43,12 @@ export default function Section({
   return (
     <motion.section ref={ref} style={{ opacity, y, scale }}>
       <div className="flex items-baseline gap-3 mb-1.5">
-        <span className="font-mono text-[10px] text-pink-400 tracking-[0.3em]">// {kicker}</span>
+        <span className="font-mono text-[10px] text-cyan-700 tracking-[0.3em]">// {kicker}</span>
       </div>
-      <h2 className="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight">
+      <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
         {title}
       </h2>
-      <p className="text-sm text-slate-400 mt-2.5 max-w-3xl leading-relaxed mb-7">
+      <p className="text-sm text-slate-500 mt-2.5 max-w-3xl leading-relaxed mb-7">
         {subtitle}
       </p>
       {children}

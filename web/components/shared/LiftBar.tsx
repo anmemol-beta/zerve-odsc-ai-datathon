@@ -11,7 +11,7 @@ export default function LiftBar({
 }) {
   const pct = Math.max(0, Math.min(lift / max, 1));
   return (
-    <div className={`h-2 w-full overflow-hidden rounded-full bg-slate-800/80 ${className}`}>
+    <div className={`h-2 w-full overflow-hidden rounded-full bg-slate-100 ${className}`}>
       <div
         className="h-full rounded-full bg-gradient-to-r from-violet-500 to-pink-500"
         style={{ width: `${pct * 100}%` }}

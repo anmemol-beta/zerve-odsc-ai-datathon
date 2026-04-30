@@ -45,7 +45,7 @@ export default function TopKSimulator() {
         <div className={`font-mono text-[10px] uppercase tracking-[0.3em] ${ACCENT.pink.text}`}>
           Top-K simulator ★
         </div>
-        <h3 className="mt-2 text-lg font-semibold text-slate-100">
+        <h3 className="mt-2 text-lg font-semibold text-slate-900">
           If we target top {k.toFixed(1)}% by score…
         </h3>
 
@@ -105,7 +105,7 @@ export default function TopKSimulator() {
           accent={netGain > 0 ? "emerald" : "rose"}
         />
 
-        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 text-[11px] leading-relaxed text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-[11px] leading-relaxed text-slate-500">
           <strong className="text-slate-300">Assumptions:</strong>{" "}
           {fmtUSD(COST_PER_TOUCH)} per user touched (modal+email blend),{" "}
           {fmtUSD(VALUE_PER_UPGRADE)} first-year revenue per upgrade. Tune in code; the
@@ -174,8 +174,8 @@ function PrecisionRecallCurve({
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="mt-5 w-full">
-      <line x1={PAD.left} x2={W - PAD.right} y1={H - PAD.bottom} y2={H - PAD.bottom} stroke="#334155" />
-      <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={H - PAD.bottom} stroke="#334155" />
+      <line x1={PAD.left} x2={W - PAD.right} y1={H - PAD.bottom} y2={H - PAD.bottom} stroke="#cbd5e1" />
+      <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={H - PAD.bottom} stroke="#cbd5e1" />
 
       {/* baseline */}
       <line
@@ -183,7 +183,7 @@ function PrecisionRecallCurve({
         x2={W - PAD.right}
         y1={y(base_rate)}
         y2={y(base_rate)}
-        stroke="#475569"
+        stroke="#94a3b8"
         strokeDasharray="3 3"
       />
       <text x={W - PAD.right} y={y(base_rate) - 4} fontSize={9} fill="#64748b" textAnchor="end">

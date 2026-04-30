@@ -725,7 +725,7 @@ export const FALLBACK_STRATEGIES_SEGMENTS: SegmentEntry[] = [
 ];
 
 // ─── §06 INSIGHTS CARD TEXT (fan-in narrative) ──────────────────────────
-export const FALLBACK_INSIGHTS_TEXT = `INSIGHTS CARD · v3 ENSEMBLE
+export const FALLBACK_INSIGHTS_TEXT = `INSIGHTS CARD
 
 PR-AUC 0.265 (random 0.018, lift 14.4×)
 ROC-AUC 0.812 · Brier 0.0222 · isotonic-calibrated

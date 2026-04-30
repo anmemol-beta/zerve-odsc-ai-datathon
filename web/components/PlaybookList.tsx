@@ -27,7 +27,7 @@ function Header({ total, pct }: { total: number; pct: number }) {
           <div className={`font-mono text-[10px] uppercase tracking-[0.3em] ${ACCENT.pink.text}`}>
             Playbook · 7 ranked actions
           </div>
-          <h3 className="mt-1 text-lg font-semibold text-slate-100">
+          <h3 className="mt-1 text-lg font-semibold text-slate-900">
             {fmtNum(total)} users targeted ({fmtPct(pct, 1)} of base)
           </h3>
         </div>
@@ -67,14 +67,14 @@ function PlaybookRow({
           </span>
           <span className="text-3xl">{action.icon}</span>
           {action.is_top && (
-            <span className="rounded-full bg-pink-500/20 px-2 py-0.5 text-[8px] uppercase tracking-[0.18em] text-pink-300">
+            <span className="rounded-full bg-pink-50 px-2 py-0.5 text-[8px] uppercase tracking-[0.18em] text-pink-600">
               top
             </span>
           )}
         </div>
 
         <div className="flex-1">
-          <h4 className="text-base font-semibold text-slate-100">{action.title}</h4>
+          <h4 className="text-base font-semibold text-slate-900">{action.title}</h4>
           <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
             {action.message}
           </p>
@@ -95,7 +95,7 @@ function PlaybookRow({
               <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500">
                 vs baseline
               </div>
-              <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-800">
+              <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-200">
                 <motion.div
                   className={`h-full ${c.bgStrong}`}
                   initial={{ width: 0 }}

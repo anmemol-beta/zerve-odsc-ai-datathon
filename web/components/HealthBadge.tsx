@@ -18,7 +18,7 @@ export default function HealthBadge() {
   const label = q.isLoading ? "pinging…" : ok ? "live" : "offline";
   const host = API_BASE.replace(/^https?:\/\//, "") || "same-origin";
   return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/60 px-3 py-1 font-mono text-[10px] text-slate-300 backdrop-blur">
+    <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-mono text-[10px] text-slate-300 backdrop-blur">
       <span className={`h-1.5 w-1.5 animate-pulse rounded-full ${dotColor}`} />
       {label}
       <span className="text-slate-600">·</span>

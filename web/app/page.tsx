@@ -14,13 +14,10 @@ import LivePredict from "@/components/LivePredict";
 import PlaybookList from "@/components/PlaybookList";
 import InsightsCard from "@/components/InsightsCard";
 import VersionBadge from "@/components/VersionBadge";
-import ShaderBackgroundLazy from "@/components/ShaderBackgroundLazy";
-import CanvasDAGLazy from "@/components/canvas/CanvasDAGLazy";
 
 export default function Page() {
   return (
     <main className="relative mx-auto max-w-[1400px] space-y-16 px-6 pb-24 lg:px-8">
-      <ShaderBackgroundLazy />
       <Hero />
 
       <div className="-mt-4 flex justify-end">
@@ -95,8 +92,8 @@ export default function Page() {
 
       <Section
         kicker="08"
-        title="Live inference · v3 ensemble"
-        subtitle={`Pick any test-set row index — when canvas is reachable, the request flies through beta-zerve.hub.zerve.cloud and runs predict_proba across all 3 calibration folds. Otherwise we fall back to the offline cohort. Predicted stage and top-3 features come along for the ride.`}
+        title="Inference · scoring any user"
+        subtitle="Pick any test-set row index — the calibrated ensemble produces an upgrade probability, predicted funnel stage, and the three features that drove the score. Same model, same calibration, same probabilities the playbook is sized against."
       >
         <LivePredict />
       </Section>
@@ -111,16 +108,8 @@ export default function Page() {
 
       <Section
         kicker="10"
-        title="The canvas, in your browser"
-        subtitle="Every block here is a real Zerve canvas node. Coordinates, edges, descriptions all read straight from canvas.yaml. Click a block to pull its live matplotlib figure or variable from the deployed FastAPI — same calibrated XGB ensemble, same cohort tables, same K2 strategies that the data scientist sees inside the canvas."
-      >
-        <CanvasDAGLazy />
-      </Section>
-
-      <Section
-        kicker="11"
-        title="Insights card · the fan-in"
-        subtitle="The final canvas node — fan-in from Diagnose v3, SHAP v3, Compare Models, Per-Segment Performance, Build Strategies, and ROI Ranking. The PNG and the text both come from the same canvas variables."
+        title="Insights · the fan-in"
+        subtitle="The final canvas node — fan-in from diagnostics, SHAP, model comparison, per-segment performance, strategies, and ROI ranking. Headline metrics, funnel widths, and playbook priorities collapsed into a single artifact."
       >
         <InsightsCard />
       </Section>
