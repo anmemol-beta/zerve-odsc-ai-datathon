@@ -431,9 +431,8 @@ layers:
     compute_settings:
       compute_environment_type: 1
     description: Final fan-in from Diagnose v3, SHAP v3, Compare Models,
-      Per-Segment Performance, Build Strategies, ROI Ranking. Renders 1-page
-      text + visual insights card. Outputs `insights_card_text`,
-      `insights_payload`.
+      Per-Segment Performance, Build Strategies, ROI Ranking, Champion Selector.
+      Renders 1-page text + visual insights card.
     height: 1000
     id: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
@@ -446,6 +445,131 @@ layers:
     width: 1600
     x: 1700
     y: 5000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 2
+      ephemeral_storage_gib: 20
+      size: small
+    description: PyTorch tabular MLP — deep learning candidate for the AutoML
+      pool. 3-layer net with BatchNorm/GELU/Dropout, class-weighted BCE,
+      cosine LR, isotonic post-hoc calibration. Outputs `mlp_v3` wrapper +
+      `mlp_proba_v3` + `mlp_metrics_v3`.
+    height: 1000
+    id: 6d61ebe2-68f6-4250-9cc0-fe6e9cbb7206
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Train MLP v3
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 5100
+    y: 2500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 2
+      ephemeral_storage_gib: 20
+      size: small
+    description: CatBoost classifier with auto class weights + isotonic CV=3
+      calibration. Categorical-aware GBM rounds out the candidate pool with a
+      different bias from XGBoost. Outputs `catboost_v3`, `catboost_proba_v3`,
+      `catboost_metrics_v3`.
+    height: 1000
+    id: 7808a43a-63e4-49ec-8521-acbf44685678
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Train CatBoost v3
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 5100
+    y: 3000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Defines monthly evaluation cohorts by slicing the test set
+      with user-signup-month. Outputs `rolling_splits` list (each a mask + label)
+      plus `user_signup_month` Series. No retraining — just isolates "does
+      this model still work next month?" from "does this model work overall?".
+    height: 1000
+    id: f47c217b-07d4-4b71-8151-488ce58b039b
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Time-Rolling Splits
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 5100
+    y: 2000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 2
+      ephemeral_storage_gib: 20
+      size: small
+    description: AutoML core. Evaluates every candidate model (xgb_v3, rf_v3,
+      hgb_v3, ensemble_v3, mlp_v3, catboost_v3) on every rolling cohort. Outputs
+      `rolling_metrics_v3` long dataframe (cohort × model → PR-AUC, ROC-AUC,
+      Brier, top-K precision, lift).
+    height: 1000
+    id: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Train Across Time
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 5100
+    y: 3500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Drift detection over rolling cohorts. Per-model stability
+      score (CV-based), OLS slope, alerts (negative_drift, high_variance,
+      wide_range). Outputs `drift_summary` dataframe + `drift_alerts` list.
+    height: 1000
+    id: d06ed74d-198c-40c0-82aa-53842872e958
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Performance Drift
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 5100
+    y: 4000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Production model picker. Weighted score = 0.5 latest cohort
+      PR-AUC + 0.3 cross-cohort mean + 0.2 stability. Outputs
+      `champion_per_cohort`, `win_counts`, `current_champion` str,
+      `champion_summary` dict.
+    height: 1000
+    id: 270985b3-cc22-4754-b630-ac6bd6ca7f90
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Champion Selector
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 5100
+    y: 4500
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   edges:
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
@@ -615,6 +739,78 @@ layers:
     id: c581c866-5369-4005-be43-0588237b8338
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: ff9ffda7-a6c3-40fb-8401-1e120409e03d
+    target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+  # Build Features v3 → Train MLP v3
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 2a610926-e88f-4e6d-b9fd-d333afbd862c
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: ffc35448-b11d-45a1-93d4-8ea9f45d35f7
+    target: 6d61ebe2-68f6-4250-9cc0-fe6e9cbb7206
+  # Build Features v3 → Train CatBoost v3
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 75e51478-ed08-4c12-a88c-55b21fafe067
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: ffc35448-b11d-45a1-93d4-8ea9f45d35f7
+    target: 7808a43a-63e4-49ec-8521-acbf44685678
+  # Example Dataset → Time-Rolling Splits
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: e91630df-38c7-4f53-b8f0-46e5c7209417
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: bbd1b635-38e8-4533-b331-c647f51a44a2
+    target: f47c217b-07d4-4b71-8151-488ce58b039b
+  # Build Features v3 → Time-Rolling Splits
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 2b3b76d4-bc3d-444c-90a4-2007bf71e871
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: ffc35448-b11d-45a1-93d4-8ea9f45d35f7
+    target: f47c217b-07d4-4b71-8151-488ce58b039b
+  # Time-Rolling Splits → Train Across Time
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: b7fe72d5-7896-4db9-afc4-7f5a409c954f
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: f47c217b-07d4-4b71-8151-488ce58b039b
+    target: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
+  # Train Model v3 → Train Across Time
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: df9b8255-bd74-4167-bc68-823d144001eb
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+    target: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
+  # Train MLP v3 → Train Across Time
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: a3d8c918-e289-4ff2-b734-9865de675ed9
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 6d61ebe2-68f6-4250-9cc0-fe6e9cbb7206
+    target: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
+  # Train CatBoost v3 → Train Across Time
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 4c633ddb-1cd2-4378-b857-5f50d724e881
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 7808a43a-63e4-49ec-8521-acbf44685678
+    target: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
+  # Train Across Time → Performance Drift
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 68bfca5d-1a13-4dcb-a578-c1b997abc688
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
+    target: d06ed74d-198c-40c0-82aa-53842872e958
+  # Train Across Time → Champion Selector
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 95aaff3a-5dd5-4acb-9257-043d8a15a705
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
+    target: 270985b3-cc22-4754-b630-ac6bd6ca7f90
+  # Performance Drift → Champion Selector
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 4cf397a8-1552-46f7-9b9d-f5b8a198cee7
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: d06ed74d-198c-40c0-82aa-53842872e958
+    target: 270985b3-cc22-4754-b630-ac6bd6ca7f90
+  # Champion Selector → Insights Card
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 1bfc01a5-9a92-41a5-bf90-5f21cfb3ebf9
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 270985b3-cc22-4754-b630-ac6bd6ca7f90
     target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
   id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Development
