@@ -100,7 +100,7 @@ else:
 
     shap_values_v3 = np.zeros((n_explain, n_feat))
     t0 = time.time()
-    for r in range(N_PERM):
+    for shp_perm_idx in range(N_PERM):
         # one shared permutation per iteration (each explained sample
         # gets the same permutation but a different background sample)
         pi = rng.permutation(n_feat)
@@ -120,10 +120,10 @@ else:
             x_current = x_next
             f_prev = f_next
 
-        if (r + 1) % 5 == 0 or r == 0:
+        if (shp_perm_idx + 1) % 5 == 0 or shp_perm_idx == 0:
             elapsed = time.time() - t0
-            eta = elapsed / (r + 1) * (N_PERM - r - 1)
-            print(f"  perm {r+1:>2}/{N_PERM}  elapsed={elapsed:.1f}s  ETA={eta:.1f}s")
+            eta = elapsed / (shp_perm_idx + 1) * (N_PERM - shp_perm_idx - 1)
+            print(f"  perm {shp_perm_idx+1:>2}/{N_PERM}  elapsed={elapsed:.1f}s  ETA={eta:.1f}s")
 
     shap_values_v3 /= N_PERM
     interpret_method = "sampling_pure_numpy"

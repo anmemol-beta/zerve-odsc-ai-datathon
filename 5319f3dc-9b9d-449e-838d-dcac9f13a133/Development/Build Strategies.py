@@ -71,8 +71,8 @@ def _k2_chat(messages: list, temperature: float = 0.2, retries: int = 2) -> str:
     last_err = None
     for attempt in range(retries + 1):
         try:
-            with urllib.request.urlopen(req, timeout=120) as r:
-                payload = json.loads(r.read())
+            with urllib.request.urlopen(req, timeout=120) as bs_resp:
+                payload = json.loads(bs_resp.read())
             text = payload["choices"][0]["message"]["content"]
             if "</think>" in text:
                 text = text.split("</think>", 1)[1]
@@ -165,11 +165,11 @@ def _build_user_prompt(seg: dict, playbook_excerpt: str) -> str:
     L.append(f"  - session_minutes: {seg['median_session_min']:.1f}")
     L.append("")
     L.append("TOP DISTINGUISHING BEHAVIORS (vs baseline, sorted by reach lift):")
-    for r in seg["top_behavioral"]:
-        L.append(f"  - {r['feature']}: seg_med={_fmt_num(r['seg_median'])}, "
-                 f"base_med={_fmt_num(r['base_median'])}, "
-                 f"reach={r['seg_reach']:.1%} vs {r['base_reach']:.1%} "
-                 f"(lift {r['reach_lift']:.1f}x)")
+    for bs_row in seg["top_behavioral"]:
+        L.append(f"  - {bs_row['feature']}: seg_med={_fmt_num(bs_row['seg_median'])}, "
+                 f"base_med={_fmt_num(bs_row['base_median'])}, "
+                 f"reach={bs_row['seg_reach']:.1%} vs {bs_row['base_reach']:.1%} "
+                 f"(lift {bs_row['reach_lift']:.1f}x)")
     L.append("")
     L.append("DEMOGRAPHIC PROFILE (top values):")
     for k, v in seg["demographics"].items():
@@ -413,13 +413,13 @@ def _compact_stats(s: dict) -> dict:
         "median_session_min": round(s["median_session_min"], 1),
         "median_days_since_last": round(s["median_days_since_last"], 1),
         "top_behavioral": [
-            {**r,
-             "seg_median": round(r["seg_median"], 2),
-             "base_median": round(r["base_median"], 2),
-             "seg_reach": round(r["seg_reach"], 4),
-             "base_reach": round(r["base_reach"], 4),
-             "reach_lift": round(r["reach_lift"], 2)}
-            for r in s["top_behavioral"]
+            {**bs_row,
+             "seg_median": round(bs_row["seg_median"], 2),
+             "base_median": round(bs_row["base_median"], 2),
+             "seg_reach": round(bs_row["seg_reach"], 4),
+             "base_reach": round(bs_row["base_reach"], 4),
+             "reach_lift": round(bs_row["reach_lift"], 2)}
+            for bs_row in s["top_behavioral"]
         ],
         "demographics": s["demographics"],
         "metadata": s["metadata"],
@@ -439,8 +439,8 @@ def _shape_ok(d) -> bool:
 
 
 def _http_get(url: str, timeout: int = 30) -> bytes:
-    with urllib.request.urlopen(url, timeout=timeout) as r:
-        return r.read()
+    with urllib.request.urlopen(url, timeout=timeout) as bs_resp:
+        return bs_resp.read()
 
 
 # ═══ 6. main pipeline ════════════════════════════════════════════════════
