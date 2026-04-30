@@ -14,10 +14,12 @@ import LivePredict from "@/components/LivePredict";
 import PlaybookList from "@/components/PlaybookList";
 import InsightsCard from "@/components/InsightsCard";
 import VersionBadge from "@/components/VersionBadge";
+import ShaderBackgroundLazy from "@/components/ShaderBackgroundLazy";
 
 export default function Page() {
   return (
     <main className="relative mx-auto max-w-[1400px] space-y-16 px-6 pb-24 lg:px-8">
+      <ShaderBackgroundLazy />
       <Hero />
 
       <div className="-mt-4 flex justify-end">

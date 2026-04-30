@@ -32,7 +32,7 @@ export default function FeatureImportance() {
         <div className={`font-mono text-[10px] uppercase tracking-[0.3em] ${ACCENT.violet.text}`}>
           Feature → marketing bridge
         </div>
-        <h3 className="mt-2 text-base font-semibold text-slate-900">
+        <h3 className="mt-2 text-base font-semibold text-slate-100">
           Every signal maps to an action
         </h3>
         <p className="mt-1 text-xs leading-relaxed text-slate-400">
@@ -48,13 +48,13 @@ export default function FeatureImportance() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.35, delay: 0.1 + i * 0.08 }}
-              className="rounded-lg border border-slate-200 bg-slate-50 p-4"
+              className="rounded-lg border border-slate-700 bg-slate-900/60 p-4"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="font-mono text-[10px] tracking-[0.18em] text-amber-700">
+                <span className="font-mono text-[10px] tracking-[0.18em] text-amber-300">
                   #{i + 1} · {s.label}
                 </span>
-                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] tabular-nums text-emerald-700">
+                <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[9px] tabular-nums text-emerald-300">
                   {fmtLift(s.expected_lift)}
                 </span>
               </div>
@@ -95,7 +95,7 @@ function ShapRow({
     <div className="flex items-center gap-3">
       <div className="w-44 truncate text-xs text-slate-200">{item.label}</div>
       <div className="relative flex-1">
-        <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+        <div className="h-3 overflow-hidden rounded-full bg-slate-900">
           <motion.div
             className={`h-full rounded-full ${
               positive
@@ -114,7 +114,7 @@ function ShapRow({
       </div>
       <div
         className={`w-10 text-right text-[10px] uppercase tracking-[0.12em] ${
-          positive ? "text-pink-600" : "text-cyan-700"
+          positive ? "text-pink-300" : "text-cyan-300"
         }`}
       >
         {positive ? "+" : "–"}

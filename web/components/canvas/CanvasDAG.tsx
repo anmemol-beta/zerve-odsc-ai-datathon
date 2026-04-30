@@ -96,7 +96,7 @@ export default function CanvasDAG() {
   );
 
   return (
-    <div className="relative h-[760px] w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50">
+    <div className="relative h-[760px] w-full overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900/60">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -118,14 +118,14 @@ export default function CanvasDAG() {
         />
         <Controls
           showInteractive={false}
-          className="!bg-slate-50 !border-slate-200"
+          className="!bg-slate-900/60 !border-slate-700"
         />
         <MiniMap
           nodeColor={(n) =>
             KIND_COLORS[(n.data as BlockNodeData).kind].ring
           }
           maskColor="rgba(2,6,23,0.7)"
-          className="!bg-slate-50 !border-slate-200"
+          className="!bg-slate-900/60 !border-slate-700"
           pannable
           zoomable
         />
@@ -145,7 +145,7 @@ export default function CanvasDAG() {
 function Legend() {
   const kinds = Object.entries(KIND_COLORS);
   return (
-    <div className="absolute left-4 top-4 z-10 flex flex-wrap gap-2 rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-2 backdrop-blur">
+    <div className="absolute left-4 top-4 z-10 flex flex-wrap gap-2 rounded-lg border border-slate-700/60 bg-slate-900/60 px-3 py-2 backdrop-blur">
       {kinds.map(([k, c]) => (
         <span
           key={k}

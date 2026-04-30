@@ -45,7 +45,7 @@ export default function TopKSimulator() {
         <div className={`font-mono text-[10px] uppercase tracking-[0.3em] ${ACCENT.pink.text}`}>
           Top-K simulator ★
         </div>
-        <h3 className="mt-2 text-lg font-semibold text-slate-900">
+        <h3 className="mt-2 text-lg font-semibold text-slate-100">
           If we target top {k.toFixed(1)}% by score…
         </h3>
 
@@ -105,7 +105,7 @@ export default function TopKSimulator() {
           accent={netGain > 0 ? "emerald" : "rose"}
         />
 
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-[11px] leading-relaxed text-slate-500">
+        <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-4 text-[11px] leading-relaxed text-slate-500">
           <strong className="text-slate-300">Assumptions:</strong>{" "}
           {fmtUSD(COST_PER_TOUCH)} per user touched (modal+email blend),{" "}
           {fmtUSD(VALUE_PER_UPGRADE)} first-year revenue per upgrade. Tune in code; the
@@ -174,8 +174,8 @@ function PrecisionRecallCurve({
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="mt-5 w-full">
-      <line x1={PAD.left} x2={W - PAD.right} y1={H - PAD.bottom} y2={H - PAD.bottom} stroke="#cbd5e1" />
-      <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={H - PAD.bottom} stroke="#cbd5e1" />
+      <line x1={PAD.left} x2={W - PAD.right} y1={H - PAD.bottom} y2={H - PAD.bottom} stroke="#334155" />
+      <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={H - PAD.bottom} stroke="#334155" />
 
       {/* baseline */}
       <line
@@ -183,7 +183,7 @@ function PrecisionRecallCurve({
         x2={W - PAD.right}
         y1={y(base_rate)}
         y2={y(base_rate)}
-        stroke="#94a3b8"
+        stroke="#475569"
         strokeDasharray="3 3"
       />
       <text x={W - PAD.right} y={y(base_rate) - 4} fontSize={9} fill="#64748b" textAnchor="end">
@@ -220,12 +220,12 @@ function PrecisionRecallCurve({
         precision →
       </text>
       {[0, 10, 25, 50].map((t) => (
-        <text key={t} x={x(t)} y={H - PAD.bottom + 14} fontSize={9} fill="#475569" textAnchor="middle">
+        <text key={t} x={x(t)} y={H - PAD.bottom + 14} fontSize={9} fill="#94a3b8" textAnchor="middle">
           {t}%
         </text>
       ))}
       {[0, 0.1, 0.25, 0.5].map((t) => (
-        <text key={t} x={PAD.left - 6} y={y(t) + 3} fontSize={9} fill="#475569" textAnchor="end">
+        <text key={t} x={PAD.left - 6} y={y(t) + 3} fontSize={9} fill="#94a3b8" textAnchor="end">
           {fmtPct(t, 0)}
         </text>
       ))}

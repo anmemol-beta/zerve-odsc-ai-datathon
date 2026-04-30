@@ -34,12 +34,12 @@ type SegmentEntry = {
 };
 
 const CHANNEL_COLOR: Record<string, string> = {
-  email:             "text-cyan-700 border-cyan-200 bg-cyan-50",
-  in_app_modal:      "text-pink-600 border-pink-200 bg-pink-50",
-  sales_call:        "text-amber-700 border-amber-200 bg-amber-50",
-  push_notification: "text-violet-600 border-violet-200 bg-violet-50",
-  ad_retargeting:    "text-emerald-700 border-emerald-200 bg-emerald-50",
-  lifecycle_drip:    "text-blue-700 border-blue-200 bg-blue-50",
+  email:             "text-cyan-300 border-cyan-400/40 bg-cyan-500/15",
+  in_app_modal:      "text-pink-300 border-pink-400/40 bg-pink-500/15",
+  sales_call:        "text-amber-300 border-amber-400/40 bg-amber-500/15",
+  push_notification: "text-violet-300 border-violet-400/40 bg-violet-500/15",
+  ad_retargeting:    "text-emerald-300 border-emerald-400/40 bg-emerald-500/15",
+  lifecycle_drip:    "text-blue-300 border-blue-400/40 bg-blue-500/15",
 };
 
 export default function StrategyGallery() {
@@ -68,8 +68,8 @@ export default function StrategyGallery() {
   return (
     <div className="space-y-3">
       {usingFallback && (
-        <div className="rounded-md border border-amber-500/40 bg-amber-50 px-3 py-2 text-[11px] text-amber-200">
-          live <code className="rounded bg-slate-100 px-1 py-0.5">/strategies/segments</code> unavailable — showing the offline cohort baked into the bundle.
+        <div className="rounded-md border border-amber-500/40 bg-amber-500/15 px-3 py-2 text-[11px] text-amber-200">
+          live <code className="rounded bg-slate-900 px-1 py-0.5">/strategies/segments</code> unavailable — showing the offline cohort baked into the bundle.
         </div>
       )}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
@@ -118,14 +118,14 @@ function SegmentList({
               onClick={() => onSelect(s.segment_id)}
               className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-xs transition ${
                 isSel
-                  ? "bg-pink-50 text-pink-100 ring-1 ring-pink-400/40"
-                  : "text-slate-300 hover:bg-slate-100"
+                  ? "bg-pink-500/15 text-pink-100 ring-1 ring-pink-400/40"
+                  : "text-slate-300 hover:bg-slate-900"
               }`}
             >
               <span className="truncate">{s.label ?? s.segment_id}</span>
               <span
                 className={`flex-shrink-0 rounded-full px-1.5 py-0.5 text-[9px] tabular-nums ${
-                  lift > 1 ? "bg-emerald-50 text-emerald-700" : "bg-slate-200 text-slate-400"
+                  lift > 1 ? "bg-emerald-500/15 text-emerald-300" : "bg-slate-800 text-slate-400"
                 }`}
               >
                 {lift.toFixed(1)}×
@@ -150,7 +150,7 @@ function SegmentDetail({ segment }: { segment: SegmentEntry }) {
           <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
             segment
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-100">
             {segment.label ?? segment.segment_id}
           </h3>
         </div>
@@ -168,7 +168,7 @@ function SegmentDetail({ segment }: { segment: SegmentEntry }) {
             <Stat
               label="lift"
               value={`${stats.baseline_lift.toFixed(1)}×`}
-              accent="text-emerald-700"
+              accent="text-emerald-300"
             />
           )}
         </div>
@@ -193,7 +193,7 @@ function SegmentDetail({ segment }: { segment: SegmentEntry }) {
           <ul className="space-y-1.5 text-xs text-slate-400">
             {risks.map((r, i) => (
               <li key={i} className="flex gap-2">
-                <span className="text-amber-700">·</span>
+                <span className="text-amber-300">·</span>
                 <span>{r}</span>
               </li>
             ))}
@@ -206,17 +206,17 @@ function SegmentDetail({ segment }: { segment: SegmentEntry }) {
 
 function ActionCard({ action }: { action: StrategyAction }) {
   const channelClass = action.channel
-    ? CHANNEL_COLOR[action.channel] ?? "text-slate-300 border-slate-200 bg-slate-100"
-    : "text-slate-300 border-slate-200 bg-slate-100";
+    ? CHANNEL_COLOR[action.channel] ?? "text-slate-300 border-slate-700 bg-slate-900"
+    : "text-slate-300 border-slate-700 bg-slate-900";
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+    <div className="rounded-lg border border-slate-700 bg-slate-900/60 p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-pink-600">
+            <span className="text-[10px] font-mono text-pink-300">
               #{action.rank ?? "?"}
             </span>
-            <span className="font-medium text-slate-900">{action.title ?? "—"}</span>
+            <span className="font-medium text-slate-100">{action.title ?? "—"}</span>
           </div>
           {action.message_en && (
             <p className="mt-1 text-xs leading-relaxed text-slate-400">
@@ -224,7 +224,7 @@ function ActionCard({ action }: { action: StrategyAction }) {
             </p>
           )}
           {action.target_filter && (
-            <code className="mt-2 inline-block rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-cyan-700">
+            <code className="mt-2 inline-block rounded bg-slate-900 px-1.5 py-0.5 text-[10px] text-cyan-300">
               {action.target_filter}
             </code>
           )}
@@ -238,7 +238,7 @@ function ActionCard({ action }: { action: StrategyAction }) {
             </span>
           )}
           {action.estimated_roi_multiple !== undefined && (
-            <span className="text-xs tabular-nums text-emerald-700">
+            <span className="text-xs tabular-nums text-emerald-300">
               {action.estimated_roi_multiple.toFixed(1)}× ROI
             </span>
           )}
@@ -256,7 +256,7 @@ function ActionCard({ action }: { action: StrategyAction }) {
 function Stat({
   label,
   value,
-  accent = "text-slate-900",
+  accent = "text-slate-100",
 }: {
   label: string;
   value: string;

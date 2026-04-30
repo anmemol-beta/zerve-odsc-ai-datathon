@@ -30,7 +30,7 @@ function ModelTable({ rows }: { rows: typeof FALLBACK_MODEL_COMPARISON.rows }) {
   return (
     <div className={`glass overflow-hidden rounded-2xl border ${ACCENT.violet.border}`}>
       <table className="w-full text-sm">
-        <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.18em] text-slate-400">
+        <thead className="bg-slate-900/60 text-[10px] uppercase tracking-[0.18em] text-slate-400">
           <tr>
             <th className="px-4 py-3 text-left">Model</th>
             <th className="px-3 py-3 text-right">PR-AUC</th>
@@ -48,8 +48,8 @@ function ModelTable({ rows }: { rows: typeof FALLBACK_MODEL_COMPARISON.rows }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
-              className={`border-t border-slate-200/50 ${
-                r.is_champion ? "bg-pink-50" : ""
+              className={`border-t border-slate-700/50 ${
+                r.is_champion ? "bg-pink-500/15" : ""
               }`}
             >
               <td className="px-4 py-3">
@@ -66,7 +66,7 @@ function ModelTable({ rows }: { rows: typeof FALLBACK_MODEL_COMPARISON.rows }) {
                     {r.name}
                   </span>
                   {r.is_champion && (
-                    <span className="rounded-full bg-pink-50 px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-pink-600">
+                    <span className="rounded-full bg-pink-500/15 px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-pink-300">
                       champion
                     </span>
                   )}
@@ -86,7 +86,7 @@ function ModelTable({ rows }: { rows: typeof FALLBACK_MODEL_COMPARISON.rows }) {
               </td>
               <td
                 className={`px-3 py-3 text-right font-mono tabular-nums ${
-                  r.is_champion ? "text-pink-600" : "text-slate-300"
+                  r.is_champion ? "text-pink-300" : "text-slate-300"
                 }`}
               >
                 {fmtLift(r.lift_vs_random)}
@@ -118,8 +118,8 @@ function PRCurves({
       </div>
       <svg viewBox={`0 0 ${PR_W} ${PR_H}`} className="mt-3 w-full">
         {/* axes */}
-        <line x1={PAD.left} x2={PR_W - PAD.right} y1={PR_H - PAD.bottom} y2={PR_H - PAD.bottom} stroke="#cbd5e1" />
-        <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={PR_H - PAD.bottom} stroke="#cbd5e1" />
+        <line x1={PAD.left} x2={PR_W - PAD.right} y1={PR_H - PAD.bottom} y2={PR_H - PAD.bottom} stroke="#334155" />
+        <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={PR_H - PAD.bottom} stroke="#334155" />
         {/* grid */}
         {[0.2, 0.4, 0.6, 0.8].map((g) => (
           <line
@@ -128,7 +128,7 @@ function PRCurves({
             x2={PR_W - PAD.right}
             y1={y(g)}
             y2={y(g)}
-            stroke="#e2e8f0"
+            stroke="#1e293b"
             strokeDasharray="2 3"
           />
         ))}
@@ -138,7 +138,7 @@ function PRCurves({
           x2={PR_W - PAD.right}
           y1={y(0.0184)}
           y2={y(0.0184)}
-          stroke="#94a3b8"
+          stroke="#475569"
           strokeDasharray="3 3"
           strokeWidth={1}
         />
@@ -182,12 +182,12 @@ function PRCurves({
           precision →
         </text>
         {[0, 0.5, 1].map((t) => (
-          <text key={`xt${t}`} x={x(t)} y={PR_H - PAD.bottom + 14} fontSize={9} fill="#475569" textAnchor="middle">
+          <text key={`xt${t}`} x={x(t)} y={PR_H - PAD.bottom + 14} fontSize={9} fill="#94a3b8" textAnchor="middle">
             {t.toFixed(1)}
           </text>
         ))}
         {[0.0184, 0.2, 0.4, 0.6].map((t) => (
-          <text key={`yt${t}`} x={PAD.left - 6} y={y(t) + 3} fontSize={9} fill="#475569" textAnchor="end">
+          <text key={`yt${t}`} x={PAD.left - 6} y={y(t) + 3} fontSize={9} fill="#94a3b8" textAnchor="end">
             {t === 0.0184 ? "0.02" : t.toFixed(1)}
           </text>
         ))}
@@ -231,15 +231,15 @@ function CalibrationPlot({
       </div>
       <svg viewBox={`0 0 ${CAL_W} ${CAL_H}`} className="mt-3 w-full">
         {/* axes */}
-        <line x1={PAD.left} x2={CAL_W - PAD.right} y1={CAL_H - PAD.bottom} y2={CAL_H - PAD.bottom} stroke="#cbd5e1" />
-        <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={CAL_H - PAD.bottom} stroke="#cbd5e1" />
+        <line x1={PAD.left} x2={CAL_W - PAD.right} y1={CAL_H - PAD.bottom} y2={CAL_H - PAD.bottom} stroke="#334155" />
+        <line x1={PAD.left} x2={PAD.left} y1={PAD.top} y2={CAL_H - PAD.bottom} stroke="#334155" />
         {/* perfect-cal diagonal */}
         <line
           x1={x(0)}
           x2={x(1)}
           y1={y(0)}
           y2={y(1)}
-          stroke="#94a3b8"
+          stroke="#475569"
           strokeDasharray="3 3"
         />
         <text x={x(1) - 6} y={y(1) + 12} fontSize={9} fill="#64748b" textAnchor="end">
@@ -269,10 +269,10 @@ function CalibrationPlot({
         {/* ticks */}
         {[0, 0.5, 1].map((t) => (
           <g key={t}>
-            <text x={x(t)} y={CAL_H - PAD.bottom + 14} fontSize={9} fill="#475569" textAnchor="middle">
+            <text x={x(t)} y={CAL_H - PAD.bottom + 14} fontSize={9} fill="#94a3b8" textAnchor="middle">
               {t}
             </text>
-            <text x={PAD.left - 6} y={y(t) + 3} fontSize={9} fill="#475569" textAnchor="end">
+            <text x={PAD.left - 6} y={y(t) + 3} fontSize={9} fill="#94a3b8" textAnchor="end">
               {t}
             </text>
           </g>
@@ -293,11 +293,11 @@ function CalibrationPlot({
       </svg>
       <div className="mt-2 flex flex-wrap gap-3 text-[10px] text-slate-400">
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-3 rounded bg-rose-500" />
+          <span className="h-1.5 w-3 rounded bg-rose-500/150" />
           uncalibrated
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-3 rounded bg-emerald-500" />
+          <span className="h-1.5 w-3 rounded bg-emerald-500/150" />
           calibrated (isotonic)
         </span>
       </div>

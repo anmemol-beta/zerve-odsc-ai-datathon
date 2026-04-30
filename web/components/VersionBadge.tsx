@@ -11,9 +11,9 @@ export default function VersionBadge() {
         href={`https://github.com/anmemol-beta/zerve-odsc-ai-datathon/commit/${SHA}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="font-mono text-[10px] tracking-wider text-slate-500 hover:text-pink-600 transition-colors px-2 py-1 rounded-md bg-ink-900/70 backdrop-blur-md border border-slate-200/60"
+        className="font-mono text-[10px] tracking-wider text-slate-500 hover:text-pink-300 transition-colors px-2 py-1 rounded-md bg-ink-900/70 backdrop-blur-md border border-slate-700/60"
       >
-        <span className="text-slate-600">build</span>{" "}
+        <span className="text-slate-400">build</span>{" "}
         <span className="text-slate-300">{SHA}</span>
         <span className="hidden group-hover:inline text-slate-500"> · {TIME_SHORT}</span>
       </a>

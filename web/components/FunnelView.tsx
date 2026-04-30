@@ -151,8 +151,8 @@ export default function FunnelView() {
           </div>
           <div className="flex items-center gap-3 text-[10px] text-slate-400">
             <Legend swatch="bg-gradient-to-r from-violet-500 to-pink-500" label="advance" />
-            <Legend swatch="bg-amber-50" label="stall" />
-            <Legend swatch="bg-slate-500/40" label="stayed" />
+            <Legend swatch="bg-amber-500/15" label="stall" />
+            <Legend swatch="bg-slate-900/600/40" label="stayed" />
           </div>
         </div>
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Funnel sankey">
@@ -234,7 +234,7 @@ export default function FunnelView() {
         </svg>
         <div className="mt-3 text-xs leading-relaxed text-slate-500">
           17,541 users enter at <span className="text-slate-300">Signed up</span>; 323
-          (1.84%) make it to <span className="text-pink-600">Paying</span>. The amber
+          (1.84%) make it to <span className="text-pink-300">Paying</span>. The amber
           ribbons mark cohorts that reach a stage and stall — those are the ones the
           model will single out.
         </div>
@@ -308,7 +308,7 @@ function PostUpgradeDonut() {
             y={SIZE / 2 - 4}
             textAnchor="middle"
             fontSize={28}
-            fill="#0f172a"
+            fill="#f1f5f9"
             className="font-bold tabular-nums"
           >
             {total}

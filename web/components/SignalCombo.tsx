@@ -39,7 +39,7 @@ export default function SignalCombo() {
         <div className={`font-mono text-[10px] uppercase tracking-[0.3em] ${ACCENT.violet.text}`}>
           Toggle the flags
         </div>
-        <h3 className="mt-2 text-base font-semibold text-slate-900">
+        <h3 className="mt-2 text-base font-semibold text-slate-100">
           Live conditional rate
         </h3>
         <p className="mt-1 text-xs leading-relaxed text-slate-400">
@@ -58,9 +58,9 @@ export default function SignalCombo() {
           ))}
         </div>
 
-        <div className="mt-5 rounded-md border border-slate-200 bg-slate-50 p-3 font-mono text-[10px] text-slate-400">
+        <div className="mt-5 rounded-md border border-slate-700 bg-slate-900/60 p-3 font-mono text-[10px] text-slate-400">
           combo key →{" "}
-          <span className="text-pink-600">{key}</span>
+          <span className="text-pink-300">{key}</span>
           <span className="ml-3 text-slate-500">
             (power · agent · onboarding)
           </span>
@@ -91,11 +91,11 @@ export default function SignalCombo() {
         <div className="mt-6">
           <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-slate-500">
             <span>vs all-flags-off baseline ({fmtPct(baseline.rate, 2)})</span>
-            <span className={`font-mono ${lift > 5 ? "text-pink-600" : "text-slate-400"}`}>
+            <span className={`font-mono ${lift > 5 ? "text-pink-300" : "text-slate-400"}`}>
               {lift.toFixed(1)}× lift
             </span>
           </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
             <motion.div
               key={key}
               className="h-full bg-gradient-to-r from-violet-500 to-pink-500"
@@ -142,8 +142,8 @@ function FlagSwitch({
       onClick={() => onChange(!on)}
       className={`group flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition ${
         on
-          ? "border-pink-200 bg-pink-50"
-          : "border-slate-200 bg-slate-50 hover:border-slate-200"
+          ? "border-pink-400/40 bg-pink-500/15"
+          : "border-slate-700 bg-slate-900/60 hover:border-slate-700"
       }`}
     >
       <div>
@@ -154,11 +154,11 @@ function FlagSwitch({
       </div>
       <div
         className={`relative h-5 w-9 rounded-full transition ${
-          on ? "bg-pink-500" : "bg-slate-200"
+          on ? "bg-pink-500/150" : "bg-slate-800"
         }`}
       >
         <motion.div
-          className="absolute top-0.5 h-4 w-4 rounded-full bg-white shadow"
+          className="absolute top-0.5 h-4 w-4 rounded-full bg-slate-950 shadow"
           animate={{ x: on ? 18 : 2 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         />

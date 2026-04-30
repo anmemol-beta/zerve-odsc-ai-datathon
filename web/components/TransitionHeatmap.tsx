@@ -28,7 +28,7 @@ export default function TransitionHeatmap() {
                 x={PAD.left + j * CELL + CELL / 2}
                 y={PAD.top - 16}
                 fontSize={9}
-                fill="#475569"
+                fill="#94a3b8"
                 textAnchor="end"
                 transform={`rotate(-40 ${PAD.left + j * CELL + CELL / 2} ${PAD.top - 16})`}
                 className="font-mono"
@@ -44,7 +44,7 @@ export default function TransitionHeatmap() {
               x={PAD.left - 8}
               y={PAD.top + i * CELL + CELL / 2 + 3}
               fontSize={10}
-              fill="#475569"
+              fill="#94a3b8"
               textAnchor="end"
               className="font-mono"
             >
@@ -103,13 +103,13 @@ export default function TransitionHeatmap() {
             key={`${h.from}>>${h.to}`}
             className={`glass rounded-xl border p-4 ${ACCENT.pink.border}`}
           >
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-pink-600">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-pink-300">
               {STAGE_LABEL[h.from]} → {STAGE_LABEL[h.to]}
             </div>
             <p className="mt-2 text-xs leading-relaxed text-slate-300">{h.note}</p>
           </div>
         ))}
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-[11px] leading-relaxed text-slate-500">
+        <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-4 text-[11px] leading-relaxed text-slate-500">
           Cells are row-stochastic — each row sums to ~100%. Diagonals (slate)
           show stay-in-stage probability; off-diagonals (cyan) show advance.
           Pink-bordered cells are the high-leverage transitions.

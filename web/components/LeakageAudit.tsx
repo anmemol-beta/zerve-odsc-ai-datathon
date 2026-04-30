@@ -49,20 +49,20 @@ export default function LeakageAudit() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.35, delay: i * 0.04 }}
-              className="border-b border-slate-200/60 last:border-b-0"
+              className="border-b border-slate-700/60 last:border-b-0"
             >
               <button
                 onClick={() => setOpenCat(open ? null : cat.id)}
-                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-100"
+                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-900"
               >
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-[10px] tracking-[0.18em] text-emerald-700">
+                  <span className="font-mono text-[10px] tracking-[0.18em] text-emerald-300">
                     {cat.id}
                   </span>
                   <span className="text-sm font-medium text-slate-200">{cat.title}</span>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] tabular-nums text-emerald-700">
-                  <span className="rounded-full bg-emerald-50 px-2 py-0.5">
+                <div className="flex items-center gap-2 text-[10px] tabular-nums text-emerald-300">
+                  <span className="rounded-full bg-emerald-500/15 px-2 py-0.5">
                     {passed}/{cat.checks.length}
                   </span>
                   <span className={`transition-transform ${open ? "rotate-90" : ""}`}>›</span>
@@ -81,11 +81,11 @@ export default function LeakageAudit() {
                       {cat.checks.map((c, j) => (
                         <div
                           key={j}
-                          className="flex items-start gap-3 rounded-md border border-slate-200/60 bg-slate-50 p-3"
+                          className="flex items-start gap-3 rounded-md border border-slate-700/60 bg-slate-900/60 p-3"
                         >
                           <span
                             className={`mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full ${
-                              c.pass ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-600"
+                              c.pass ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300"
                             }`}
                           >
                             {c.pass ? "✓" : "✗"}
@@ -120,7 +120,7 @@ function ObsDaysStory({
       <div className={`font-mono text-[10px] uppercase tracking-[0.3em] ${ACCENT.amber.text}`}>
         ⚠ The obs_days story
       </div>
-      <h4 className="mt-2 text-base font-semibold text-slate-900">
+      <h4 className="mt-2 text-base font-semibold text-slate-100">
         ROC 0.939 from one feature alone — that's the smell
       </h4>
       <div className="mt-4 grid grid-cols-3 gap-3 text-center">
@@ -162,7 +162,7 @@ function Tile({
 }) {
   const c = ACCENT[accent];
   return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+    <div className="rounded-md border border-slate-700 bg-slate-900/60 p-3">
       <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500">{label}</div>
       <div className={`mt-1 text-2xl font-bold tabular-nums ${c.text}`}>{value}</div>
       {detail && <div className="mt-0.5 text-[9px] text-slate-500">{detail}</div>}

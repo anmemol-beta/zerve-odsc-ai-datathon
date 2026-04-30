@@ -17,12 +17,12 @@ export default function InsightsCard() {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_1fr]">
       <div className="glass overflow-hidden rounded-2xl">
-        <div className="border-b border-slate-200 bg-slate-50 px-5 py-3">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-700">
+        <div className="border-b border-slate-700 bg-slate-900/60 px-5 py-3">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
             // insights · headline
           </span>
         </div>
-        <div className="bg-white p-5">
+        <div className="bg-slate-950 p-5">
           <InsightVisual />
         </div>
       </div>
@@ -33,9 +33,9 @@ export default function InsightsCard() {
         </span>
         {insights.isLoading && (
           <div className="space-y-2">
-            <div className="h-3 animate-pulse rounded bg-slate-200" />
-            <div className="h-3 w-5/6 animate-pulse rounded bg-slate-200" />
-            <div className="h-3 w-2/3 animate-pulse rounded bg-slate-200" />
+            <div className="h-3 animate-pulse rounded bg-slate-800" />
+            <div className="h-3 w-5/6 animate-pulse rounded bg-slate-800" />
+            <div className="h-3 w-2/3 animate-pulse rounded bg-slate-800" />
           </div>
         )}
         {!insights.isLoading && (
@@ -55,13 +55,13 @@ function InsightVisual() {
   return (
     <div className="space-y-5">
       <div>
-        <div className="text-[10px] uppercase tracking-[0.3em] text-cyan-700">
+        <div className="text-[10px] uppercase tracking-[0.3em] text-cyan-300">
           ensemble · headline
         </div>
         <div className="mt-2 flex items-baseline gap-3">
-          <span className="text-5xl font-black text-slate-900 tabular-nums">0.265</span>
+          <span className="text-5xl font-black text-slate-100 tabular-nums">0.265</span>
           <span className="text-sm text-slate-500">PR-AUC</span>
-          <span className="text-xs font-medium text-emerald-600">14.4× lift vs random</span>
+          <span className="text-xs font-medium text-emerald-300">14.4× lift vs random</span>
         </div>
       </div>
       <div>
@@ -93,16 +93,16 @@ function InsightVisual() {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
-        <div className="rounded border border-emerald-200 bg-emerald-50 p-2">
-          <div className="text-lg font-bold text-emerald-700">21/21</div>
+        <div className="rounded border border-emerald-400/40 bg-emerald-500/15 p-2">
+          <div className="text-lg font-bold text-emerald-300">21/21</div>
           <div className="text-slate-500">leakage checks</div>
         </div>
-        <div className="rounded border border-cyan-200 bg-cyan-50 p-2">
-          <div className="text-lg font-bold text-cyan-700">169</div>
+        <div className="rounded border border-cyan-400/40 bg-cyan-500/15 p-2">
+          <div className="text-lg font-bold text-cyan-300">169</div>
           <div className="text-slate-500">features</div>
         </div>
-        <div className="rounded border border-blue-200 bg-blue-50 p-2">
-          <div className="text-lg font-bold text-blue-700">1,300</div>
+        <div className="rounded border border-blue-400/40 bg-blue-500/15 p-2">
+          <div className="text-lg font-bold text-blue-300">1,300</div>
           <div className="text-slate-500">playbook target</div>
         </div>
       </div>

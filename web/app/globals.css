@@ -4,34 +4,42 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* Zerve-aligned palette — light theme, navy primary, teal accent.
-   Background ramp follows zerve.ai: pure-white surfaces over an off-white page,
-   with subtle slate borders for separation rather than glow/glass. */
 html, body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #020617;
+  color: #e2e8f0;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-::selection { background-color: rgba(8, 145, 178, 0.18); }
+::selection { background-color: rgba(236, 72, 153, 0.35); }
 
+/* Solid base — ShaderBackground component layers the gradient mesh on top */
 body { position: relative; min-height: 100vh; }
 
-/* `glass` is overloaded across components — we keep the class name but flip its
-   meaning to "white card with subtle border + soft elevation shadow" so the
-   existing component tree picks up the new style without touching every file. */
+@keyframes blobA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(60px, 40px) scale(1.10); }
+  66%      { transform: translate(-30px, 50px) scale(0.92); }
+}
+@keyframes blobB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(-50px, 30px) scale(0.95); }
+  66%      { transform: translate(40px, -40px) scale(1.15); }
+}
+@keyframes blobC {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(80px, -60px) scale(1.08); }
+}
+
 .glass {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.04),
-    0 4px 16px rgba(15, 23, 42, 0.04);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.65), rgba(11, 17, 32, 0.85));
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(51, 65, 85, 0.5);
 }
 
 .gradient-text {
-  /* navy → teal — Zerve brand chord */
-  background: linear-gradient(120deg, #1e3a8a 0%, #0e7490 60%, #06b6d4 100%);
+  background: linear-gradient(120deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -45,27 +53,27 @@ input[type="range"] {
 }
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
-  background: linear-gradient(to right, #1e3a8a, #0e7490, #06b6d4);
+  background: linear-gradient(to right, #ec4899, #8b5cf6, #06b6d4);
   border-radius: 999px;
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   height: 16px; width: 16px;
-  background: #ffffff;
+  background: #f1f5f9;
   border-radius: 50%;
   margin-top: -6px;
-  border: 2px solid #0e7490;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.15);
+  border: 2px solid #ec4899;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.45);
 }
 input[type="range"]::-moz-range-track {
   height: 4px;
-  background: linear-gradient(to right, #1e3a8a, #0e7490, #06b6d4);
+  background: linear-gradient(to right, #ec4899, #8b5cf6, #06b6d4);
   border-radius: 999px;
 }
 input[type="range"]::-moz-range-thumb {
   height: 16px; width: 16px;
-  background: #ffffff;
+  background: #f1f5f9;
   border-radius: 50%;
-  border: 2px solid #0e7490;
+  border: 2px solid #ec4899;
 }

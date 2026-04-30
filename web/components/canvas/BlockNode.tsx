@@ -24,7 +24,7 @@ export default function BlockNode({ data }: { data: BlockNodeData }) {
   return (
     <div
       onClick={() => data.onClick(data.id)}
-      className="group relative w-[300px] cursor-pointer rounded-xl border bg-slate-50 px-4 py-3 text-left text-slate-900 shadow-[0_8px_30px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(99,102,241,0.25)]"
+      className="group relative w-[300px] cursor-pointer rounded-xl border bg-slate-900/60 px-4 py-3 text-left text-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(99,102,241,0.25)]"
       style={{
         borderColor: ringColor,
         background: `linear-gradient(155deg, ${c.bg}, rgba(2,6,23,0.92))`,
@@ -71,10 +71,10 @@ export default function BlockNode({ data }: { data: BlockNodeData }) {
 
 function StatusBadge({ status }: { status: RunStatus }) {
   const map = {
-    idle: { dot: "bg-slate-500", text: "idle", color: "text-slate-400" },
-    running: { dot: "bg-cyan-400 animate-pulse", text: "running", color: "text-cyan-700" },
-    done: { dot: "bg-emerald-400", text: "done", color: "text-emerald-700" },
-    error: { dot: "bg-rose-400", text: "error", color: "text-rose-600" },
+    idle: { dot: "bg-slate-900/600", text: "idle", color: "text-slate-400" },
+    running: { dot: "bg-cyan-400 animate-pulse", text: "running", color: "text-cyan-300" },
+    done: { dot: "bg-emerald-400", text: "done", color: "text-emerald-300" },
+    error: { dot: "bg-rose-400", text: "error", color: "text-rose-300" },
   } as const;
   const m = map[status];
   return (
