@@ -43,7 +43,7 @@ layers:
     height: 1000
     id: 0b8229ca-b06b-44d6-8d55-005762b6a808
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Visualize Cohort
+    name: Cohort Time-travel
     parent_id: null
     properties:
       interactive_execution: true
@@ -100,7 +100,7 @@ layers:
     height: 1000
     id: 2f767f9b-b9f5-45f9-bfc4-4276151b0e0e
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Train Model
+    name: Train Model v1
     parent_id: null
     properties:
       interactive_execution: true
@@ -119,7 +119,7 @@ layers:
     height: 1000
     id: 33b816f9-9012-4d11-9537-c520d4968e12
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Visualize Model
+    name: Visualize v1 Model
     parent_id: null
     properties:
       interactive_execution: true
@@ -219,7 +219,7 @@ layers:
     height: 1000
     id: 507d2b84-d91a-41df-ad63-f4e6e1134220
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Build Features
+    name: Build Features v1
     parent_id: null
     properties:
       interactive_execution: true
@@ -239,7 +239,7 @@ layers:
     height: 1000
     id: 60158a32-c7b5-4329-be45-5acdda206696
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Compare Models
+    name: Pick Champion
     parent_id: null
     properties:
       interactive_execution: true
@@ -281,7 +281,7 @@ layers:
     height: 1000
     id: 6d77cc97-9baf-43b2-b49f-daadf0220749
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Diagnose v3
+    name: Calibration Audit
     parent_id: null
     properties:
       interactive_execution: true
@@ -320,7 +320,7 @@ layers:
     height: 1000
     id: 74b326c2-b2ce-43f2-ada9-088406566be2
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Funnel Stages
+    name: Funnel v1
     parent_id: null
     properties:
       interactive_execution: true
