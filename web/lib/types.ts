@@ -75,6 +75,11 @@ export type CohortPoint = {
   at_risk_pct: number;
   upgraded_pct: number;
   cum_n: number;
+  cum_active: number;
+  cum_created: number;
+  cum_ai: number;
+  cum_engaged: number;
+  cum_at_risk: number;
   cum_upgraded: number;
   cum_upgrade_rate: number;
 };

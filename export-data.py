@@ -261,26 +261,36 @@ cohort_df = pd.DataFrame({
 
 cohort_groups = cohort_df.groupby("cohort", observed=True)
 cohort_evolution = []
-running_signed_up = 0
-running_upgraded = 0
+running = {"n": 0, "active": 0, "created": 0, "ai": 0, "engaged": 0, "at_risk": 0, "upgraded": 0}
 for week, group in cohort_groups:
     if pd.isna(week):
         continue
-    n = int(len(group))
-    running_signed_up += n
-    running_upgraded += int(group["upgraded"].sum())
+    running["n"]        += int(len(group))
+    running["active"]   += int(group["active"].sum())
+    running["created"]  += int(group["created"].sum())
+    running["ai"]       += int(group["ai"].sum())
+    running["engaged"]  += int(group["engaged"].sum())
+    running["at_risk"]  += int(group["at_risk"].sum())
+    running["upgraded"] += int(group["upgraded"].sum())
     cohort_evolution.append({
         "week": pd.Timestamp(week).strftime("%Y-%m-%d"),
-        "n": n,
+        "n":            int(len(group)),
+        # Per-cohort stage reach %
         "active_pct":   round(float(group["active"].mean())   * 100, 2),
         "created_pct":  round(float(group["created"].mean())  * 100, 2),
         "ai_pct":       round(float(group["ai"].mean())       * 100, 2),
         "engaged_pct":  round(float(group["engaged"].mean())  * 100, 2),
         "at_risk_pct":  round(float(group["at_risk"].mean())  * 100, 2),
         "upgraded_pct": round(float(group["upgraded"].mean()) * 100, 2),
-        "cum_n":        running_signed_up,
-        "cum_upgraded": running_upgraded,
-        "cum_upgrade_rate": round(100 * running_upgraded / max(1, running_signed_up), 2),
+        # Cumulative through this week (as-of snapshot)
+        "cum_n":         running["n"],
+        "cum_active":    running["active"],
+        "cum_created":   running["created"],
+        "cum_ai":        running["ai"],
+        "cum_engaged":   running["engaged"],
+        "cum_at_risk":   running["at_risk"],
+        "cum_upgraded":  running["upgraded"],
+        "cum_upgrade_rate": round(100 * running["upgraded"] / max(1, running["n"]), 2),
     })
 
 # Sort chronologically (groupby on Timestamp index already sorts but be explicit)

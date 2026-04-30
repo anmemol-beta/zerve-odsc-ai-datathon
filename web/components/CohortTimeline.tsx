@@ -30,35 +30,61 @@ function fmtWeek(iso: string): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit", timeZone: "UTC" });
 }
 
-function pct(p: number): string {
-  return `${p.toFixed(1)}%`;
+function fmtNum(n: number): string {
+  return Math.round(n).toLocaleString();
+}
+
+// Animated counter — interpolates the number on prop change
+function NumberTicker({ value, accent }: { value: number; accent: string }) {
+  const [shown, setShown] = useState(value);
+  useEffect(() => {
+    const start = shown;
+    const t0 = performance.now();
+    const dur = 360;
+    let raf = 0;
+    const step = (now: number) => {
+      const k = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - k, 3);
+      setShown(start + (value - start) * eased);
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return <span className={`tabular-nums ${accent}`}>{fmtNum(shown)}</span>;
 }
 
 export default function CohortTimeline({ data }: { data: CohortEvolution }) {
   const cohorts = data.cohorts;
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
-  const [speed, setSpeed] = useState(1); // 0.5x / 1x / 2x
+  const [speed, setSpeed] = useState(1);
   const timer = useRef<number | null>(null);
 
-  // Clamp idx if data length shrinks
   useEffect(() => {
     if (idx >= cohorts.length) setIdx(0);
   }, [cohorts.length, idx]);
 
-  // Auto-advance
   useEffect(() => {
     if (!playing) return;
     const ms = 1300 / speed;
     timer.current = window.setInterval(() => {
-      setIdx((i) => (i + 1) % cohorts.length);
+      setIdx((i) => {
+        const next = i + 1;
+        if (next >= cohorts.length) {
+          // loop back to start
+          return 0;
+        }
+        return next;
+      });
     }, ms);
     return () => { if (timer.current) window.clearInterval(timer.current); };
   }, [playing, speed, cohorts.length]);
 
   const cur = cohorts[idx] ?? cohorts[0];
 
-  // Pre-compute extents for line chart
+  // Trend chart extents
   const { maxUpgrade, maxAtRisk, maxN } = useMemo(() => {
     let mU = 0, mR = 0, mN = 0;
     for (const c of cohorts) {
@@ -69,55 +95,37 @@ export default function CohortTimeline({ data }: { data: CohortEvolution }) {
     return { maxUpgrade: Math.max(mU, 1), maxAtRisk: Math.max(mR, 1), maxN: Math.max(mN, 1) };
   }, [cohorts]);
 
-  const chartW = 800;
-  const chartH = 140;
+  const chartW = 800, chartH = 140;
   const padL = 36, padR = 14, padT = 10, padB = 22;
   const innerW = chartW - padL - padR;
   const innerH = chartH - padT - padB;
   const xFor = (i: number) => padL + (cohorts.length <= 1 ? 0 : (i / (cohorts.length - 1)) * innerW);
   const yForUpgrade = (p: number) => padT + innerH - (p / maxUpgrade) * innerH;
   const yForAtRisk  = (p: number) => padT + innerH - (p / maxAtRisk)  * innerH;
-  const yForN       = (n: number) => padT + innerH - (n / maxN)       * innerH;
 
   const upgradePath = cohorts.map((c, i) => `${i === 0 ? "M" : "L"} ${xFor(i)} ${yForUpgrade(c.upgraded_pct)}`).join(" ");
   const atRiskPath  = cohorts.map((c, i) => `${i === 0 ? "M" : "L"} ${xFor(i)} ${yForAtRisk(c.at_risk_pct)}`).join(" ");
   const cumPath     = cohorts.map((c, i) => `${i === 0 ? "M" : "L"} ${xFor(i)} ${yForUpgrade(c.cum_upgrade_rate)}`).join(" ");
 
+  // Reveal-up-to-current overlay path (animated growth)
+  const visibleUpgrade = cohorts.slice(0, idx + 1).map((c, i) => `${i === 0 ? "M" : "L"} ${xFor(i)} ${yForUpgrade(c.upgraded_pct)}`).join(" ");
+
+  // Cumulative funnel composition (as-of this week)
+  const cumStage = (k: Stage) => (cur as any)[`cum_${k}`] as number;
+  const cumPct = (k: Stage) => (cur ? (cumStage(k) / Math.max(1, cur.cum_n)) * 100 : 0);
+
+  // Progress bar fill (0 → 100% over the timeline)
+  const progress = cohorts.length <= 1 ? 0 : idx / (cohorts.length - 1);
+
   return (
     <div className="space-y-5">
-      {/* Cohort headline + stage composition */}
-      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-5">
-        <div className="glass rounded-2xl p-5 flex flex-col justify-between min-h-[200px]">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono">
-            cohort signed up week
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={cur?.week}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
-              className="space-y-1"
-            >
-              <div className="text-3xl font-black tabular-nums text-slate-50">
-                {cur ? fmtWeek(cur.week) : "—"}
-              </div>
-              <div className="text-sm text-slate-400">
-                <span className="font-mono text-slate-200">{cur?.n.toLocaleString() ?? 0}</span> users joined
-              </div>
-              <div className="text-xs text-slate-500 mt-2">
-                Cumulative through this week:{" "}
-                <span className="text-pink-300 font-mono">{cur?.cum_upgrade_rate.toFixed(2)}%</span> upgrade rate
-                {" "}({cur?.cum_upgraded.toLocaleString() ?? 0} of {cur?.cum_n.toLocaleString() ?? 0})
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="flex items-center gap-2 mt-3">
+      {/* ── Time scrubber + playhead controls (sticky-ish header for the section) */}
+      <div className="glass rounded-2xl p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setPlaying((p) => !p)}
-              className="text-xs font-mono px-3 py-1.5 rounded-md bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/40 text-pink-200 transition"
+              className="text-xs font-mono px-3 py-1.5 rounded-md bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/40 text-pink-200 transition shrink-0"
             >
               {playing ? "❚❚ pause" : "▶ play"}
             </button>
@@ -131,12 +139,87 @@ export default function CohortTimeline({ data }: { data: CohortEvolution }) {
               <option value={2}>2×</option>
               <option value={4}>4×</option>
             </select>
+            <div className="text-[10px] uppercase tracking-[0.22em] font-mono text-slate-500">
+              week {idx + 1} / {cohorts.length}
+            </div>
+          </div>
+
+          {/* Scrubber */}
+          <div className="flex-1 relative">
+            <input
+              type="range"
+              min={0}
+              max={cohorts.length - 1}
+              step={1}
+              value={idx}
+              onChange={(e) => { setPlaying(false); setIdx(parseInt(e.target.value)); }}
+              className="w-full"
+            />
+            <div className="flex justify-between mt-1 text-[10px] font-mono text-slate-500">
+              <span>{fmtWeek(cohorts[0]?.week ?? "")}</span>
+              <span className="text-pink-300">{cur ? fmtWeek(cur.week) : ""}</span>
+              <span>{fmtWeek(cohorts[cohorts.length - 1]?.week ?? "")}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Skinny progress fill */}
+        <div className="h-1 mt-2 rounded-full bg-slate-800/60 overflow-hidden">
+          <motion.div
+            animate={{ width: `${progress * 100}%` }}
+            transition={{ duration: 0.25, ease: "linear" }}
+            className="h-full bg-gradient-to-r from-pink-500 via-violet-500 to-cyan-500"
+          />
+        </div>
+      </div>
+
+      {/* ── Headline cards (cumulative as-of this week) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard label="Cumulative users"  value={cur?.cum_n ?? 0}        accent="text-slate-50"  glow="rgba(139,92,246,0.18)" />
+        <StatCard label="Reached engaged"   value={cur?.cum_engaged ?? 0}  accent="text-emerald-200" glow="rgba(16,185,129,0.18)" />
+        <StatCard label="Upgraded"          value={cur?.cum_upgraded ?? 0} accent="text-pink-200" glow="rgba(236,72,153,0.22)" />
+        <StatCard label="At risk (cum)"     value={cur?.cum_at_risk ?? 0}  accent="text-amber-200" glow="rgba(245,158,11,0.20)" warn />
+      </div>
+
+      {/* ── Two-up: cumulative funnel (left) + this-week's cohort breakdown (right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="glass rounded-2xl p-5">
+          <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-3">
+            cumulative funnel — as of {cur ? fmtWeek(cur.week) : "—"}
+          </div>
+          <div className="space-y-2">
+            {STAGES.map((s) => {
+              const v = cumPct(s);
+              return (
+                <div key={s} className="flex items-center gap-3">
+                  <div className="w-20 text-xs text-slate-400 font-mono">{STAGE_LABEL[s]}</div>
+                  <div className="flex-1 h-5 bg-slate-800/60 rounded-full overflow-hidden">
+                    <motion.div
+                      animate={{ width: `${Math.min(100, v)}%` }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ backgroundColor: STAGE_COLOR[s], boxShadow: `0 0 10px ${STAGE_COLOR[s]}88` }}
+                      className="h-full rounded-full"
+                    />
+                  </div>
+                  <div className="w-16 text-right text-xs font-mono tabular-nums text-slate-300">
+                    {v.toFixed(1)}%
+                  </div>
+                  <div className="w-14 text-right text-xs font-mono tabular-nums text-slate-500">
+                    <NumberTicker value={cumStage(s)} accent="text-slate-500" />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
         <div className="glass rounded-2xl p-5">
           <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-3">
-            stage reach for this cohort (% of joiners)
+            this week's cohort —{" "}
+            <span className="text-pink-300 tabular-nums">
+              <NumberTicker value={cur?.n ?? 0} accent="text-pink-300" /> users
+            </span>{" "}
+            joined
           </div>
           <div className="space-y-2">
             {STAGES.map((s) => {
@@ -153,7 +236,7 @@ export default function CohortTimeline({ data }: { data: CohortEvolution }) {
                     />
                   </div>
                   <div className="w-14 text-right text-xs font-mono tabular-nums text-slate-200">
-                    {pct(value)}
+                    {value.toFixed(1)}%
                   </div>
                 </div>
               );
@@ -162,7 +245,7 @@ export default function CohortTimeline({ data }: { data: CohortEvolution }) {
         </div>
       </div>
 
-      {/* Trend line chart with playhead */}
+      {/* ── Trend line with playhead */}
       <div className="glass rounded-2xl p-5">
         <div className="flex items-center justify-between mb-2">
           <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono">
@@ -175,19 +258,8 @@ export default function CohortTimeline({ data }: { data: CohortEvolution }) {
           </div>
         </div>
 
-        <svg
-          viewBox={`0 0 ${chartW} ${chartH}`}
-          className="w-full h-[140px] cursor-pointer"
-          onMouseDown={(e) => {
-            const rect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
-            const xPx = ((e.clientX - rect.left) / rect.width) * chartW;
-            const i = Math.round(((xPx - padL) / innerW) * (cohorts.length - 1));
-            const clamped = Math.max(0, Math.min(cohorts.length - 1, i));
-            setPlaying(false);
-            setIdx(clamped);
-          }}
-        >
-          {/* Y grid */}
+        <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-[140px]">
+          {/* grid */}
           {[0.25, 0.5, 0.75, 1].map((g) => (
             <line key={g}
               x1={padL} x2={chartW - padR}
@@ -196,63 +268,80 @@ export default function CohortTimeline({ data }: { data: CohortEvolution }) {
             />
           ))}
 
-          {/* Cumulative upgrade rate (dim slate, baseline reference) */}
-          <path d={cumPath} fill="none" stroke="#94a3b8" strokeWidth={1.4} opacity={0.8} />
+          {/* faint full-line backgrounds */}
+          <path d={cumPath} fill="none" stroke="#94a3b8" strokeWidth={1.4} opacity={0.35} />
+          <path d={upgradePath} fill="none" stroke="#ec4899" strokeWidth={1.6} opacity={0.18} />
+          <path d={atRiskPath} fill="none" stroke="#f59e0b" strokeWidth={1.4} opacity={0.18} />
 
-          {/* Per-cohort upgrade % (pink) */}
-          <path d={upgradePath} fill="none" stroke="#ec4899" strokeWidth={2.0} />
+          {/* foreground "drawn so far" segment */}
+          <path d={visibleUpgrade} fill="none" stroke="#ec4899" strokeWidth={2.2} />
 
-          {/* Per-cohort at_risk % (amber) */}
-          <path d={atRiskPath} fill="none" stroke="#f59e0b" strokeWidth={1.6} opacity={0.8} />
-
-          {/* Cohort dots, scaled by cohort size */}
-          {cohorts.map((c, i) => (
+          {/* dots, only up to current */}
+          {cohorts.slice(0, idx + 1).map((c, i) => (
             <circle key={c.week}
               cx={xFor(i)} cy={yForUpgrade(c.upgraded_pct)}
               r={Math.max(1.5, 4 * (c.n / maxN))}
-              fill="#ec4899" opacity={i === idx ? 1 : 0.6}
+              fill="#ec4899" opacity={i === idx ? 1 : 0.55}
             />
           ))}
 
-          {/* Playhead */}
+          {/* playhead */}
           {cur && (
             <g>
-              <line
-                x1={xFor(idx)} x2={xFor(idx)}
-                y1={padT} y2={padT + innerH}
+              <line x1={xFor(idx)} x2={xFor(idx)} y1={padT} y2={padT + innerH}
                 stroke="#f1f5f9" strokeWidth={1.2} strokeDasharray="3 3" opacity={0.6}
               />
               <circle cx={xFor(idx)} cy={yForUpgrade(cur.upgraded_pct)} r={6} fill="none" stroke="#f1f5f9" strokeWidth={1.5} />
             </g>
           )}
 
-          {/* Y-axis tick labels (upgrade % scale) */}
+          {/* y ticks */}
           {[0, 0.5, 1].map((g) => (
-            <text key={g}
-              x={padL - 4}
-              y={padT + innerH * (1 - g) + 3}
+            <text key={g} x={padL - 4} y={padT + innerH * (1 - g) + 3}
               fontSize={9} fill="#64748b" textAnchor="end" fontFamily="monospace"
             >
               {(g * maxUpgrade).toFixed(1)}%
             </text>
           ))}
-
-          {/* X-axis: first/last cohort labels */}
-          <text x={padL} y={chartH - 4} fontSize={9} fill="#64748b" fontFamily="monospace">
-            {fmtWeek(cohorts[0]?.week ?? "2025-01-01")}
-          </text>
-          <text x={chartW - padR} y={chartH - 4} fontSize={9} fill="#64748b" fontFamily="monospace" textAnchor="end">
-            {fmtWeek(cohorts[cohorts.length - 1]?.week ?? "2025-01-01")}
-          </text>
         </svg>
 
-        <div className="text-[11px] text-slate-500 mt-2 leading-snug">
-          <strong className="text-slate-300">Decision lens:</strong>{" "}
-          if the per-cohort <span className="text-pink-300">pink</span> line bends UP relative to the{" "}
-          <span className="text-slate-300">grey cumulative</span> line, recent cohorts are upgrading at a higher rate than the all-time baseline —
-          i.e. the funnel is genuinely improving, not just accumulating eligible users.
-          The <span className="text-amber-300">amber</span> line is at-risk %; spikes precede churn waves.
-          Click anywhere on the chart to scrub; the bars above re-render the funnel for that week.
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={cur?.week}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-[11px] text-slate-400 mt-2 leading-snug"
+          >
+            <strong className="text-slate-200">{cur ? fmtWeek(cur.week) : ""}</strong> ·
+            this cohort upgrade <span className="text-pink-300 font-mono">{cur?.upgraded_pct.toFixed(2)}%</span> ·
+            cumulative upgrade <span className="text-slate-300 font-mono">{cur?.cum_upgrade_rate.toFixed(2)}%</span> ·
+            at-risk <span className="text-amber-300 font-mono">{cur?.at_risk_pct.toFixed(1)}%</span>
+            {idx > 0 && cur && cohorts[0] && cur.upgraded_pct > cohorts[0].upgraded_pct && (
+              <span className="ml-2 text-emerald-300">↑ vs cohort 1</span>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ label, value, accent, glow, warn }: { label: string; value: number; accent: string; glow: string; warn?: boolean }) {
+  return (
+    <div className="relative rounded-2xl overflow-hidden p-px">
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/30 via-violet-500/5 to-cyan-500/15 opacity-70" />
+      <div className="relative rounded-[15px] bg-ink-900/85 backdrop-blur-md p-4">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: `radial-gradient(220px circle at 60% 0%, ${glow}, transparent 70%)` }}
+        />
+        <div className="relative">
+          <div className="text-[9px] uppercase tracking-[0.22em] text-slate-400 font-mono">{label}</div>
+          <div className={`mt-1.5 text-3xl font-black tracking-[-0.04em] ${warn ? "text-amber-300" : accent}`}>
+            <NumberTicker value={value} accent="" />
+          </div>
         </div>
       </div>
     </div>

@@ -59,8 +59,8 @@ export default async function Page() {
 
       <Section
         kicker="06"
-        title="Cohort evolution over time"
-        subtitle="Each frame is a single weekly signup cohort. Watch how stage-reach % changes across cohorts — auto-plays from Sept 2025 to Apr 2026, scrub the chart to jump to any week. Use it to tell whether the recent upgrade spike comes from product improvements or just accumulated eligibility."
+        title="Time-travel mode"
+        subtitle="Press play and the entire panel becomes a single point-in-time snapshot of the product — cumulative funnel composition, this week's signup cohort, and the upgrade-rate trend curve all advance together from Sep 2025 to Apr 2026. Scrub to any week to compare the platform 'as of' that date."
       >
         <CohortTimeline data={cohortEvolution} />
       </Section>
