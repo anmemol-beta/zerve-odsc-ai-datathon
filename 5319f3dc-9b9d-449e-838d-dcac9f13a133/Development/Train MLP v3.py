@@ -83,13 +83,12 @@ if TORCH_OK:
     X_val_s = scaler.transform(X_val)
     X_test_s = scaler.transform(X_test_a)
 
-    # 2. model
+    # 2. model — slimmed for fast training (was 256-128-64; now 128-64)
     class TabularMLP(nn.Module):
         def __init__(self, n_in: int, p_drop: float = 0.3):
             super().__init__()
             self.net = nn.Sequential(
-                nn.Linear(n_in, 256), nn.BatchNorm1d(256), nn.GELU(), nn.Dropout(p_drop),
-                nn.Linear(256, 128),  nn.BatchNorm1d(128), nn.GELU(), nn.Dropout(p_drop),
+                nn.Linear(n_in, 128), nn.BatchNorm1d(128), nn.GELU(), nn.Dropout(p_drop),
                 nn.Linear(128, 64),   nn.BatchNorm1d(64),  nn.GELU(), nn.Dropout(p_drop),
                 nn.Linear(64, 1),
             )
@@ -104,8 +103,8 @@ if TORCH_OK:
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([pos_weight], device=device))
     optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
 
-    EPOCHS = 30
-    BATCH = 512
+    EPOCHS = 12
+    BATCH = 1024
     train_ds = TensorDataset(torch.from_numpy(X_fit_s), torch.from_numpy(y_fit))
     train_dl = DataLoader(train_ds, batch_size=BATCH, shuffle=True, drop_last=False)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS)

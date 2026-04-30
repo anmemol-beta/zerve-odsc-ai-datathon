@@ -38,18 +38,18 @@ print(f"[v3] scale_pos_weight = {_pos_w_v3:.1f}")
 
 base_models_v3 = {
     "xgb_v3": xgb.XGBClassifier(
-        objective="binary:logistic", n_estimators=300,
-        learning_rate=0.05, max_depth=5, min_child_weight=10,
+        objective="binary:logistic", n_estimators=150,
+        learning_rate=0.08, max_depth=5, min_child_weight=10,
         subsample=0.8, colsample_bytree=0.7,
         scale_pos_weight=_pos_w_v3, eval_metric="aucpr",
         n_jobs=-1, random_state=42, verbosity=0,
     ),
     "rf_v3": RandomForestClassifier(
-        n_estimators=300, max_depth=12, min_samples_leaf=20,
+        n_estimators=150, max_depth=10, min_samples_leaf=20,
         class_weight="balanced", n_jobs=-1, random_state=42,
     ),
     "hgb_v3": HistGradientBoostingClassifier(
-        max_iter=300, max_depth=6, learning_rate=0.05,
+        max_iter=150, max_depth=6, learning_rate=0.08,
         min_samples_leaf=20, l2_regularization=1.0,
         class_weight="balanced", random_state=42,
     ),
@@ -57,9 +57,9 @@ base_models_v3 = {
 
 models_v3 = {}
 preds_v3 = {}
-print("[v3] Fitting calibrated base models (isotonic, cv=3)...")
+print("[v3] Fitting calibrated base models (isotonic, cv=2)...")
 for _name, _m in base_models_v3.items():
-    _cc = CalibratedClassifierCV(_m, method="isotonic", cv=3, n_jobs=1)
+    _cc = CalibratedClassifierCV(_m, method="isotonic", cv=2, n_jobs=1)
     _cc.fit(X_v3_train, y_v3_train)
     _p = _cc.predict_proba(X_v3_test)[:, 1]
     models_v3[_name] = _cc

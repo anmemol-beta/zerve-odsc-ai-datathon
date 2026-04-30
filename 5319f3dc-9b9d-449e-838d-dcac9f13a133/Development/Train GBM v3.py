@@ -36,9 +36,9 @@ y_test_arr = np.asarray(y_v3_test).astype(int)
 print("[GBM v3] backend=sklearn_gbm  "
       "(GradientBoostingClassifier — classic CART-tree GBM)")
 gbm_base = GradientBoostingClassifier(
-    n_estimators=300,
-    max_depth=5,
-    learning_rate=0.05,
+    n_estimators=120,
+    max_depth=4,
+    learning_rate=0.08,
     subsample=0.85,
     random_state=42,
 )
@@ -46,8 +46,8 @@ gbm_backend = "sklearn_gbm"
 
 
 # ─── calibrate, fit, predict ─────────────────────────────────────────────
-print(f"[GBM v3] calibrating with isotonic CV=3...")
-gbm_v3 = CalibratedClassifierCV(gbm_base, method="isotonic", cv=3)
+print(f"[GBM v3] calibrating with isotonic CV=2...")
+gbm_v3 = CalibratedClassifierCV(gbm_base, method="isotonic", cv=2)
 gbm_v3.fit(X_train_arr, y_train_arr)
 
 gbm_proba_v3 = gbm_v3.predict_proba(X_test_arr)[:, 1]
