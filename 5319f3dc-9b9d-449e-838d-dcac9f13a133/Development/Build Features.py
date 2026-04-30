@@ -49,22 +49,58 @@ RANDOM_STATE = 42
 DATA_END = events["timestamp"].max()
 
 LEAKAGE_EVENTS = {
+    # Direct upgrade/downgrade
     "subscription_upgraded",
-    "clicked_upgrade",
+    "subscription_downgraded",
+    "subscription_cancelled",
     "upgrade_subscription",
+    "downgrade_subscription",
+    "cancel_subscription",
+    "renew_plan",
+    "open_cancel_plan_modal",
+    # Click-to-pay intent
+    "clicked_upgrade",
     "promo_code_redeemed",
     "redeem upgrade offer",
+    "claim_free_offer_clicked",
     "watermark_remove_upgrade_clicked",
     "agent_resume_plan_button_clicked",
+    "agent_cancel_plan_button_clicked",
     "seats_exceeded_share_resource_warning_clicked_upgrade",
-    "subscription_downgraded",
-    "downgrade_subscription",
+    "ai_credit_banner_clicked",
+    "team_plan_modal",
+    "deployment_credit_limit_modal",
+    # Wallet operations adjacent to upgrade
+    "billing_info",
+    "addon_credits_purchased",
+    "add_credits",
+    "clicked_add_credits",
+    "agent_add_credits_button_clicked",
+    "agent_add_on_credits_popup_opened",
+    # Promotional credit grants (correlate w/ admin upgrade intent)
+    "work_email_bonus_credits_received",
+    "referral_bonus_credits_received",
+    "referral_credits_awarded",
+    "referral_upgrade_bonus_awarded",
+    "commercial_credits_received",
 }
 
-CREATED_EVENTS       = {"agent_tool_call_create_block_tool", "run_block", "new_canvas_created"}
-AI_EVENTS            = {"$ai_generation", "agent_new_chat", "agent_worker_created"}
+CREATED_EVENTS       = {"agent_tool_call_create_block_tool", "run_block", "new_canvas_created", "block_create", "files_upload"}
+AI_EVENTS            = {"$ai_generation", "agent_new_chat", "agent_worker_created", "agent_message"}
 TOOL_CALL_PREFIX     = "agent_tool_call_"
 CREDITS_BELOW_EVENTS = {"credits_below_1", "credits_below_2", "credits_below_3", "credits_below_4"}
+DEPLOY_EVENTS        = {
+    "notebook_deployment_deployed",
+    "notebook_deployment_preview_created",
+    "notebook_deployment_updated",
+    "notebook_deployment_undeployed",
+    "notebook_deployment_reset",
+    "notebook_deployment_credits_exceeded",
+    "notebook_deployment_usage_tracked",
+    "notebook_deployment_automatic_preview_started",
+    "notebook_deployment_preview_updated",
+}
+INTEG_SC_EVENTS      = {"source_control_connect_to_canvas", "source_control_commit", "source_control_pull"}
 
 
 # ── Per-user start time
@@ -88,17 +124,24 @@ obs = ev[
 ].copy()
 
 # Boolean / date helpers (computed once).
-obs["_date"]             = obs["timestamp"].dt.date
-obs["_is_signin"]        = obs["event"].eq("sign_in")
-obs["_is_ai"]            = obs["event"].isin(AI_EVENTS)
-obs["_is_created"]       = obs["event"].isin(CREATED_EVENTS)
-obs["_is_run_block"]     = obs["event"].eq("run_block")
-obs["_is_credits_used"]  = obs["event"].eq("credits_used")
-obs["_is_credits_below"] = obs["event"].isin(CREDITS_BELOW_EVENTS)
-obs["_is_exception"]     = obs["event"].eq("$exception")
-obs["_is_pageview"]      = obs["event"].eq("$pageview")
-obs["_is_addon"]         = obs["event"].eq("addon_credits_used")
-obs["_is_tool_call"]     = obs["event"].astype(str).str.startswith(TOOL_CALL_PREFIX)
+obs["_date"]              = obs["timestamp"].dt.date
+obs["_is_signin"]         = obs["event"].eq("sign_in")
+obs["_is_ai"]             = obs["event"].isin(AI_EVENTS)
+obs["_is_created"]        = obs["event"].isin(CREATED_EVENTS)
+obs["_is_run_block"]      = obs["event"].eq("run_block")
+obs["_is_credits_used"]   = obs["event"].eq("credits_used")
+obs["_is_credits_below"]  = obs["event"].isin(CREDITS_BELOW_EVENTS)
+obs["_is_credits_excd"]   = obs["event"].eq("credits_exceeded")
+obs["_is_exception"]      = obs["event"].eq("$exception")
+obs["_is_pageview"]       = obs["event"].eq("$pageview")
+obs["_is_addon"]          = obs["event"].eq("addon_credits_used")
+obs["_is_tool_call"]      = obs["event"].astype(str).str.startswith(TOOL_CALL_PREFIX)
+obs["_is_deploy"]         = obs["event"].isin(DEPLOY_EVENTS)
+obs["_is_integ_sc"]       = obs["event"].isin(INTEG_SC_EVENTS)
+obs["_is_canvas_clone"]   = obs["event"].eq("canvas_clone")
+obs["_is_files_upload"]   = obs["event"].eq("files_upload")
+obs["_is_agent_msg"]      = obs["event"].eq("agent_message")
+obs["_is_banner_shown"]   = obs["event"].eq("ai_credit_banner_shown")
 
 
 def _agg(df, suffix):
@@ -106,19 +149,45 @@ def _agg(df, suffix):
         return pd.DataFrame()
     g = df.groupby("person_id", sort=False, observed=True)
     out = g.agg(
-        n_events        =("event",            "size"),
-        n_distinct_days =("_date",            "nunique"),
-        n_signins       =("_is_signin",       "sum"),
-        n_ai            =("_is_ai",           "sum"),
-        n_created       =("_is_created",      "sum"),
-        n_run_block     =("_is_run_block",    "sum"),
-        n_credits_used  =("_is_credits_used", "sum"),
-        n_credits_below =("_is_credits_below","sum"),
-        n_exception     =("_is_exception",    "sum"),
-        n_pageview      =("_is_pageview",     "sum"),
-        n_addon         =("_is_addon",        "sum"),
-        n_tool_call     =("_is_tool_call",    "sum"),
+        n_events         =("event",            "size"),
+        n_distinct_days  =("_date",            "nunique"),
+        n_distinct_evts  =("event",            "nunique"),
+        n_signins        =("_is_signin",       "sum"),
+        n_ai             =("_is_ai",           "sum"),
+        n_created        =("_is_created",      "sum"),
+        n_run_block      =("_is_run_block",    "sum"),
+        n_credits_used   =("_is_credits_used", "sum"),
+        n_credits_below  =("_is_credits_below","sum"),
+        n_credits_excd   =("_is_credits_excd", "sum"),
+        n_exception      =("_is_exception",    "sum"),
+        n_pageview       =("_is_pageview",     "sum"),
+        n_addon          =("_is_addon",        "sum"),
+        n_tool_call      =("_is_tool_call",    "sum"),
+        n_deploy         =("_is_deploy",       "sum"),
+        n_integ_sc       =("_is_integ_sc",     "sum"),
+        n_canvas_clone   =("_is_canvas_clone", "sum"),
+        n_files_upload   =("_is_files_upload", "sum"),
+        n_agent_msg      =("_is_agent_msg",    "sum"),
+        n_banner_shown   =("_is_banner_shown", "sum"),
+        first_ts         =("timestamp",        "min"),
+        last_ts          =("timestamp",        "max"),
     )
+    # Tempo / quality features
+    span_sec = (out["last_ts"] - out["first_ts"]).dt.total_seconds()
+    out["session_minutes"]         = span_sec / 60.0
+    out["mean_event_interval_sec"] = span_sec / out["n_events"].clip(lower=1)
+    out["exception_rate"]          = out["n_exception"] / out["n_events"].clip(lower=1)
+    out["events_per_day"]          = out["n_events"] / out["n_distinct_days"].clip(lower=1)
+    # Binary engagement flags (mission1 "did_*" semantic)
+    out["did_run_block"]      = (out["n_run_block"]    > 0).astype(int)
+    out["did_use_agent"]      = (out["n_agent_msg"]    > 0).astype(int)
+    out["did_deploy"]         = (out["n_deploy"]       > 0).astype(int)
+    out["did_files_upload"]   = (out["n_files_upload"] > 0).astype(int)
+    out["did_source_control"] = (out["n_integ_sc"]     > 0).astype(int)
+    out["did_hit_credit_lim"] = (out["n_credits_excd"] > 0).astype(int)
+    out["did_canvas_clone"]   = (out["n_canvas_clone"] > 0).astype(int)
+    out["did_see_banner"]     = (out["n_banner_shown"] > 0).astype(int)
+    out = out.drop(columns=["first_ts", "last_ts"])
     return out.add_suffix(f"_{suffix}")
 
 

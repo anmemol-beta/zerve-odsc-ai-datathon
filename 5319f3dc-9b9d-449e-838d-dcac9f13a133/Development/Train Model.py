@@ -24,7 +24,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
     roc_auc_score, average_precision_score, precision_score,
-    recall_score, f1_score, log_loss,
+    recall_score, f1_score, log_loss, brier_score_loss,
 )
 
 feature_cols = list(X_train.columns)
@@ -79,6 +79,7 @@ def evaluate(name, y_true, y_score):
         "roc_auc": roc_auc_score(y_true, y_score),
         "pr_auc":  average_precision_score(y_true, y_score),
         "log_loss": log_loss(y_true, y_score, labels=[0, 1]),
+        "brier":   brier_score_loss(y_true, y_score),
         "recall@5%":  recall_at_k(y_true, y_score, 5),
         "recall@10%": recall_at_k(y_true, y_score, 10),
         "precision@5%":  precision_at_k(y_true, y_score, 5),
