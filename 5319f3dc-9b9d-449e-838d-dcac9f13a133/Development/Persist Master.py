@@ -15,12 +15,15 @@ Why split write vs upload:
     trainable subset has succeeded.
 
 Inputs:
-    events_pipeline       (Merge Events)
-    merge_summary         (Merge Events)
-    master_meta           (Load Events Master)
+    training_pool         (Build Training Pool) — label-stable rows
+    training_pool_meta    (Build Training Pool) — gate result + counts
+    events_pipeline       (Merge Events) — full pool (history record)
+    merge_summary         (Merge Events) — counts + cutoffs
+    master_meta           (Load Events Master) — source metadata
 
 Outputs:
-    persist_master_meta   dict   — local path, sha hash, target upload url
+    persist_master_meta   dict   — local path, sha hash, gate state,
+                                   target upload url, would-promote flag
 """
 import os
 import json
@@ -61,6 +64,10 @@ persist_master_meta = {
     "n_users": int(events_pipeline["person_id"].nunique()),
     "label_lag_days": merge_summary["label_lag_days"],
     "trainable_users": merge_summary["n_trainable_users"],
+    "training_gate_passed": training_pool_meta["training_gate_passed"],
+    "training_pool_n_users": training_pool_meta["n_users"],
+    "training_pool_n_positives": training_pool_meta["n_positives"],
+    "would_promote_new_model": training_pool_meta["training_gate_passed"],
     "upstream_master_source": master_meta["source"],
     "upload_target": TARGET_UPLOAD_URL,
     "upload_status": "MOCKED — would run in CI after successful retrain",
@@ -78,8 +85,17 @@ print(f"  sha          : {sha}")
 print(f"  n_rows       : {persist_master_meta['n_rows']:,}")
 print(f"  n_users      : {persist_master_meta['n_users']:,}")
 print()
+print(f"  training gate passed       : {persist_master_meta['training_gate_passed']}")
+print(f"  would promote new model    : {persist_master_meta['would_promote_new_model']}")
+print(f"    (training_pool: {persist_master_meta['training_pool_n_users']:,} users, "
+      f"{persist_master_meta['training_pool_n_positives']:,} positives)")
+print()
 print("  → Production CI job would now run:")
 print(f"      aws s3 cp {LOCAL_PATH} {TARGET_UPLOAD_URL}")
 print(f"      (or: gh workflow run promote-master --ref main)")
+if persist_master_meta["would_promote_new_model"]:
+    print(f"    + gh workflow run retrain-and-promote --ref main")
+else:
+    print(f"    (skip retrain — gate failed; previous champion stays)")
 print()
 print("  Next weekly cron picks up the updated master on the same DAG.")
