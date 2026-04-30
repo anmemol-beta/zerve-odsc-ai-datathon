@@ -13,6 +13,7 @@ zero-downtime deploys after the initial Zerve setup.
 import hashlib
 import io
 import shutil
+import time
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -29,7 +30,18 @@ current_sha: str = ""
 
 def fetch_and_extract() -> tuple[int, str]:
     global current_sha
-    req = urllib.request.Request(ZIP_URL, headers={"User-Agent": "zerve-deploy"})
+    # Bust the Fastly POP cache that fronts raw.githubusercontent.com — without
+    # this, /admin/refresh keeps returning the previous build for ~5 minutes
+    # after each push (different egress regions hit different cached objects).
+    url = f"{ZIP_URL}?t={int(time.time())}"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "zerve-deploy",
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache",
+        },
+    )
     with urllib.request.urlopen(req, timeout=60) as resp:
         payload = resp.read()
     sha = hashlib.sha256(payload).hexdigest()[:12]
