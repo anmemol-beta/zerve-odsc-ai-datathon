@@ -348,9 +348,8 @@ blocks:
     ephemeral_storage_gib: 20
     size: small
   description: "Bias-diverse GBM candidate. sklearn GradientBoostingClassifier (classic\
-    \ CART trees) wrapped with isotonic CalibratedClassifierCV(cv=3). Block opportunistically\
-    \ uses catboost if importable, otherwise pure sklearn \u2014 primary path in Zerve.\
-    \ Outputs `gbm_v3`, `gbm_proba_v3`, `gbm_metrics_v3`, `gbm_backend`."
+    \ CART trees) wrapped with isotonic CalibratedClassifierCV(cv=3). Outputs `gbm_v3`,\
+    \ `gbm_proba_v3`, `gbm_metrics_v3`, `gbm_backend`."
   height: 1000
   id: 7808a43a-63e4-49ec-8521-acbf44685678
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a

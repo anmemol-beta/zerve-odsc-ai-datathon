@@ -1,45 +1,24 @@
-"""Train GBM v3 — bias-diverse gradient-boosting candidate (sklearn primary).
+"""Train GBM v3 — bias-diverse gradient-boosting candidate (sklearn).
 
 Sits in the AutoML pool as 'another GBM, different tree splitting' so the
-champion picker sees more than just XGBoost-flavored models. Two paths,
-decided at import time:
+champion picker sees more than just XGBoost-flavored models.
 
-  Path A — sklearn GradientBoostingClassifier (PRIMARY in Zerve)
-        Classic CART-tree GBM, isotonic CalibratedClassifierCV(cv=3).
-        Pure sklearn, zero extra dependencies, always installs cleanly.
+  sklearn GradientBoostingClassifier — classic CART-tree GBM, wrapped
+  with isotonic CalibratedClassifierCV(cv=3) so head-to-head metric
+  comparison with the v3 ensemble stays apples-to-apples.
 
-  Path B — catboost (kept available for richer environments)
-        If `catboost` happens to be importable, the block uses it instead
-        for its symmetric/oblivious trees + ordered boosting (a more
-        meaningfully different bias than path A). In Zerve catboost is
-        not in `requirements`, so this path normally won't trigger.
-
-Both paths wrap with isotonic CalibratedClassifierCV(cv=3) so head-to-head
-metric comparison with the v3 ensemble stays apples-to-apples.
-
-Outputs are interchangeable:
+Outputs:
     gbm_v3                  calibrated classifier wrapper
     gbm_proba_v3            np.ndarray  — test set positive-class probabilities
     gbm_metrics_v3          dict
-    gbm_backend             str  — "sklearn_gbm" | "catboost"
-
-The historical name 'CatBoost' is retained as a comment because earlier
-canvas runs used real catboost; the block intent (bias-diverse GBM) is
-unchanged.
+    gbm_backend             str  — "sklearn_gbm"
 """
 import warnings
 import numpy as np
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# Try catboost first only as an opportunistic upgrade; sklearn is the default.
-try:
-    from catboost import CatBoostClassifier  # type: ignore
-    CATBOOST_OK = True
-except Exception as e:
-    print(f"[GBM v3] catboost not available ({e}) — using sklearn GradientBoosting")
-    CATBOOST_OK = False
-
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import (
     average_precision_score, roc_auc_score, brier_score_loss,
@@ -51,39 +30,20 @@ X_test_arr = X_v3_test.fillna(0).values
 y_test_arr = np.asarray(y_v3_test).astype(int)
 
 
-# ═══ Path A — catboost (only if importable; not in Zerve requirements) ═══
-if CATBOOST_OK:
-    print("[GBM v3] backend=catboost  (oblivious trees + ordered boosting)")
-    gbm_base = CatBoostClassifier(
-        iterations=500,
-        depth=6,
-        learning_rate=0.05,
-        auto_class_weights="Balanced",
-        early_stopping_rounds=30,
-        eval_metric="AUC",
-        random_seed=42,
-        verbose=0,
-        allow_writing_files=False,
-    )
-    gbm_backend = "catboost"
+# ─── sklearn GradientBoosting ────────────────────────────────────────────
+print("[GBM v3] backend=sklearn_gbm  "
+      "(GradientBoostingClassifier — classic CART-tree GBM)")
+gbm_base = GradientBoostingClassifier(
+    n_estimators=300,
+    max_depth=5,
+    learning_rate=0.05,
+    subsample=0.85,
+    random_state=42,
+)
+gbm_backend = "sklearn_gbm"
 
 
-# ═══ Path B — sklearn GradientBoosting (PRIMARY) ═════════════════════════
-else:
-    print("[GBM v3] backend=sklearn_gbm  "
-          "(GradientBoostingClassifier — classic CART-tree GBM)")
-    from sklearn.ensemble import GradientBoostingClassifier
-    gbm_base = GradientBoostingClassifier(
-        n_estimators=300,
-        max_depth=5,
-        learning_rate=0.05,
-        subsample=0.85,
-        random_state=42,
-    )
-    gbm_backend = "sklearn_gbm"
-
-
-# ─── shared: calibrate, fit, predict ──────────────────────────────────────
+# ─── calibrate, fit, predict ─────────────────────────────────────────────
 print(f"[GBM v3] calibrating with isotonic CV=3...")
 gbm_v3 = CalibratedClassifierCV(gbm_base, method="isotonic", cv=3)
 gbm_v3.fit(X_train_arr, y_train_arr)

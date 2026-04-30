@@ -1,8 +1,8 @@
 """Train MLP v3 — PyTorch tabular MLP with sklearn fallback.
 
 The deep-learning candidate in the AutoML pool. Tree boosting (XGB/RF/HGB/
-CatBoost) usually wins on tabular data, but a properly-regularized MLP is
-a fair-fight comparison and lets us claim end-to-end model-family coverage
+GBM) usually wins on tabular data, but a properly-regularized MLP is a
+fair-fight comparison and lets us claim end-to-end model-family coverage
 (linear → trees → neural).
 
 Two execution paths:

@@ -16,7 +16,7 @@ Inputs (from canvas namespace):
     y_v3_test             (Build Features v3)
     preds_v3              (Train Model v3)        — XGB, RF, HGB, ensemble
     mlp_proba_v3          (Train MLP v3)
-    gbm_proba_v3          (Train GBM v3 — sklearn GradientBoosting / catboost)
+    gbm_proba_v3          (Train GBM v3 — sklearn GradientBoosting)
 
 Outputs:
     rolling_metrics_v3    pd.DataFrame  — long table: cohort × model → metrics

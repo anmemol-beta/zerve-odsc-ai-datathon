@@ -13,7 +13,7 @@ Persistence target:
     /tmp/zerve-models/v3/
         ensemble_v3.joblib       — calibrated XGB+RF+HGB voting wrapper
         models_v3.joblib         — full dict including all 3 base models
-        gbm_v3.joblib            — sklearn GradientBoosting (or catboost) wrapper
+        gbm_v3.joblib            — sklearn GradientBoosting wrapper
         mlp_v3_state.joblib      — MLP + scaler + isotonic (sklearn path) OR
                                    torch state-dict bundle (torch path)
         meta.json                — champion + metrics + trained_at + features
