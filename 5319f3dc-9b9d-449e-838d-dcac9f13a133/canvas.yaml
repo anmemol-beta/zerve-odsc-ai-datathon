@@ -249,6 +249,196 @@ layers:
     width: 1600
     x: 850
     y: 3500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Schema/null/range/dedup/leakage-event audit on raw `events`.
+      Halts the pipeline on any hard failure. Outputs `events_validation` dict.
+    height: 1000
+    id: 0e04f05a-e752-4049-93e4-6dbc3f6a03bb
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Validate Events
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 1700
+    y: 200
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: 8-check audit on `user_features_v4` — exactly-one-stage, closed
+      enum, monotonicity, AtRisk@X rank consistency, label/flag agreement,
+      days_since_last >= 0, distribution sums to total. Outputs `funnel_v4_validation`.
+    height: 1000
+    id: fd478fce-35e3-45f8-a19b-af716403d20e
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Validate Funnel v4
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 0
+    y: 4000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: User-disjoint check, leakage-feature audit (25-token blacklist),
+      _full window absence (cutoff-length leak fix), distribution shift sample.
+      Outputs `features_v3_validation`.
+    height: 1000
+    id: bdb3dbad-2d14-4e2d-8024-7031694c18bb
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Validate Features v3
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 3400
+    y: 2500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: 2x2 dashboard — calibration reliability diagram, ROC overlay,
+      PR overlay, Brier decomposition (reliability/resolution/uncertainty) +
+      per-model ECE. Outputs `diagnose_v3` dict.
+    height: 1000
+    id: 6d77cc97-9baf-43b2-b49f-daadf0220749
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Diagnose v3
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 3400
+    y: 3000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Tree SHAP on the v3 ensemble — extracts XGB base from each
+      of the 3 calibration folds, averages SHAP values, renders top-20 bar
+      + contrasting upgrader/non-upgrader waterfalls.
+    height: 1000
+    id: ff9ffda7-a6c3-40fb-8401-1e120409e03d
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: SHAP v3
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 3400
+    y: 3500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Fan-in from Train Model (v1) and Train Model v3 — side-by-side
+      metrics table, head-to-head bar chart, statistical-power callout
+      (6 vs 185 test positives). Outputs `model_comparison`, `chosen_model`.
+    height: 1000
+    id: 60158a32-c7b5-4329-be45-5acdda206696
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Compare Models
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 3400
+    y: 1500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Joins each test user's v3 prediction with their v4 funnel stage,
+      then computes per-segment PR-AUC, top-5% precision, and lift over base
+      rate. Outputs `segment_performance_v3`.
+    height: 1000
+    id: 7c24b7dd-684a-40c0-8463-aea4ece90422
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Per-Segment Performance
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 1700
+    y: 4000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Flattens K2 actions into a long table, ranks by ROI, charts
+      top-10, per-channel boxplot, and best-per-segment. Outputs `actions_long`,
+      `roi_top10`, `roi_per_channel`, `roi_per_segment`.
+    height: 1000
+    id: 41f5154d-4925-4376-b392-d9a929e3b23b
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: ROI Ranking
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 2500
+    y: 4500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: 14 segments × 6 channels heatmap of best ROI per cell, plus
+      action-count heatmap (how often K2 picked each channel). Outputs
+      `strategy_heatmap_data` dataframe.
+    height: 1000
+    id: 6ea2442b-0ff9-43ce-b3d3-aa36eeb41c4b
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Strategy Heatmap
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 850
+    y: 4500
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: Final fan-in from Diagnose v3, SHAP v3, Compare Models,
+      Per-Segment Performance, Build Strategies, ROI Ranking. Renders 1-page
+      text + visual insights card. Outputs `insights_card_text`,
+      `insights_payload`.
+    height: 1000
+    id: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Insights Card
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 1700
+    y: 5000
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   edges:
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
@@ -317,6 +507,108 @@ layers:
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
     target: 38732384-9a23-45f5-92bb-577330211dd7
+  # Example Dataset → Validate Events
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: d4f30a81-6dd5-40e0-9e14-f8e13ce1f9c5
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: bbd1b635-38e8-4533-b331-c647f51a44a2
+    target: 0e04f05a-e752-4049-93e4-6dbc3f6a03bb
+  # Funnel v4 → Validate Funnel v4
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 4b276338-dab5-4d66-a784-6b36456bbffc
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: a392ef25-1dea-4c1f-9d88-b8e4d4992079
+    target: fd478fce-35e3-45f8-a19b-af716403d20e
+  # Build Features v3 → Validate Features v3
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 57d8a75b-fd5e-4314-bf4f-d125786a71c5
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: ffc35448-b11d-45a1-93d4-8ea9f45d35f7
+    target: bdb3dbad-2d14-4e2d-8024-7031694c18bb
+  # Train Model v3 → Diagnose v3
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: a363bb8e-be23-45c9-8b0b-436fac58c025
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+    target: 6d77cc97-9baf-43b2-b49f-daadf0220749
+  # Train Model v3 → SHAP v3
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 756e0d18-3cf6-4345-abf3-1daf15142b05
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+    target: ff9ffda7-a6c3-40fb-8401-1e120409e03d
+  # Train Model v3 → Compare Models
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 3eabc225-deaa-400a-b38b-7cdbc78a4b6f
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+    target: 60158a32-c7b5-4329-be45-5acdda206696
+  # Train Model (v1) → Compare Models
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 62eb0a18-5146-491b-bf07-875976caaa38
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 2f767f9b-b9f5-45f9-bfc4-4276151b0e0e
+    target: 60158a32-c7b5-4329-be45-5acdda206696
+  # Train Model v3 → Per-Segment Performance
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 802ea79e-abfb-4858-95b2-b6a8bc716b2f
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+    target: 7c24b7dd-684a-40c0-8463-aea4ece90422
+  # Funnel v4 → Per-Segment Performance
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 9ebb1127-e943-40c8-97fc-8f7462f8c71a
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: a392ef25-1dea-4c1f-9d88-b8e4d4992079
+    target: 7c24b7dd-684a-40c0-8463-aea4ece90422
+  # Build Strategies → ROI Ranking
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: f3e3c705-43e6-453c-a045-55f3a8820bcf
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 38732384-9a23-45f5-92bb-577330211dd7
+    target: 41f5154d-4925-4376-b392-d9a929e3b23b
+  # Build Strategies → Strategy Heatmap
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 648d7a6a-d3ba-4971-8b88-d96a3d924439
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 38732384-9a23-45f5-92bb-577330211dd7
+    target: 6ea2442b-0ff9-43ce-b3d3-aa36eeb41c4b
+  # Diagnose v3 → Insights Card
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: a26344f2-b376-4182-9064-f404e0052e9f
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 6d77cc97-9baf-43b2-b49f-daadf0220749
+    target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+  # Per-Segment Performance → Insights Card
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 99563456-d22d-40f1-a43b-c0c226b0cd0b
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 7c24b7dd-684a-40c0-8463-aea4ece90422
+    target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+  # Build Strategies → Insights Card
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 8d6d4f12-5187-4b1e-8391-79a5cf0d18c8
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 38732384-9a23-45f5-92bb-577330211dd7
+    target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+  # ROI Ranking → Insights Card
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: 7216f356-ec28-4e48-a3c7-6b696696db6a
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 41f5154d-4925-4376-b392-d9a929e3b23b
+    target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+  # Compare Models → Insights Card
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: a48a1138-7c71-4e65-930c-a77fff331469
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 60158a32-c7b5-4329-be45-5acdda206696
+    target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+  # SHAP v3 → Insights Card
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: c581c866-5369-4005-be43-0588237b8338
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: ff9ffda7-a6c3-40fb-8401-1e120409e03d
+    target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
   id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Development
   type: 1
