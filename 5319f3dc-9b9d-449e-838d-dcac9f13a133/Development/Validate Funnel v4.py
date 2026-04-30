@@ -123,7 +123,7 @@ results["distribution"] = {
 }
 
 # ─── final summary ────────────────────────────────────────────────────────
-all_pass = all(r.get("pass", False) for r in results.values())
+all_pass = all(vf4_r.get("pass", False) for vf4_r in results.values())
 funnel_v4_validation = {
     "all_pass": all_pass,
     "checks": results,
@@ -132,8 +132,8 @@ funnel_v4_validation = {
 print("=" * 60)
 print("FUNNEL V4 VALIDATION")
 print("=" * 60)
-for name, r in results.items():
-    status = "✓ PASS" if r.get("pass") else "✗ FAIL"
+for name, vf4_r in results.items():
+    status = "✓ PASS" if vf4_r.get("pass") else "✗ FAIL"
     print(f"  {status}  {name}")
 print()
 print("stage distribution:")

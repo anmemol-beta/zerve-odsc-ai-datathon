@@ -113,16 +113,16 @@ for col in sample_features:
 results["distribution_shift_sample"] = shift_rows
 
 # ─── final ────────────────────────────────────────────────────────────────
-all_pass = all(r.get("pass", True) for r in results.values()
-               if isinstance(r, dict) and "pass" in r)
+all_pass = all(vf3_r.get("pass", True) for vf3_r in results.values()
+               if isinstance(vf3_r, dict) and "pass" in vf3_r)
 features_v3_validation = {"all_pass": all_pass, "checks": results}
 
 print("=" * 60)
 print("FEATURES V3 VALIDATION")
 print("=" * 60)
-for name, r in results.items():
-    if isinstance(r, dict) and "pass" in r:
-        status = "✓ PASS" if r["pass"] else "✗ FAIL"
+for name, vf3_r in results.items():
+    if isinstance(vf3_r, dict) and "pass" in vf3_r:
+        status = "✓ PASS" if vf3_r["pass"] else "✗ FAIL"
         print(f"  {status}  {name}")
     else:
         print(f"  ℹ INFO  {name}")

@@ -144,21 +144,21 @@ weekly_drift_index["status"] = pd.cut(
 
 # ─── 5. alerts ───────────────────────────────────────────────────────────
 drift_alerts = []
-for _, r in weekly_drift_index.iterrows():
-    if r["status"] == "red":
+for _, ddm_r in weekly_drift_index.iterrows():
+    if ddm_r["status"] == "red":
         drift_alerts.append({
-            "week": r["week"],
+            "week": ddm_r["week"],
             "kind": "material_drift",
-            "detail": f"max PSI {r['max_psi']:.3f} (>{PSI_THRESHOLD_MATERIAL}), "
-                      f"{r['n_material_drift']} features past material threshold. "
+            "detail": f"max PSI {ddm_r['max_psi']:.3f} (>{PSI_THRESHOLD_MATERIAL}), "
+                      f"{ddm_r['n_material_drift']} features past material threshold. "
                       "Recommend retrain.",
         })
-    elif r["status"] == "yellow":
+    elif ddm_r["status"] == "yellow":
         drift_alerts.append({
-            "week": r["week"],
+            "week": ddm_r["week"],
             "kind": "moderate_drift",
-            "detail": f"max PSI {r['max_psi']:.3f}, "
-                      f"{r['n_drifted_features']} features drifted. Monitor.",
+            "detail": f"max PSI {ddm_r['max_psi']:.3f}, "
+                      f"{ddm_r['n_drifted_features']} features drifted. Monitor.",
         })
 
 # also: features that drifted in 3+ consecutive weeks
