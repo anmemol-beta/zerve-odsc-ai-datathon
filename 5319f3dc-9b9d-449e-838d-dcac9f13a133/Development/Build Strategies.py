@@ -68,7 +68,7 @@ def _k2_chat(messages: list, temperature: float = 0.2, retries: int = 2) -> str:
             "Content-Type": "application/json",
         },
     )
-    last_err: Exception | None = None
+    last_err = None
     for attempt in range(retries + 1):
         try:
             with urllib.request.urlopen(req, timeout=120) as r:
