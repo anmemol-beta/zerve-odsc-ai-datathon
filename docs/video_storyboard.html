@@ -416,7 +416,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      Two things jumped out of the data right away. First, <b>half of all users disappear within fourteen minutes of signing up</b>. Second, <b>three out of four upgraders pay within their first week, and two out of three pay on day one</b>. So our model can't rely on long histories. It has to read the first hour, the first day.
+      Two things jumped out of the data right away. <b>Half of all users disappear within fourteen minutes of signing up</b>. And <b>most upgraders pay in their first week, many on day one</b>. So our model can't rely on long histories. It has to read the first day.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -468,7 +468,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      On top of those patterns we built a <b>fifteen-stage funnel</b>. Every rule is deterministic. <b>"Engaged" means three or more active days. "At-Risk" means fourteen days of silence.</b> Every user lands in exactly one stage, and an engineer could rebuild the whole thing from our definitions.
+      On top of those patterns we built a <b>fifteen-stage funnel</b>. Every rule is deterministic, with concrete thresholds shown on screen. Every user lands in exactly one stage, and an engineer could rebuild the whole thing from our definitions.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R4 · Funnel Design</span>
@@ -494,7 +494,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · KEY FINDING</span>
-      Here is our biggest finding. We tracked all <b>three hundred twenty-three upgraders</b> after they paid. <b>Only two out of three are still active</b>. Almost a quarter went silent for thirty days. Nearly one in eleven already canceled or downgraded. Treating "upgraded" as the end of the funnel hides the fact that <b>one in three paying users is at risk</b>. So we added two new stages: "at-risk after upgrade", and "churned after upgrade".
+      Here is our biggest finding. We tracked every paying user after they upgraded. <b>One in three is now at risk</b>. Either silent for over a month, or already canceled. Treating "upgraded" as the end of the funnel hides this completely. So we added two new stages for the after-upgrade lifecycle.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R4 · Funnel Design</span>
@@ -573,7 +573,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · NUMBERS</span>
-      We trained <b>five candidate models</b> side by side. Always predicting "no upgrade" gets ninety-seven percent accuracy but catches <b>zero upgraders</b>. Useless. Logistic regression is <b>five times better than random</b>. A single XGBoost, <b>ten times</b>. Our final model is <b>three tree models, all calibrated, voting together</b>. It scores <b>eleven times random</b>. And calibration makes our probabilities <b>four times more accurate</b>. So "twenty-three percent chance" really means twenty-three percent.
+      We compared five candidate models head-to-head, all on the same forward-looking holdout. Always predicting "no upgrade" catches <b>zero upgraders</b>, useless. Our final model is <b>three tree models, all calibrated, voting together</b>. It scores <b>eleven times random</b>, and calibration makes the probabilities <b>four times more accurate</b>. So a "twenty-three percent chance" really means twenty-three percent.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -677,7 +677,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · ACTION</span>
-      We turned every finding into <b>seven concrete campaigns, ranked by ROI</b>. The strongest one targets users who saw the credit limit banner. They <b>convert sixteen times more often than the average user</b>. Combined, our top three campaigns reach <b>about thirteen hundred users, just seven percent of our base</b>.
+      We turned every finding into concrete campaigns, ranked by ROI. The strongest one targets users who saw the credit limit banner. They <b>convert sixteen times more often than the average user</b>. The top three combined reach just seven percent of our base.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R6 · Insights</span>
