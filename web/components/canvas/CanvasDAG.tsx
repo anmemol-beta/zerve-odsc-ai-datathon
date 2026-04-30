@@ -22,12 +22,13 @@ import BlockDetail from "./BlockDetail";
 
 // Re-layout: keep horizontal columns (so the shape echoes the real Zerve canvas)
 // but evenly-space within each column to remove the original vertical overlap.
-const COL_X = [0, 350, 700, 1050, 1400, 1750, 2100];
+const COL_X = [0, 350, 700, 1050, 1400, 1750, 2100, 2450, 2800];
 const ROW_GAP = 170;
 
 function layoutPositions(blocks: CanvasBlock[]) {
   const colMap = new Map<number, number>([
-    [0, 0], [850, 1], [1700, 2], [2500, 3], [3400, 4], [5100, 5], [6800, 6],
+    [0, 0], [850, 1], [1700, 2], [2500, 3], [3400, 4],
+    [5100, 5], [6800, 6], [8500, 7], [10200, 8],
   ]);
   const groups: Record<number, CanvasBlock[]> = {};
   for (const b of blocks) {

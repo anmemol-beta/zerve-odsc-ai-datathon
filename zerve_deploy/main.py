@@ -138,7 +138,7 @@ BLOCKS: dict[str, dict[str, str]] = {
     "Insights Card":           {"text": "insights_card_text",
                                 "payload": "insights_payload",
                                 "figure": "fig"},
-    # ── AutoML / time-rolling / inference tier ──────────────────────────
+    # ── extra model candidates ──────────────────────────────────────────
     "Train MLP v3":             {"model": "mlp_v3",
                                  "proba": "mlp_proba_v3",
                                  "metrics": "mlp_metrics_v3"},
@@ -146,17 +146,7 @@ BLOCKS: dict[str, dict[str, str]] = {
                                  "proba": "gbm_proba_v3",
                                  "metrics": "gbm_metrics_v3",
                                  "backend": "gbm_backend"},
-    "Time-Rolling Splits":      {"splits": "rolling_splits",
-                                 "user_signup_month": "user_signup_month"},
-    "Train Across Time":        {"rolling_metrics": "rolling_metrics_v3"},
-    "Performance Drift":        {"summary": "drift_summary",
-                                 "alerts": "drift_alerts",
-                                 "figure": "fig"},
-    "Champion Selector":        {"per_cohort": "champion_per_cohort",
-                                 "win_counts": "win_counts",
-                                 "current_champion": "current_champion",
-                                 "summary": "champion_summary",
-                                 "figure": "fig"},
+    # ── data-drift tier ──────────────────────────────────────────────────
     "Weekly Data Slices":       {"slices": "weekly_slices",
                                  "summary": "weekly_summary",
                                  "baseline_id": "weekly_baseline_id"},
@@ -164,15 +154,21 @@ BLOCKS: dict[str, dict[str, str]] = {
                                  "weekly_index": "weekly_drift_index",
                                  "alerts": "drift_alerts",
                                  "figure": "fig"},
-    "Persist Models":           {"saved": "saved", "path": "artifacts_path"},
-    "Load Models":              {"models": "loaded_models",
-                                 "meta": "loaded_meta",
-                                 "model_age_hours": "model_age_hours",
-                                 "inference_ready": "inference_ready"},
-    "Weekly Inference":         {"predictions": "weekly_predictions",
-                                 "summary": "weekly_pred_summary",
-                                 "by_stage": "weekly_pred_by_stage",
-                                 "figure": "fig"},
+    # ── production data ingest tier (master + weekly drop + merge) ──────
+    "Load Events Master":       {"events": "events_master",
+                                 "meta": "master_meta",
+                                 "source": "master_source"},
+    "Load Weekly Drop":         {"events": "weekly_drop",
+                                 "meta": "weekly_drop_meta",
+                                 "status": "status"},
+    "Merge Events":             {"events": "events_pipeline",
+                                 "data_now": "data_now"},
+    "Persist Master":           {"meta": "persist_master_meta", "sha": "sha"},
+    "Build Inference Pool":     {"pool": "inference_pool",
+                                 "meta": "inference_pool_meta"},
+    "Build Training Pool":      {"pool": "training_pool",
+                                 "meta": "training_pool_meta",
+                                 "gate_passed": "training_gate_passed"},
 }
 
 
@@ -463,32 +459,7 @@ def insights():
         }
 
 
-# ─── AutoML / champion / drift shortcuts ────────────────────────────────
-@app.get("/champion")
-def champion():
-    """Currently-selected production model + win counts + per-cohort table."""
-    return {
-        "current": get("Champion Selector", "current_champion"),
-        "summary": jsonify(get("Champion Selector", "summary")),
-        "win_counts": jsonify(get("Champion Selector", "win_counts")),
-        "per_cohort": jsonify(get("Champion Selector", "per_cohort")),
-    }
-
-
-@app.get("/rolling/metrics")
-def rolling_metrics():
-    df = get("Train Across Time", "rolling_metrics")
-    return df.to_dict(orient="records")
-
-
-@app.get("/drift/performance")
-def perf_drift():
-    return {
-        "summary": jsonify(get("Performance Drift", "summary")),
-        "alerts": jsonify(get("Performance Drift", "alerts")),
-    }
-
-
+# ─── drift / data-pipeline shortcuts ────────────────────────────────────
 @app.get("/drift/data")
 def data_drift():
     return {
@@ -498,12 +469,24 @@ def data_drift():
     }
 
 
-@app.get("/inference/weekly")
-def weekly_inference():
-    return {
-        "summary": jsonify(get("Weekly Inference", "summary")),
-        "by_stage": jsonify(get("Weekly Inference", "by_stage")),
-    }
+@app.get("/pipeline/status")
+def pipeline_status():
+    """Production data-pipeline health: how recent the master is, whether
+    training gates pass, inference pool size."""
+    out = {}
+    for slot, fn in [
+        ("master_meta", lambda: jsonify(get("Load Events Master", "meta"))),
+        ("weekly_drop_meta", lambda: jsonify(get("Load Weekly Drop", "meta"))),
+        ("persist_master", lambda: jsonify(get("Persist Master", "meta"))),
+        ("inference_pool", lambda: jsonify(get("Build Inference Pool", "meta"))),
+        ("training_pool", lambda: jsonify(get("Build Training Pool", "meta"))),
+        ("training_gate_passed", lambda: jsonify(get("Build Training Pool", "gate_passed"))),
+    ]:
+        try:
+            out[slot] = fn()
+        except Exception as e:  # noqa: BLE001 — boundary
+            out[slot] = {"_error": str(e)}
+    return out
 
 
 # ─── validations (for the "is this canvas healthy?" badges) ─────────────

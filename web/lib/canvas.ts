@@ -1,6 +1,10 @@
 // Canvas DAG mirror — inlined from 5319f3dc-9b9d-449e-838d-dcac9f13a133/canvas.yaml.
 // Positions, sizes, descriptions, and edges all come straight from the Zerve project,
 // so the frontend renders the exact same graph the user sees inside the canvas.
+//
+// Current state: 32 blocks, 42 edges (after the train/infer-pool refactor that
+// dropped the model-serve tier and added Load Events Master / Load Weekly Drop /
+// Merge Events / Build {Inference,Training} Pool / Persist Master).
 
 export type CanvasBlockKind =
   | "ingest"
@@ -35,17 +39,9 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     id: "example-dataset",
     name: "Example Dataset",
     description:
-      "Slim-loads zerve_events.csv (usecols=person_id, timestamp, event), pyarrow engine, ISO8601 timestamps, categorical event dtype. Produces `events`.",
+      "Slim-loads zerve_events.csv (usecols=person_id, timestamp, event), pyarrow engine, ISO8601 timestamps, categorical event dtype.",
     x: 0, y: 0, width: 1600, height: 1000,
     kind: "ingest", hasFigure: false,
-  },
-  {
-    id: "validate-events",
-    name: "Validate Events",
-    description:
-      "Schema/null/range/dedup/leakage-event audit on raw events. Halts the pipeline on any hard failure.",
-    x: 1700, y: 200, width: 1600, height: 1000,
-    kind: "validate", hasFigure: false,
   },
   {
     id: "eda-summary",
@@ -64,14 +60,6 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     kind: "transform", hasFigure: true,
   },
   {
-    id: "build-features",
-    name: "Build Features",
-    description:
-      "Leakage-safe per-user X/y for two forward-looking snapshots (train cutoff 2026-02-01, test cutoff 2026-03-01, 30d label window).",
-    x: 1700, y: 1000, width: 1600, height: 1000,
-    kind: "transform", hasFigure: false,
-  },
-  {
     id: "visualize-funnel",
     name: "Visualize Funnel",
     description:
@@ -80,34 +68,11 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     kind: "viz", hasFigure: true,
   },
   {
-    id: "train-model",
-    name: "Train Model",
-    description:
-      "Trains logistic regression + LightGBM. Reports PR-AUC, recall@K, SHAP feature importance.",
-    x: 1700, y: 1500, width: 1600, height: 1000,
-    kind: "model", hasFigure: false,
-  },
-  {
-    id: "compare-models",
-    name: "Compare Models",
-    description:
-      "Fan-in from Train Model (v1) and v3 — side-by-side metrics table, head-to-head bar chart, statistical-power callout (6 vs 185 test positives).",
-    x: 3400, y: 1500, width: 1600, height: 1000,
-    kind: "report", hasFigure: true,
-  },
-  {
     id: "visualize-cohort",
     name: "Visualize Cohort",
     description:
       "Cumulative growth, daily activity sparkline + upgrade markers, weekly cohort upgrade rate vs cumulative baseline, day-of-week × hour heatmap.",
     x: 0, y: 2000, width: 1600, height: 1000,
-    kind: "viz", hasFigure: true,
-  },
-  {
-    id: "visualize-model",
-    name: "Visualize Model",
-    description: "ROC + PR curves, LightGBM feature importance, SHAP impact in a 2×2 dashboard.",
-    x: 1700, y: 2000, width: 1600, height: 1000,
     kind: "viz", hasFigure: true,
   },
   {
@@ -119,36 +84,12 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     kind: "transform", hasFigure: false,
   },
   {
-    id: "build-features-v3",
-    name: "Build Features v3",
+    id: "validate-funnel-v4",
+    name: "Validate Funnel v4",
     description:
-      "Per-user feature matrix at 4 cumulative windows (1h/24h/7d/full), leakage-safe per-user cutoff, time-based cohort split.",
-    x: 1700, y: 2500, width: 1600, height: 1000,
-    kind: "transform", hasFigure: false,
-  },
-  {
-    id: "validate-features-v3",
-    name: "Validate Features v3",
-    description:
-      "User-disjoint check, leakage-feature audit (25-token blacklist), _full window absence, distribution shift sample.",
-    x: 3400, y: 2500, width: 1600, height: 1000,
+      "8-check audit on user_features_v4 — exactly-one-stage, closed enum, monotonicity, AtRisk@X rank consistency, label/flag agreement.",
+    x: 0, y: 4000, width: 1600, height: 1000,
     kind: "validate", hasFigure: false,
-  },
-  {
-    id: "train-model-v3",
-    name: "Train Model v3",
-    description:
-      "Calibrated XGBoost + RandomForest + HistGB ensemble (isotonic, cv=3) with soft voting. Reports PR-AUC, ROC-AUC, Brier, top-K precision/recall.",
-    x: 1700, y: 3000, width: 1600, height: 1000,
-    kind: "model", hasFigure: false,
-  },
-  {
-    id: "diagnose-v3",
-    name: "Diagnose v3",
-    description:
-      "Calibration reliability diagram, ROC overlay, PR overlay, Brier decomposition (reliability/resolution/uncertainty) + per-model ECE.",
-    x: 3400, y: 3000, width: 1600, height: 1000,
-    kind: "viz", hasFigure: true,
   },
   {
     id: "build-strategies",
@@ -159,20 +100,59 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     kind: "strategy", hasFigure: false,
   },
   {
-    id: "shap-v3",
-    name: "SHAP v3",
+    id: "strategy-heatmap",
+    name: "Strategy Heatmap",
     description:
-      "Tree SHAP on the v3 ensemble — averages SHAP values across the 3 calibration folds, renders top-20 bar + contrasting upgrader/non-upgrader waterfalls.",
-    x: 3400, y: 3500, width: 1600, height: 1000,
+      "14 segments × 6 channels heatmap of best ROI per cell, plus action-count heatmap (how often K2 picked each channel).",
+    x: 850, y: 4500, width: 1600, height: 1000,
     kind: "viz", hasFigure: true,
   },
   {
-    id: "validate-funnel-v4",
-    name: "Validate Funnel v4",
+    id: "validate-events",
+    name: "Validate Events",
     description:
-      "8-check audit on user_features_v4 — exactly-one-stage, closed enum, monotonicity, AtRisk@X rank consistency, label/flag agreement.",
-    x: 0, y: 4000, width: 1600, height: 1000,
+      "Schema/null/range/dedup/leakage-event audit on raw events. Halts the pipeline on any hard failure.",
+    x: 1700, y: 200, width: 1600, height: 1000,
     kind: "validate", hasFigure: false,
+  },
+  {
+    id: "build-features",
+    name: "Build Features",
+    description:
+      "Leakage-safe per-user X/y for two forward-looking snapshots (train cutoff 2026-02-01, test cutoff 2026-03-01, 30d label window).",
+    x: 1700, y: 1000, width: 1600, height: 1000,
+    kind: "transform", hasFigure: false,
+  },
+  {
+    id: "train-model",
+    name: "Train Model",
+    description:
+      "Trains logistic regression + LightGBM. Reports PR-AUC, recall@K, SHAP feature importance.",
+    x: 1700, y: 1500, width: 1600, height: 1000,
+    kind: "model", hasFigure: false,
+  },
+  {
+    id: "visualize-model",
+    name: "Visualize Model",
+    description: "ROC + PR curves, LightGBM feature importance, SHAP impact in a 2×2 dashboard.",
+    x: 1700, y: 2000, width: 1600, height: 1000,
+    kind: "viz", hasFigure: true,
+  },
+  {
+    id: "build-features-v3",
+    name: "Build Features v3",
+    description:
+      "Per-user feature matrix at 4 cumulative windows (1h/24h/7d/full), leakage-safe per-user cutoff, time-based cohort split.",
+    x: 1700, y: 2500, width: 1600, height: 1000,
+    kind: "transform", hasFigure: false,
+  },
+  {
+    id: "train-model-v3",
+    name: "Train Model v3",
+    description:
+      "Calibrated XGBoost + RandomForest + HistGB ensemble (isotonic, cv=3) with soft voting. Reports PR-AUC, ROC-AUC, Brier, top-K precision/recall.",
+    x: 1700, y: 3000, width: 1600, height: 1000,
+    kind: "model", hasFigure: false,
   },
   {
     id: "per-segment-performance",
@@ -183,12 +163,12 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     kind: "report", hasFigure: true,
   },
   {
-    id: "strategy-heatmap",
-    name: "Strategy Heatmap",
+    id: "insights-card",
+    name: "Insights Card",
     description:
-      "14 segments × 6 channels heatmap of best ROI per cell, plus action-count heatmap (how often K2 picked each channel).",
-    x: 850, y: 4500, width: 1600, height: 1000,
-    kind: "viz", hasFigure: true,
+      "Final fan-in from Diagnose v3, SHAP v3, Compare Models, Per-Segment Performance, Build Strategies, ROI Ranking. 1-page text + visual insights card.",
+    x: 1700, y: 5000, width: 1600, height: 1000,
+    kind: "report", hasFigure: true,
   },
   {
     id: "roi-ranking",
@@ -199,19 +179,42 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     kind: "report", hasFigure: true,
   },
   {
-    id: "insights-card",
-    name: "Insights Card",
+    id: "compare-models",
+    name: "Compare Models",
     description:
-      "Final fan-in from Diagnose v3, SHAP v3, Compare Models, Per-Segment Performance, Build Strategies, ROI Ranking. 1-page text + visual insights card.",
-    x: 1700, y: 5000, width: 1600, height: 1000,
+      "Fan-in from Train Model (v1) and v3 — side-by-side metrics table, head-to-head bar chart, statistical-power callout (6 vs 185 test positives).",
+    x: 3400, y: 1500, width: 1600, height: 1000,
     kind: "report", hasFigure: true,
   },
-  // ── AutoML / time-rolling / inference tier ─────────────────────────────
+  {
+    id: "validate-features-v3",
+    name: "Validate Features v3",
+    description:
+      "User-disjoint check, leakage-feature audit (25-token blacklist), _full window absence, distribution shift sample.",
+    x: 3400, y: 2500, width: 1600, height: 1000,
+    kind: "validate", hasFigure: false,
+  },
+  {
+    id: "diagnose-v3",
+    name: "Diagnose v3",
+    description:
+      "Calibration reliability diagram, ROC overlay, PR overlay, Brier decomposition (reliability/resolution/uncertainty) + per-model ECE.",
+    x: 3400, y: 3000, width: 1600, height: 1000,
+    kind: "viz", hasFigure: true,
+  },
+  {
+    id: "shap-v3",
+    name: "SHAP v3",
+    description:
+      "Tree SHAP on the v3 ensemble — averages SHAP values across the 3 calibration folds, renders top-20 bar + contrasting upgrader/non-upgrader waterfalls.",
+    x: 3400, y: 3500, width: 1600, height: 1000,
+    kind: "viz", hasFigure: true,
+  },
   {
     id: "train-mlp-v3",
     name: "Train MLP v3",
     description:
-      "PyTorch tabular MLP — deep-learning candidate for the AutoML pool. 3-layer net with BatchNorm/GELU/Dropout, class-weighted BCE, cosine LR, isotonic post-hoc calibration.",
+      "PyTorch tabular MLP — deep-learning candidate. 3-layer net with BatchNorm/GELU/Dropout, class-weighted BCE, cosine LR, isotonic post-hoc calibration.",
     x: 5100, y: 2500, width: 1600, height: 1000,
     kind: "model", hasFigure: false,
   },
@@ -219,7 +222,7 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     id: "train-gbm-v3",
     name: "Train GBM v3",
     description:
-      "Bias-diverse GBM candidate — sklearn GradientBoosting (CART) wrapped in isotonic CalibratedClassifierCV(cv=3). catboost optional.",
+      "Bias-diverse GBM candidate — sklearn GradientBoosting (CART) wrapped in isotonic CalibratedClassifierCV(cv=3).",
     x: 5100, y: 3000, width: 1600, height: 1000,
     kind: "model", hasFigure: false,
   },
@@ -227,7 +230,7 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     id: "weekly-data-slices",
     name: "Weekly Data Slices",
     description:
-      "ISO-week slicing of `events`. Per-(week, user) feature snapshot. Outputs `weekly_slices`, `weekly_summary`, `weekly_baseline_id`. Head of the data-drift branch.",
+      "ISO-week slicing of `events`. Per-(week, user) feature snapshot. Outputs `weekly_slices`, `weekly_summary`, `weekly_baseline_id`.",
     x: 6800, y: 0, width: 1600, height: 1000,
     kind: "transform", hasFigure: false,
   },
@@ -239,6 +242,54 @@ export const CANVAS_BLOCKS: CanvasBlock[] = [
     x: 6800, y: 500, width: 1600, height: 1000,
     kind: "viz", hasFigure: true,
   },
+  {
+    id: "load-events-master",
+    name: "Load Events Master",
+    description:
+      "Head of the production data pipeline tier. Reads the accumulated events pool from an external master store (S3/GCS or repo).",
+    x: 8500, y: 0, width: 1600, height: 1000,
+    kind: "ingest", hasFigure: false,
+  },
+  {
+    id: "load-weekly-drop",
+    name: "Load Weekly Drop",
+    description:
+      "Reads ONLY the new ISO-week of events that the upstream telemetry system dropped. Configurable TARGET_WEEK.",
+    x: 8500, y: 500, width: 1600, height: 1000,
+    kind: "ingest", hasFigure: false,
+  },
+  {
+    id: "merge-events",
+    name: "Merge Events",
+    description:
+      "Joins master + this week's drop, dedups, applies a label-lag cutoff (LABEL_LAG_DAYS=60). Outputs `events_pipeline`.",
+    x: 8500, y: 1000, width: 1600, height: 1000,
+    kind: "transform", hasFigure: false,
+  },
+  {
+    id: "build-inference-pool",
+    name: "Build Inference Pool",
+    description:
+      "Purpose-split for the INFERENCE branch. Takes the full merged pool (label-stable + label-pending) restricted to recently-active users.",
+    x: 10200, y: 500, width: 1600, height: 1000,
+    kind: "transform", hasFigure: false,
+  },
+  {
+    id: "build-training-pool",
+    name: "Build Training Pool",
+    description:
+      "Purpose-split for the TRAINING branch. Takes the label-stable subset and applies trainability gates (min users / min positives).",
+    x: 10200, y: 1000, width: 1600, height: 1000,
+    kind: "transform", hasFigure: false,
+  },
+  {
+    id: "persist-master",
+    name: "Persist Master",
+    description:
+      "Writes the merged events pool back to /tmp/zerve-pipeline/ with SHA-256 hash + meta.json. Closes the loop so next week starts from this.",
+    x: 10200, y: 1500, width: 1600, height: 1000,
+    kind: "ops", hasFigure: false,
+  },
 ];
 
 export const CANVAS_EDGES: CanvasEdge[] = [
@@ -247,6 +298,7 @@ export const CANVAS_EDGES: CanvasEdge[] = [
   ["example-dataset", "funnel-v4"],
   ["example-dataset", "build-features-v3"],
   ["example-dataset", "weekly-data-slices"],
+  ["example-dataset", "load-events-master"],
   ["eda-summary", "funnel-stages"],
   ["eda-summary", "build-features"],
   ["funnel-stages", "visualize-funnel"],
@@ -266,8 +318,6 @@ export const CANVAS_EDGES: CanvasEdge[] = [
   ["train-model-v3", "shap-v3"],
   ["train-model-v3", "compare-models"],
   ["train-model-v3", "per-segment-performance"],
-  ["train-mlp-v3", "compare-models"],
-  ["train-gbm-v3", "compare-models"],
   ["weekly-data-slices", "data-drift-monitor"],
   ["data-drift-monitor", "insights-card"],
   ["build-strategies", "roi-ranking"],
@@ -278,6 +328,13 @@ export const CANVAS_EDGES: CanvasEdge[] = [
   ["compare-models", "insights-card"],
   ["per-segment-performance", "insights-card"],
   ["roi-ranking", "insights-card"],
+  ["load-events-master", "merge-events"],
+  ["load-weekly-drop", "merge-events"],
+  ["merge-events", "build-inference-pool"],
+  ["merge-events", "build-training-pool"],
+  ["build-inference-pool", "insights-card"],
+  ["build-training-pool", "persist-master"],
+  ["persist-master", "insights-card"],
 ].map(([source, target], i) => ({
   id: `edge-${i}`,
   source: source as string,

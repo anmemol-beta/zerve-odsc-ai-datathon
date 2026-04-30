@@ -55,7 +55,7 @@ export default function Hero() {
         className="mt-10 flex flex-col md:flex-row md:items-end gap-6 md:gap-12"
       >
         <p className="text-slate-300 max-w-xl text-base leading-relaxed">
-          A leakage-safe upgrade-prediction model and a strict-nested 6-stage funnel,
+          A leakage-safe upgrade-prediction model and a strict-nested 9-stage funnel,
           built end-to-end in <span className="text-slate-50 font-medium">Zerve</span>.
           Drag the 3D manifold, score any user, retune the funnel rules — every prediction
           is <span className="gradient-text font-semibold">explainable</span>.
