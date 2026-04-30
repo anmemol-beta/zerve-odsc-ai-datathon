@@ -82,13 +82,13 @@ segment_performance_v3 = (
 )
 
 # Order stages by funnel rank for the chart
-psp_STAGE_ORDER = [
+STAGE_ORDER = [
     "0.NoEvent", "1.New", "2.Exploring", "3.Created", "4.UsedAI",
     "5.WroteCode", "6.Integrated", "7.Engaged", "8.Upgraded",
     "9.AtRisk@UsedAI", "9.AtRisk@WroteCode", "9.AtRisk@Integrated",
     "9.AtRisk@Engaged", "9.AtRisk@Upgraded", "9.Churned@Upgraded",
 ]
-order_map = {s: i for i, s in enumerate(psp_STAGE_ORDER)}
+order_map = {s: i for i, s in enumerate(STAGE_ORDER)}
 segment_performance_v3["_order"] = segment_performance_v3["final_stage"].map(
     lambda s: order_map.get(s, 99)
 )
@@ -128,15 +128,15 @@ psp_ax.grid(alpha=0.3, axis="y")
 psp_ax = psp_axes[1]
 pr_vals = segment_performance_v3["pr_auc"].fillna(0)
 lift_vals = segment_performance_v3["lift_over_base"].fillna(0)
-psp_xs = np.arange(len(stages))
-psp_ax.bar(psp_xs - 0.2, pr_vals, 0.4, color="#a855f7", label="PR-AUC")
+xs = np.arange(len(stages))
+psp_ax.bar(xs - 0.2, pr_vals, 0.4, color="#a855f7", label="PR-AUC")
 psp_ax2 = psp_ax.twinx()
-psp_ax2.bar(psp_xs + 0.2, lift_vals, 0.4, color="#10b981", label="top-5% lift", alpha=0.85)
+psp_ax2.bar(xs + 0.2, lift_vals, 0.4, color="#10b981", label="top-5% lift", alpha=0.85)
 psp_ax.set_ylabel("PR-AUC", color="#a855f7")
 psp_ax2.set_ylabel("top-5% lift over segment base rate", color="#10b981")
 psp_ax.set_title("Where does the v3 model add lift? "
              "(missing bars = no positives in test segment)")
-psp_ax.set_xticks(psp_xs)
+psp_ax.set_xticks(xs)
 psp_ax.set_xticklabels(stages, rotation=30, ha="right", fontsize=8)
 psp_ax.grid(alpha=0.3, axis="y")
 

@@ -4,7 +4,7 @@
 # Inherits the slim `events` frame from "Example Dataset" — already parsed,
 # already deduped. This block only prints summary stats and flags leakage.
 
-eda_n_users = events["person_id"].nunique()
+n_users = events["person_id"].nunique()
 
 print("Top 20 events by frequency:")
 print(events["event"].value_counts().head(20).to_string())
@@ -12,7 +12,7 @@ print()
 
 upgraded_users = events.loc[events["event"] == "subscription_upgraded", "person_id"].nunique()
 print(f"subscription_upgraded distinct users : {upgraded_users:,}")
-print(f"base upgrade rate                    : {100 * upgraded_users / eda_n_users:.2f}%  of all users")
+print(f"base upgrade rate                    : {100 * upgraded_users / n_users:.2f}%  of all users")
 print()
 
 # Events that fire right around the upgrade. Do NOT use as features for the
@@ -43,9 +43,9 @@ eda_ax1.set_yticks(range(len(top20)))
 eda_ax1.set_yticklabels(top20.index, fontsize=9)
 eda_ax1.invert_yaxis()
 eda_ax1.set_xlabel("event count")
-eda_ax1.set_title(f"Top 20 events  ·  {eda_n_users:,} users  ·  base upgrade rate {100*upgraded_users/eda_n_users:.2f}%")
-for eda_i, eda_ev in enumerate(top20.values):
-    eda_ax1.text(eda_ev, eda_i, f"  {eda_ev:,}", va="center", fontsize=8)
+eda_ax1.set_title(f"Top 20 events  ·  {n_users:,} users  ·  base upgrade rate {100*upgraded_users/n_users:.2f}%")
+for i, ev in enumerate(top20.values):
+    eda_ax1.text(ev, i, f"  {ev:,}", va="center", fontsize=8)
 eda_ax1.legend(handles=[
     plt.Rectangle((0, 0), 1, 1, color="#4c72b0", label="safe to use as feature"),
     plt.Rectangle((0, 0), 1, 1, color="#dd8452", label="leakage — excluded"),

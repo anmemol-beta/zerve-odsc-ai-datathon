@@ -18,11 +18,11 @@ lgbm_proba_test = lgbm_model.predict_proba(X_test.values)[:, 1]
 vm_fig, vm_axes = plt.subplots(2, 2, figsize=(15, 10))
 
 # ROC
-for vm_name, scores, color in [("logistic_reg", lr_proba_test, "#4c72b0"),
+for name, scores, color in [("logistic_reg", lr_proba_test, "#4c72b0"),
                             ("lightgbm",     lgbm_proba_test, "#dd8452")]:
     fpr, tpr, _ = roc_curve(y_test, scores)
     auc = np.trapezoid(tpr, fpr)
-    vm_axes[0, 0].plot(fpr, tpr, label=f"{vm_name}  AUC={auc:.3f}", color=color, linewidth=1.5)
+    vm_axes[0, 0].plot(fpr, tpr, label=f"{name}  AUC={auc:.3f}", color=color, linewidth=1.5)
 vm_axes[0, 0].plot([0, 1], [0, 1], color="grey", linestyle=":", linewidth=1)
 vm_axes[0, 0].set_xlabel("FPR"); vm_axes[0, 0].set_ylabel("TPR")
 vm_axes[0, 0].set_title("ROC")
@@ -30,11 +30,11 @@ vm_axes[0, 0].legend(loc="lower right", fontsize=9)
 vm_axes[0, 0].grid(True, alpha=0.3)
 
 # PR
-for vm_name, scores, color in [("logistic_reg", lr_proba_test, "#4c72b0"),
+for name, scores, color in [("logistic_reg", lr_proba_test, "#4c72b0"),
                             ("lightgbm",     lgbm_proba_test, "#dd8452")]:
     prec, rec, _ = precision_recall_curve(y_test, scores)
     ap = np.trapezoid(prec[::-1], rec[::-1])
-    vm_axes[0, 1].plot(rec, prec, label=f"{vm_name}  AP={ap:.3f}", color=color, linewidth=1.5)
+    vm_axes[0, 1].plot(rec, prec, label=f"{name}  AP={ap:.3f}", color=color, linewidth=1.5)
 vm_axes[0, 1].axhline(base_rate, color="grey", linestyle=":", linewidth=1, label=f"base rate {base_rate:.3f}")
 vm_axes[0, 1].set_xlabel("recall"); vm_axes[0, 1].set_ylabel("precision")
 vm_axes[0, 1].set_title("Precision-Recall (preferred under imbalance)")

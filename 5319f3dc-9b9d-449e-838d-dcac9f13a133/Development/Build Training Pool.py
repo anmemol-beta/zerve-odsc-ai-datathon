@@ -40,12 +40,12 @@ upgraders = events_pipeline_trainable.loc[
     events_pipeline_trainable["event"] == "subscription_upgraded",
     "person_id",
 ].unique()
-btp_n_users = int(events_pipeline_trainable["person_id"].nunique())
+n_users = int(events_pipeline_trainable["person_id"].nunique())
 n_positives = int(len(upgraders))
 
 
 # ─── 2. trainability gate ────────────────────────────────────────────────
-gate_users = btp_n_users >= MIN_TRAINING_USERS
+gate_users = n_users >= MIN_TRAINING_USERS
 gate_positives = n_positives >= MIN_TRAINING_POSITIVES
 training_gate_passed = bool(gate_users and gate_positives)
 
@@ -59,12 +59,12 @@ training_pool_meta = {
     "purpose": "training",
     "label_lag_days": merge_summary["label_lag_days"],
     "n_rows": int(len(training_pool)),
-    "btp_n_users": btp_n_users,
+    "n_users": n_users,
     "n_positives": n_positives,
-    "positive_rate": round(n_positives / max(btp_n_users, 1), 5),
+    "positive_rate": round(n_positives / max(n_users, 1), 5),
     "gate_users": {
         "min_required": MIN_TRAINING_USERS,
-        "observed": btp_n_users,
+        "observed": n_users,
         "passed": gate_users,
     },
     "gate_positives": {
@@ -87,13 +87,13 @@ print("=" * 80)
 print(f"BUILD TRAINING POOL  (label_lag={merge_summary['label_lag_days']} days)")
 print("=" * 80)
 print(f"  rows                : {training_pool_meta['n_rows']:>10,}")
-print(f"  users (label-stable): {training_pool_meta['btp_n_users']:>10,}")
+print(f"  users (label-stable): {training_pool_meta['n_users']:>10,}")
 print(f"  positives (upgraded): {training_pool_meta['n_positives']:>10,}  "
       f"({training_pool_meta['positive_rate']*100:.2f}%)")
 print()
 print("  Trainability gates:")
 print(f"    users ≥ {MIN_TRAINING_USERS:<8}: "
-      f"{'PASS' if gate_users else 'FAIL'}  ({btp_n_users:,} observed)")
+      f"{'PASS' if gate_users else 'FAIL'}  ({n_users:,} observed)")
 print(f"    positives ≥ {MIN_TRAINING_POSITIVES:<3}     : "
       f"{'PASS' if gate_positives else 'FAIL'}  ({n_positives:,} observed)")
 print()

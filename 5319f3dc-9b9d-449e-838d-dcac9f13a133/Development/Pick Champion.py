@@ -32,11 +32,11 @@ v3["n_test_positives"] = int(np.asarray(y_v3_test).sum())
 
 # Align column names. v3 already uses snake_case; v1 should match.
 COMMON = ["model", "roc_auc", "pr_auc", "brier"]
-for pc_c in COMMON:
-    if pc_c not in v1.columns:
-        v1[pc_c] = np.nan
-    if pc_c not in v3.columns:
-        v3[pc_c] = np.nan
+for c in COMMON:
+    if c not in v1.columns:
+        v1[c] = np.nan
+    if c not in v3.columns:
+        v3[c] = np.nan
 
 # top-K columns may differ — keep what's available
 def _pick(df, name_options):
@@ -87,13 +87,13 @@ v1_lgbm = model_comparison[
 
 winner_metrics = {}
 if len(v3_ens) and len(v1_lgbm):
-    for pc_m in ["roc_auc", "pr_auc", "brier"]:
-        v1v = float(v1_lgbm[pc_m].iloc[0])
-        v3v = float(v3_ens[pc_m].iloc[0])
+    for m in ["roc_auc", "pr_auc", "brier"]:
+        v1v = float(v1_lgbm[m].iloc[0])
+        v3v = float(v3_ens[m].iloc[0])
         # brier — lower is better; others — higher
-        v3_better = (v3v < v1v) if pc_m == "brier" else (v3v > v1v)
+        v3_better = (v3v < v1v) if m == "brier" else (v3v > v1v)
         delta = v3v - v1v
-        winner_metrics[pc_m] = {
+        winner_metrics[m] = {
             "v1": v1v, "v3": v3v, "delta": delta, "v3_better": v3_better,
         }
 
@@ -133,17 +133,17 @@ titles = {
     "brier": "Brier (lower ↓ better)",
 }
 
-for cm_ax, pc_m in zip(cm_axes, metric_order):
-    rows = model_comparison.dropna(subset=[pc_m])
+for cm_ax, m in zip(cm_axes, metric_order):
+    rows = model_comparison.dropna(subset=[m])
     versions = []
     values = []
     for _, r in rows.iterrows():
         label = f"{r['version']} {r['model']}"[:25]
         versions.append(label)
-        values.append(r[pc_m])
+        values.append(r[m])
     colors = ["#06b6d4" if "v1" in v else "#ec4899" for v in versions]
     bars = cm_ax.barh(versions, values, color=colors)
-    cm_ax.set_title(titles[pc_m])
+    cm_ax.set_title(titles[m])
     cm_ax.grid(alpha=0.3, axis="x")
     for b, v in zip(bars, values):
         cm_ax.text(v, b.get_y() + b.get_height()/2, f" {v:.4f}",
@@ -161,6 +161,6 @@ print()
 print("CHOSEN MODEL: ensemble_v3")
 print(f"  test positives: 6 (v1 random) → {comparison_summary['v3_test_pos']} "
       f"(v3 cohort) — {comparison_summary['statistical_power_ratio']:.0f}x more power")
-for pc_m, pc_w in winner_metrics.items():
-    sign = "✓" if pc_w["v3_better"] else "✗"
-    print(f"  {sign} {pc_m}: v1={pc_w['v1']:.4f}  v3={pc_w['v3']:.4f}  Δ={pc_w['delta']:+.4f}")
+for m, w in winner_metrics.items():
+    sign = "✓" if w["v3_better"] else "✗"
+    print(f"  {sign} {m}: v1={w['v1']:.4f}  v3={w['v3']:.4f}  Δ={w['delta']:+.4f}")

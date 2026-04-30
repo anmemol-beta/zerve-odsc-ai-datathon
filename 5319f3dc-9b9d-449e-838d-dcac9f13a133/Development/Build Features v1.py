@@ -51,7 +51,7 @@ RANDOM_STATE = 42
 
 DATA_END = events["timestamp"].max()
 
-bf_LEAKAGE_EVENTS = {
+LEAKAGE_EVENTS = {
     # Direct upgrade/downgrade
     "subscription_upgraded",
     "subscription_downgraded",
@@ -88,8 +88,8 @@ bf_LEAKAGE_EVENTS = {
     "commercial_credits_received",
 }
 
-bf_CREATED_EVENTS       = {"agent_tool_call_create_block_tool", "run_block", "new_canvas_created", "block_create", "files_upload"}
-bf_AI_EVENTS            = {"$ai_generation", "agent_new_chat", "agent_worker_created", "agent_message"}
+CREATED_EVENTS       = {"agent_tool_call_create_block_tool", "run_block", "new_canvas_created", "block_create", "files_upload"}
+AI_EVENTS            = {"$ai_generation", "agent_new_chat", "agent_worker_created", "agent_message"}
 TOOL_CALL_PREFIX     = "agent_tool_call_"
 CREDITS_BELOW_EVENTS = {"credits_below_1", "credits_below_2", "credits_below_3", "credits_below_4"}
 DEPLOY_EVENTS        = {
@@ -115,22 +115,22 @@ required_total_days = OBS_DAYS + LABEL_DAYS
 eligible_users = user_first_ts[user_first_ts <= DATA_END - timedelta(days=required_total_days)].index
 
 # Annotate each event row with the user's start time + relative days.
-bf_ev = events.merge(user_first_ts, how="left", left_on="person_id", right_index=True)
-bf_ev["days_from_start"] = (bf_ev["timestamp"] - bf_ev["first_ts"]).dt.total_seconds() / 86400
+ev = events.merge(user_first_ts, how="left", left_on="person_id", right_index=True)
+ev["days_from_start"] = (ev["timestamp"] - ev["first_ts"]).dt.total_seconds() / 86400
 
 # Observation = events in [0, OBS_DAYS) for eligible users, excluding leakage events.
-obs = bf_ev[
-    (bf_ev["person_id"].isin(eligible_users)) &
-    (bf_ev["days_from_start"] >= 0) &
-    (bf_ev["days_from_start"] <  OBS_DAYS) &
-    (~bf_ev["event"].isin(bf_LEAKAGE_EVENTS))
+obs = ev[
+    (ev["person_id"].isin(eligible_users)) &
+    (ev["days_from_start"] >= 0) &
+    (ev["days_from_start"] <  OBS_DAYS) &
+    (~ev["event"].isin(LEAKAGE_EVENTS))
 ].copy()
 
 # Boolean / date helpers (computed once).
 obs["_date"]              = obs["timestamp"].dt.date
 obs["_is_signin"]         = obs["event"].eq("sign_in")
-obs["_is_ai"]             = obs["event"].isin(bf_AI_EVENTS)
-obs["_is_created"]        = obs["event"].isin(bf_CREATED_EVENTS)
+obs["_is_ai"]             = obs["event"].isin(AI_EVENTS)
+obs["_is_created"]        = obs["event"].isin(CREATED_EVENTS)
 obs["_is_run_block"]      = obs["event"].eq("run_block")
 obs["_is_credits_used"]   = obs["event"].eq("credits_used")
 obs["_is_credits_below"]  = obs["event"].isin(CREDITS_BELOW_EVENTS)
@@ -217,10 +217,10 @@ TREND_BASE_COLS = [
     "n_deploy", "n_agent_msg",
 ]
 trend = pd.DataFrame(index=early_agg.index.union(late_agg.index))
-for bf_col in TREND_BASE_COLS:
-    early_col = early_agg.get(f"{bf_col}_early", pd.Series(0, index=trend.index)).reindex(trend.index, fill_value=0)
-    late_col  = late_agg.get(f"{bf_col}_late",   pd.Series(0, index=trend.index)).reindex(trend.index, fill_value=0)
-    trend[f"trend_{bf_col}"] = late_col / early_col.clip(lower=1)
+for col in TREND_BASE_COLS:
+    early_col = early_agg.get(f"{col}_early", pd.Series(0, index=trend.index)).reindex(trend.index, fill_value=0)
+    late_col  = late_agg.get(f"{col}_late",   pd.Series(0, index=trend.index)).reindex(trend.index, fill_value=0)
+    trend[f"trend_{col}"] = late_col / early_col.clip(lower=1)
 # Whole-week activity acceleration flag (any signal sustained into late window)
 trend["did_persist_late"] = ((late_agg.reindex(trend.index, fill_value=0)["n_events_late"] > 0).astype(int)
                               if "n_events_late" in late_agg.columns else 0)
@@ -248,7 +248,7 @@ X_full.index.name = "person_id"
 # ── Filter out users who upgraded WITHIN their observation window. Their label
 #    is structurally yes but their features are post-decision — both useless
 #    and leakage-prone.
-upgrade_rows = bf_ev[bf_ev["event"] == "subscription_upgraded"]
+upgrade_rows = ev[ev["event"] == "subscription_upgraded"]
 upgrade_rows = upgrade_rows[upgrade_rows["person_id"].isin(eligible_users)]
 upgraded_in_obs = upgrade_rows[upgrade_rows["days_from_start"] < OBS_DAYS]["person_id"].unique()
 
@@ -270,7 +270,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y_full,
 )
 
-bf_feature_cols = list(X_full.columns)
+feature_cols = list(X_full.columns)
 
 print(f"data span             : {events['timestamp'].min().date()} → {DATA_END.date()}")
 print(f"observation window    : first {OBS_DAYS} days from each user's first event")
@@ -284,4 +284,4 @@ print(f"positives total       : {int(y_full.sum())} ({100 * y_full.mean():.2f}%)
 print()
 print(f"train: {X_train.shape}  positives={int(y_train.sum())}  ({100 * y_train.mean():.2f}%)")
 print(f"test : {X_test.shape}   positives={int(y_test.sum())}  ({100 * y_test.mean():.2f}%)")
-print(f"feature count         : {len(bf_feature_cols)}")
+print(f"feature count         : {len(feature_cols)}")

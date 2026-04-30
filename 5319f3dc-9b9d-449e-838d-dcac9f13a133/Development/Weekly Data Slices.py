@@ -16,7 +16,7 @@ Outputs:
                                                   n_upgrades, n_active,
                                                   agent_share, ai_share, ...
     weekly_baseline_id  str                       which week_id is the baseline
-                                                  (first 4 wds_weeks pooled)
+                                                  (first 4 weeks pooled)
 
 Why per-(week, user) and not just per-week aggregate:
     Data drift is best detected at the feature distribution level. A weekly
@@ -30,11 +30,11 @@ import numpy as np
 import pandas as pd
 
 # ─── 1. attach ISO week to every event ───────────────────────────────────
-wds_ev = events.copy()
-wds_ev["iso_week"] = wds_ev["timestamp"].dt.to_period("W-MON")  # wds_weeks anchored Mon→Sun
-wds_weeks = sorted(wds_ev["iso_week"].unique())
-print(f"[weekly] event log spans {len(wds_weeks)} ISO wds_weeks "
-      f"({wds_weeks[0]} → {wds_weeks[-1]})")
+ev = events.copy()
+ev["iso_week"] = ev["timestamp"].dt.to_period("W-MON")  # weeks anchored Mon→Sun
+weeks = sorted(ev["iso_week"].unique())
+print(f"[weekly] event log spans {len(weeks)} ISO weeks "
+      f"({weeks[0]} → {weeks[-1]})")
 
 
 # ─── 2. lightweight per-(week, user) feature snapshot ────────────────────
@@ -43,21 +43,21 @@ print(f"[weekly] event log spans {len(wds_weeks)} ISO wds_weeks "
 # be expensive). The drift signal in these correlates with the rest.
 KEY_EVENT_GROUPS = {
     "n_events":           lambda mask: mask,                # raw count
-    "n_ai_events":        lambda mask: mask & wds_ev["event"].str.contains("ai_|llm_|agent_", case=False, na=False),
-    "n_credit_events":    lambda mask: mask & wds_ev["event"].str.contains("credit", case=False, na=False),
-    "n_run_events":       lambda mask: mask & wds_ev["event"].str.contains("run_|exec_", case=False, na=False),
-    "n_block_events":     lambda mask: mask & wds_ev["event"].str.contains("block_", case=False, na=False),
-    "n_exception_events": lambda mask: mask & (wds_ev["event"] == "$exception"),
-    "n_deploy_events":    lambda mask: mask & wds_ev["event"].str.contains("deploy", case=False, na=False),
+    "n_ai_events":        lambda mask: mask & ev["event"].str.contains("ai_|llm_|agent_", case=False, na=False),
+    "n_credit_events":    lambda mask: mask & ev["event"].str.contains("credit", case=False, na=False),
+    "n_run_events":       lambda mask: mask & ev["event"].str.contains("run_|exec_", case=False, na=False),
+    "n_block_events":     lambda mask: mask & ev["event"].str.contains("block_", case=False, na=False),
+    "n_exception_events": lambda mask: mask & (ev["event"] == "$exception"),
+    "n_deploy_events":    lambda mask: mask & ev["event"].str.contains("deploy", case=False, na=False),
 }
 
 weekly_slices = {}
 print("[weekly] building per-week per-user feature snapshots...")
-for wds_w in wds_weeks:
-    in_week = (wds_ev["iso_week"] == wds_w)
+for w in weeks:
+    in_week = (ev["iso_week"] == w)
     if in_week.sum() == 0:
         continue
-    week_ev = wds_ev[in_week]
+    week_ev = ev[in_week]
     users_in_week = week_ev["person_id"].unique()
     snap = pd.DataFrame(index=pd.Index(users_in_week, name="person_id"))
 
@@ -67,7 +67,7 @@ for wds_w in wds_weeks:
     for fname, predicate in KEY_EVENT_GROUPS.items():
         if fname == "n_events":
             continue
-        sub = wds_ev[predicate(in_week)]
+        sub = ev[predicate(in_week)]
         if len(sub):
             snap[fname] = sub.groupby("person_id", observed=True).size().reindex(snap.index, fill_value=0)
         else:
@@ -95,7 +95,7 @@ for wds_w in wds_weeks:
     ).astype(int)
 
     snap = snap.fillna(0).astype({"n_events": "int32"})
-    weekly_slices[str(wds_w)] = snap
+    weekly_slices[str(w)] = snap
 
 print(f"[weekly] built {len(weekly_slices)} weekly slices")
 sample_w = list(weekly_slices.keys())[len(weekly_slices) // 2]
@@ -104,9 +104,9 @@ print(f"        sample slice {sample_w!r}: shape={weekly_slices[sample_w].shape}
 
 # ─── 3. weekly summary dataframe ─────────────────────────────────────────
 summary_rows = []
-for wds_w_id, snap in weekly_slices.items():
+for w_id, snap in weekly_slices.items():
     summary_rows.append({
-        "week": wds_w_id,
+        "week": w_id,
         "n_users": len(snap),
         "n_events": int(snap["n_events"].sum()),
         "n_upgrades": int(snap["had_upgrade"].sum()),
@@ -120,12 +120,12 @@ for wds_w_id, snap in weekly_slices.items():
 weekly_summary = pd.DataFrame(summary_rows).sort_values("week").reset_index(drop=True)
 
 
-# ─── 4. baseline (first 4 wds_weeks pooled) for drift comparison ─────────────
+# ─── 4. baseline (first 4 weeks pooled) for drift comparison ─────────────
 # Drift is measured against this distribution. Configurable downstream.
 BASELINE_N_WEEKS = 4
-wds_baseline_weeks = weekly_summary["week"].head(BASELINE_N_WEEKS).tolist()
-weekly_baseline_id = f"baseline:{wds_baseline_weeks[0]}..{wds_baseline_weeks[-1]}"
-print(f"[weekly] baseline = first {BASELINE_N_WEEKS} wds_weeks pooled "
+baseline_weeks = weekly_summary["week"].head(BASELINE_N_WEEKS).tolist()
+weekly_baseline_id = f"baseline:{baseline_weeks[0]}..{baseline_weeks[-1]}"
+print(f"[weekly] baseline = first {BASELINE_N_WEEKS} weeks pooled "
       f"({weekly_baseline_id})")
 
 

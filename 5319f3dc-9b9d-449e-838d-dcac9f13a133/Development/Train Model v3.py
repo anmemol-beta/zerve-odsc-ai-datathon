@@ -58,16 +58,16 @@ base_models_v3 = {
 models_v3 = {}
 preds_v3 = {}
 print("[v3] Fitting calibrated base models (isotonic, cv=2)...")
-for tm3_name, _m in base_models_v3.items():
+for _name, _m in base_models_v3.items():
     _cc = CalibratedClassifierCV(_m, method="isotonic", cv=2, n_jobs=1)
     _cc.fit(X_v3_train, y_v3_train)
     _p = _cc.predict_proba(X_v3_test)[:, 1]
-    models_v3[tm3_name] = _cc
-    preds_v3[tm3_name] = _p
+    models_v3[_name] = _cc
+    preds_v3[_name] = _p
     _pr = average_precision_score(y_v3_test, _p)
     _roc = roc_auc_score(y_v3_test, _p)
     _br = brier_score_loss(y_v3_test, _p)
-    print(f"  {tm3_name:<8}  PR-AUC={_pr:.4f}  ROC-AUC={_roc:.4f}  Brier={_br:.4f}")
+    print(f"  {_name:<8}  PR-AUC={_pr:.4f}  ROC-AUC={_roc:.4f}  Brier={_br:.4f}")
 
 # Soft voting ensemble (simple mean — weighted variant marginally different)
 ensemble_proba_v3 = np.mean(list(preds_v3.values()), axis=0)

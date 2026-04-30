@@ -215,14 +215,14 @@ def _agg_window_v3(sub, suffix):
 
 print("[v3] Aggregating window features...")
 _window_blocks_v3 = []
-for bf3_name, _sec in WINDOWS_V3.items():
+for _name, _sec in WINDOWS_V3.items():
     if _sec == float("inf"):
         _sub_v3 = _clean_v3
     else:
         _sub_v3 = _clean_v3.loc[_clean_v3["sec_since_first"] <= _sec]
-    _f_v3 = _agg_window_v3(_sub_v3, bf3_name)
+    _f_v3 = _agg_window_v3(_sub_v3, _name)
     _window_blocks_v3.append(_f_v3)
-    print(f"  window={bf3_name:<5}  rows={len(_sub_v3):>10,}  feats={len(_f_v3.columns)}")
+    print(f"  window={_name:<5}  rows={len(_sub_v3):>10,}  feats={len(_f_v3.columns)}")
 
 X_v3_full = pd.concat(_window_blocks_v3, axis=1).fillna(0)
 
@@ -272,7 +272,7 @@ def _mode_per_user_v3(col):
         lambda s: s.mode().iloc[0] if len(s.mode()) else None
     )
 
-for _col, bf3_name in [
+for _col, _name in [
     ("person_properties.purpose",      "purpose"),
     ("person_properties.role",         "role"),
     ("person_properties.work_type",    "work_type"),
@@ -282,12 +282,12 @@ for _col, bf3_name in [
     ("properties.$geoip_country_name", "country"),
 ]:
     _s_v3 = _mode_per_user_v3(_col).reindex(X_v3_full.index)
-    if bf3_name == "country":
+    if _name == "country":
         _top10 = _s_v3.value_counts().head(10).index
         _s_v3 = _s_v3.where(_s_v3.isin(_top10), "Other").fillna("Unknown")
-    elif bf3_name in ("os", "device_type"):
+    elif _name in ("os", "device_type"):
         _s_v3 = _s_v3.fillna("Unknown")
-    _dummies_v3 = pd.get_dummies(_s_v3.fillna("(missing)"), prefix=bf3_name, dummy_na=False).astype(int)
+    _dummies_v3 = pd.get_dummies(_s_v3.fillna("(missing)"), prefix=_name, dummy_na=False).astype(int)
     X_v3_full = pd.concat([X_v3_full, _dummies_v3], axis=1)
 
 # Cohort + label

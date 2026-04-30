@@ -13,7 +13,7 @@
 #
 # Exports for downstream blocks (UI / Streamlit / Visualize Model):
 #   lr_model, lgbm_model, model_metrics, shap_values, shap_explainer,
-#   feature_importance, tm_feature_cols, tm_base_rate
+#   feature_importance, feature_cols, base_rate
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -34,8 +34,8 @@ from sklearn.metrics import (
     recall_score, f1_score, log_loss, brier_score_loss,
 )
 
-tm_feature_cols = list(X_train.columns)
-tm_base_rate = float(y_test.mean())
+feature_cols = list(X_train.columns)
+base_rate = float(y_test.mean())
 
 # ── Logistic regression — standardized features for stable coefficients
 scaler = StandardScaler()
@@ -61,7 +61,7 @@ lgbm_model = lgb.LGBMClassifier(
     random_state=42,
     verbose=-1,
 )
-lgbm_model.fit(X_train.values, y_train.values, feature_name=tm_feature_cols)
+lgbm_model.fit(X_train.values, y_train.values, feature_name=feature_cols)
 lgbm_proba = lgbm_model.predict_proba(X_test.values)[:, 1]
 
 
@@ -99,7 +99,7 @@ model_metrics = pd.DataFrame([
     evaluate("lightgbm",     y_test, lgbm_proba),
 ])
 
-print(f"test base rate          : {100*tm_base_rate:.2f}%  (positives = {int(y_test.sum())} / {len(y_test):,})")
+print(f"test base rate          : {100*base_rate:.2f}%  (positives = {int(y_test.sum())} / {len(y_test):,})")
 print(f"random recall@5%        : ~5%  (uniform sampling baseline)")
 print(f"random recall@10%       : ~10%")
 print()
@@ -110,20 +110,20 @@ print()
 # Pick the better model (by PR-AUC) for downstream UI / SHAP.
 better = model_metrics.iloc[model_metrics["pr_auc"].argmax()]["model"]
 print(f"=> chosen for UI / explanations : {better}")
-tm_chosen_model = lgbm_model if better == "lightgbm" else lr_model
+chosen_model = lgbm_model if better == "lightgbm" else lr_model
 chosen_proba = lgbm_proba if better == "lightgbm" else lr_proba
-chosen_X_test = X_test if better == "lightgbm" else pd.DataFrame(X_test_s, index=X_test.index, columns=tm_feature_cols)
+chosen_X_test = X_test if better == "lightgbm" else pd.DataFrame(X_test_s, index=X_test.index, columns=feature_cols)
 
 # ── Feature importance: LR (standardized coefs) + LGBM (gain).
 lr_importance = pd.Series(
     np.abs(lr_model.coef_[0]),
-    index=tm_feature_cols,
+    index=feature_cols,
     name="lr_abs_std_coef",
 ).sort_values(ascending=False)
 
 lgbm_importance = pd.Series(
     lgbm_model.booster_.feature_importance(importance_type="gain"),
-    index=tm_feature_cols,
+    index=feature_cols,
     name="lgbm_gain",
 ).sort_values(ascending=False)
 

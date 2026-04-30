@@ -1,16 +1,16 @@
 """Validate Funnel v4 — engineer-implementability proof.
 
-Reads `user_features_v4` and asserts the v4 vfu_stage assignment satisfies
+Reads `user_features_v4` and asserts the v4 stage assignment satisfies
 every rule a downstream engineer would expect:
     1. every user has exactly one `final_stage` (no nulls, no duplicates)
-    2. vfu_stage labels are drawn from the closed enum (no typos)
+    2. stage labels are drawn from the closed enum (no typos)
     3. `highest` field is monotone consistent with t1..t8 timestamps
-    4. AtRisk@<X> implies highest >= X (you can't be at-risk at a vfu_stage
+    4. AtRisk@<X> implies highest >= X (you can't be at-risk at a stage
        you never reached)
     5. 8.Upgraded implies upgraded=True
     6. 9.Churned@Upgraded implies upgraded=True
     7. days_since_last is non-negative
-    8. vfu_stage population sums to total user count
+    8. stage population sums to total user count
 
 Outputs:
     funnel_v4_validation   dict — per-check pass/fail + counts
@@ -32,12 +32,12 @@ EXPECTED_STAGES = {
     "9.AtRisk@Engaged", "9.AtRisk@Upgraded", "9.Churned@Upgraded",
 }
 
-vfu_results = {}
+results = {}
 
-# ─── 1. exactly one vfu_stage per user ────────────────────────────────────────
+# ─── 1. exactly one stage per user ────────────────────────────────────────
 n_total = len(uf)
 n_with_stage = int(uf["final_stage"].notna().sum())
-vfu_results["one_stage_per_user"] = {
+results["one_stage_per_user"] = {
     "total_users": n_total,
     "users_with_stage": n_with_stage,
     "missing": n_total - n_with_stage,
@@ -47,7 +47,7 @@ vfu_results["one_stage_per_user"] = {
 # ─── 2. closed enum ───────────────────────────────────────────────────────
 unique_stages = set(uf["final_stage"].dropna().unique())
 unexpected = unique_stages - EXPECTED_STAGES
-vfu_results["stage_enum_closed"] = {
+results["stage_enum_closed"] = {
     "expected_size": len(EXPECTED_STAGES),
     "observed_size": len(unique_stages),
     "unexpected": list(unexpected),
@@ -67,13 +67,13 @@ def _expected_highest(row):
 sample = uf.sample(min(500, len(uf)), random_state=42)
 sample_expected = sample.apply(_expected_highest, axis=1)
 mismatch = int((sample["highest"].astype(int) != sample_expected).sum())
-vfu_results["highest_monotone"] = {
+results["highest_monotone"] = {
     "sampled": len(sample),
     "mismatch": mismatch,
     "pass": mismatch == 0,
 }
 
-# ─── 4. AtRisk@X implies highest >= X (X = vfu_stage rank) ────────────────────
+# ─── 4. AtRisk@X implies highest >= X (X = stage rank) ────────────────────
 ATRISK_MIN_RANK = {
     "9.AtRisk@UsedAI": 4, "9.AtRisk@WroteCode": 5,
     "9.AtRisk@Integrated": 6, "9.AtRisk@Engaged": 7,
@@ -85,7 +85,7 @@ for label, min_rank in ATRISK_MIN_RANK.items():
     bad = int((sub["highest"].astype(int) < min_rank).sum())
     if bad > 0:
         atrisk_violations[label] = bad
-vfu_results["atrisk_rank_consistent"] = {
+results["atrisk_rank_consistent"] = {
     "violations": atrisk_violations,
     "pass": not atrisk_violations,
 }
@@ -93,7 +93,7 @@ vfu_results["atrisk_rank_consistent"] = {
 # ─── 5. 8.Upgraded ⇒ upgraded=True ────────────────────────────────────────
 upg_label_users = uf[uf["final_stage"] == "8.Upgraded"]
 not_upg_flag = int((~upg_label_users["upgraded"].astype(bool)).sum())
-vfu_results["upgraded_label_consistent"] = {
+results["upgraded_label_consistent"] = {
     "upgraded_label_count": len(upg_label_users),
     "missing_upgraded_flag": not_upg_flag,
     "pass": not_upg_flag == 0,
@@ -102,7 +102,7 @@ vfu_results["upgraded_label_consistent"] = {
 # ─── 6. 9.Churned@Upgraded ⇒ upgraded=True ────────────────────────────────
 churn_users = uf[uf["final_stage"] == "9.Churned@Upgraded"]
 churn_no_upg = int((~churn_users["upgraded"].astype(bool)).sum()) if len(churn_users) else 0
-vfu_results["churned_label_consistent"] = {
+results["churned_label_consistent"] = {
     "churned_label_count": len(churn_users),
     "missing_upgraded_flag": churn_no_upg,
     "pass": churn_no_upg == 0,
@@ -110,38 +110,38 @@ vfu_results["churned_label_consistent"] = {
 
 # ─── 7. days_since_last >= 0 ──────────────────────────────────────────────
 neg_days = int((uf["days_since_last"].dropna() < 0).sum())
-vfu_results["days_since_last_nonneg"] = {
+results["days_since_last_nonneg"] = {
     "negative_count": neg_days, "pass": neg_days == 0,
 }
 
 # ─── 8. distribution sums to total ────────────────────────────────────────
 dist = uf["final_stage"].value_counts().to_dict()
-vfu_results["distribution"] = {
+results["distribution"] = {
     "stage_counts": {k: int(v) for k, v in dist.items()},
     "sum_equals_total": sum(dist.values()) == n_with_stage,
     "pass": sum(dist.values()) == n_with_stage,
 }
 
 # ─── final summary ────────────────────────────────────────────────────────
-vfu_all_pass = all(vf4_r.get("pass", False) for vf4_r in vfu_results.values())
+all_pass = all(vf4_r.get("pass", False) for vf4_r in results.values())
 funnel_v4_validation = {
-    "vfu_all_pass": vfu_all_pass,
-    "checks": vfu_results,
+    "all_pass": all_pass,
+    "checks": results,
 }
 
 print("=" * 60)
 print("FUNNEL V4 VALIDATION")
 print("=" * 60)
-for vfu_name, vf4_r in vfu_results.items():
+for name, vf4_r in results.items():
     status = "✓ PASS" if vf4_r.get("pass") else "✗ FAIL"
-    print(f"  {status}  {vfu_name}")
+    print(f"  {status}  {name}")
 print()
-print("vfu_stage distribution:")
-for vfu_stage, n in sorted(dist.items(), key=lambda kv: -kv[1]):
+print("stage distribution:")
+for stage, n in sorted(dist.items(), key=lambda kv: -kv[1]):
     pct = n / n_with_stage * 100
     bar = "█" * int(pct / 2)
-    print(f"  {vfu_stage:<26} {n:>6,} ({pct:>5.1f}%)  {bar}")
+    print(f"  {stage:<26} {n:>6,} ({pct:>5.1f}%)  {bar}")
 print()
-print(f"OVERALL: {'PASS — all 8 checks green' if vfu_all_pass else 'FAIL — see details above'}")
+print(f"OVERALL: {'PASS — all 8 checks green' if all_pass else 'FAIL — see details above'}")
 
-assert vfu_all_pass, "Funnel v4 validation failed — see vfu_results above"
+assert all_pass, "Funnel v4 validation failed — see results above"

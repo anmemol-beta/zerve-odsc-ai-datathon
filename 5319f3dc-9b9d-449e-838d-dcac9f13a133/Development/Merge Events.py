@@ -60,8 +60,8 @@ n_after_dedup = len(events_pipeline)
 # to LABEL_LAG_DAYS. If their latest activity is within that window, we
 # don't yet know whether they will upgrade — so they should NOT be in the
 # training pool, only the inference pool.
-me_data_now = events_pipeline["timestamp"].max()
-cutoff = me_data_now - pd.Timedelta(days=LABEL_LAG_DAYS)
+data_now = events_pipeline["timestamp"].max()
+cutoff = data_now - pd.Timedelta(days=LABEL_LAG_DAYS)
 last_activity = events_pipeline.groupby("person_id")["timestamp"].max()
 trainable_users = last_activity[last_activity <= cutoff].index
 events_pipeline_trainable = events_pipeline[
@@ -72,7 +72,7 @@ events_pipeline_trainable = events_pipeline[
 # ─── 4. report ───────────────────────────────────────────────────────────
 merge_summary = {
     "label_lag_days": LABEL_LAG_DAYS,
-    "me_data_now": str(me_data_now),
+    "data_now": str(data_now),
     "label_cutoff": str(cutoff),
     "n_master_in": int(n_master),
     "n_drop_in": int(n_drop),
@@ -96,7 +96,7 @@ print(f"  weekly drop in       : {merge_summary['n_drop_in']:>10,} rows")
 print(f"  unioned              : {merge_summary['n_unioned']:>10,} rows")
 print(f"  after dedup          : {merge_summary['n_after_dedup']:>10,} rows  "
       f"(dropped {merge_summary['n_unioned']-merge_summary['n_after_dedup']:,} dup)")
-print(f"  me_data_now             : {merge_summary['me_data_now']}")
+print(f"  data_now             : {merge_summary['data_now']}")
 print(f"  label cutoff         : {merge_summary['label_cutoff']}")
 print(f"  full pool users      : {merge_summary['n_full_users']:>10,}")
 print(f"  trainable users      : {merge_summary['n_trainable_users']:>10,}  "

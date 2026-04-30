@@ -3,7 +3,7 @@
 This block is the last node in the DAG. It consumes outputs from every
 upstream branch and renders a single 1-page summary suitable for
 presentation, video, or as the "Executive Summary" of the Zerve agent
-report. It depends on (ic_i.e., is downstream of):
+report. It depends on (i.e., is downstream of):
 
     Diagnose v3            → diagnose_v3
     SHAP v3                → shap_summary_v3
@@ -31,7 +31,7 @@ def _fmt_int(x):
 # ─── 1. headline numbers ──────────────────────────────────────────────────
 n_users_total = len(user_features_v4)
 n_upgraders = int(user_features_v4["upgraded"].sum())
-ic_base_rate = n_upgraders / n_users_total if n_users_total else 0
+base_rate = n_upgraders / n_users_total if n_users_total else 0
 n_test_pos = int(np.asarray(y_v3_test).sum())
 
 # v3 ensemble metrics
@@ -63,7 +63,7 @@ lines = [
     "",
     "DATASET",
     f"  • {_fmt_int(n_users_total)} users  ·  {_fmt_int(n_upgraders)} upgraders  "
-    f"·  base rate {ic_base_rate*100:.2f}%",
+    f"·  base rate {base_rate*100:.2f}%",
     "",
     "MODEL — v3 calibrated XGB+RF+HistGB ensemble",
     f"  • PR-AUC  {pr_auc:.4f}    ROC-AUC {roc_auc:.4f}    Brier {brier:.4f}    ECE {ece:.4f}",
@@ -144,7 +144,7 @@ insights_payload = {
     "headline": {
         "n_users": n_users_total,
         "n_upgraders": n_upgraders,
-        "ic_base_rate": ic_base_rate,
+        "base_rate": base_rate,
         "n_test_positives": n_test_pos,
     },
     "model": {
@@ -174,7 +174,7 @@ insights_payload = {
 }
 
 # ─── 4. visual card ───────────────────────────────────────────────────────
-ic_fig, ic_ax = plt.subplots(figsize=(12, 8))
+ic_fig, ax = plt.subplots(figsize=(12, 8))
 ic_ax.axis("off")
 ic_ax.text(0.5, 0.97, "Zerve Upgrade Prediction & Funnel — Final Insights",
         fontsize=18, fontweight="bold", ha="center", va="top",
@@ -186,12 +186,12 @@ ic_ax.text(0.5, 0.92, generated,
 # four big numbers
 panels = [
     ("USERS", _fmt_int(n_users_total), "#06b6d4"),
-    ("UPGRADERS", f"{_fmt_int(n_upgraders)}  ({ic_base_rate*100:.2f}%)", "#ec4899"),
+    ("UPGRADERS", f"{_fmt_int(n_upgraders)}  ({base_rate*100:.2f}%)", "#ec4899"),
     ("V3 PR-AUC", f"{pr_auc:.4f}", "#a855f7"),
     ("V3 ROC-AUC", f"{roc_auc:.3f}", "#10b981"),
 ]
-for ic_i, (label, value, color) in enumerate(panels):
-    x = 0.05 + ic_i * 0.235
+for i, (label, value, color) in enumerate(panels):
+    x = 0.05 + i * 0.235
     ic_ax.add_patch(plt.Rectangle((x, 0.65), 0.21, 0.18,
                                transform=ic_ax.transAxes,
                                facecolor=color, alpha=0.12,
