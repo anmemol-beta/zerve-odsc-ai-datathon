@@ -9,15 +9,16 @@
 #   Per-user pivots align every user to the same "age" relative to their own
 #   start, mirroring a real CS workflow.
 #
-# Why OBS_DAYS = 3, LABEL_DAYS = 60:
+# Why OBS_DAYS = 7, EARLY_CUT = 3, LABEL_DAYS = 60:
 #   The data has a sharp time-to-upgrade distribution — 70.9% of upgraders
-#   convert within 3 days, 75.9% within 7 days. Predicting "will user upgrade"
-#   over the very early window is mostly trivial (those users came with intent).
-#   The interesting and actionable question is: "of users who DIDN'T upgrade
-#   in their first 3 days, who will in the next 60?" That's where CS / growth
-#   teams can intervene. So OBS=3 (capture early intensity), LABEL=60 (60d is
-#   long enough to catch ~78% of remaining upgraders without truncating too
-#   many recent users from eligibility).
+#   convert within 3 days, 75.9% within 7 days. The interesting and actionable
+#   question is: "of users who DIDN'T upgrade in their first 7 days, who will
+#   in the next 60?" That's where CS / growth teams can intervene. We observe
+#   for 7 days but split the window at day 3 (EARLY_CUT) so we can compute
+#   trend ratios (late/early): users still active in days 3-7 are categorically
+#   different from those who lit up day 0 and went silent. LABEL=60 catches
+#   ~78% of remaining upgraders without truncating too many recent users from
+#   eligibility.
 #
 # Design:
 #   For each user u with first event at t0(u):
@@ -42,7 +43,8 @@
 from datetime import timedelta
 from sklearn.model_selection import train_test_split
 
-OBS_DAYS     = 3
+OBS_DAYS     = 7
+EARLY_CUT    = 3      # split obs window into [0, EARLY_CUT) and [EARLY_CUT, OBS_DAYS) for trend features
 LABEL_DAYS   = 60
 RANDOM_STATE = 42
 
@@ -193,9 +195,34 @@ def _agg(df, suffix):
 
 obs_agg = _agg(obs, "obs")
 
-# Day-1 vs full-obs split lets the model see "early intensity" patterns.
-obs_day0 = obs[obs["days_from_start"] < 1.0]
-day0_agg = _agg(obs_day0, "day0")
+# Sub-windows for trend analysis:
+#   day0 : [0,1)    — first-impression intensity
+#   early: [0, EARLY_CUT)  — short-term ramp
+#   late : [EARLY_CUT, OBS_DAYS)  — sustained engagement
+# Ratio features (late / early) capture acceleration vs decay.
+obs_day0  = obs[obs["days_from_start"] <  1.0]
+obs_early = obs[obs["days_from_start"] <  EARLY_CUT]
+obs_late  = obs[(obs["days_from_start"] >= EARLY_CUT) & (obs["days_from_start"] < OBS_DAYS)]
+
+day0_agg  = _agg(obs_day0,  "day0")
+early_agg = _agg(obs_early, "early")
+late_agg  = _agg(obs_late,  "late")
+
+# Trend ratios (late / early) on the count features. Captures whether the user
+# is accelerating (>1, ramp-up) or decaying (<1, abandoning) by mid-week.
+TREND_BASE_COLS = [
+    "n_events", "n_ai", "n_created", "n_run_block",
+    "n_tool_call", "n_credits_used", "n_pageview", "n_distinct_evts",
+    "n_deploy", "n_agent_msg",
+]
+trend = pd.DataFrame(index=early_agg.index.union(late_agg.index))
+for col in TREND_BASE_COLS:
+    early_col = early_agg.get(f"{col}_early", pd.Series(0, index=trend.index)).reindex(trend.index, fill_value=0)
+    late_col  = late_agg.get(f"{col}_late",   pd.Series(0, index=trend.index)).reindex(trend.index, fill_value=0)
+    trend[f"trend_{col}"] = late_col / early_col.clip(lower=1)
+# Whole-week activity acceleration flag (any signal sustained into late window)
+trend["did_persist_late"] = ((late_agg.reindex(trend.index, fill_value=0)["n_events_late"] > 0).astype(int)
+                              if "n_events_late" in late_agg.columns else 0)
 
 # Activity hour (UTC) — pattern of when users come in
 hour_summary = obs.groupby("person_id", sort=False, observed=True).agg(
@@ -208,6 +235,9 @@ hour_summary = obs.groupby("person_id", sort=False, observed=True).agg(
 X_full = (
     obs_agg
     .join(day0_agg,     how="left")
+    .join(early_agg,    how="left")
+    .join(late_agg,     how="left")
+    .join(trend,        how="left")
     .join(hour_summary, how="left")
     .reindex(eligible_users, fill_value=0)
     .fillna(0)

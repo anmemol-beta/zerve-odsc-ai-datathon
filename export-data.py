@@ -49,6 +49,11 @@ X_full         = ns["X_full"]
 lgbm_model     = ns["lgbm_model"]
 shap_explainer = ns["shap_explainer"]
 feature_cols   = ns["feature_cols"]
+is_active      = ns["is_active"]
+is_created     = ns["is_created"]
+is_ai          = ns["is_ai"]
+is_engaged     = ns["is_engaged"]
+is_at_risk     = ns["is_at_risk"]
 
 
 def dump(name: str, obj):
@@ -236,5 +241,56 @@ dump("sankey_default", {
     "nodes": sankey_nodes,
     "links": sankey_links,
 })
+
+# ── 9. Cohort evolution timeline — for each weekly signup cohort, the share
+#       that reached each funnel stage. Lets the dashboard animate how recent
+#       cohorts compare to older ones (decision question: are conversions
+#       improving over time, or is the upgrade spike just from accumulated
+#       eligibility?).
+user_first_ts = events.groupby("person_id", sort=False, observed=True)["timestamp"].min()
+weeks = user_first_ts.dt.to_period("W").dt.start_time.rename("cohort_week")
+cohort_df = pd.DataFrame({
+    "cohort":    weeks.reindex(user_features.index).values,
+    "active":    is_active.values,
+    "created":   is_created.values,
+    "ai":        is_ai.values,
+    "engaged":   is_engaged.values,
+    "at_risk":   is_at_risk.values,
+    "upgraded":  user_features["upgraded"].values,
+})
+
+cohort_groups = cohort_df.groupby("cohort", observed=True)
+cohort_evolution = []
+running_signed_up = 0
+running_upgraded = 0
+for week, group in cohort_groups:
+    if pd.isna(week):
+        continue
+    n = int(len(group))
+    running_signed_up += n
+    running_upgraded += int(group["upgraded"].sum())
+    cohort_evolution.append({
+        "week": pd.Timestamp(week).strftime("%Y-%m-%d"),
+        "n": n,
+        "active_pct":   round(float(group["active"].mean())   * 100, 2),
+        "created_pct":  round(float(group["created"].mean())  * 100, 2),
+        "ai_pct":       round(float(group["ai"].mean())       * 100, 2),
+        "engaged_pct":  round(float(group["engaged"].mean())  * 100, 2),
+        "at_risk_pct":  round(float(group["at_risk"].mean())  * 100, 2),
+        "upgraded_pct": round(float(group["upgraded"].mean()) * 100, 2),
+        "cum_n":        running_signed_up,
+        "cum_upgraded": running_upgraded,
+        "cum_upgrade_rate": round(100 * running_upgraded / max(1, running_signed_up), 2),
+    })
+
+# Sort chronologically (groupby on Timestamp index already sorts but be explicit)
+cohort_evolution.sort(key=lambda x: x["week"])
+
+dump("cohort_evolution", {
+    "cohorts": cohort_evolution,
+    "total_users":    int(running_signed_up),
+    "total_upgraded": int(running_upgraded),
+})
+
 
 print("-- done")

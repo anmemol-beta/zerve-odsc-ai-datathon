@@ -6,7 +6,9 @@ import HeadlineCards from "@/components/HeadlineCards";
 import Section from "@/components/Section";
 import UserLookup from "@/components/UserLookup";
 import FunnelExplorer from "@/components/FunnelExplorer";
-import type { Headline, Manifold, UserRow, FunnelGrid } from "@/lib/types";
+import CohortTimeline from "@/components/CohortTimeline";
+import VersionBadge from "@/components/VersionBadge";
+import type { Headline, Manifold, UserRow, FunnelGrid, CohortEvolution } from "@/lib/types";
 
 const Manifold3D = dynamic(() => import("@/components/Manifold3D"), { ssr: false });
 const ShaderBackground = dynamic(() => import("@/components/ShaderBackground"), { ssr: false });
@@ -17,11 +19,12 @@ async function loadJSON<T>(name: string): Promise<T> {
 }
 
 export default async function Page() {
-  const [headline, manifold, users, funnelGrid] = await Promise.all([
+  const [headline, manifold, users, funnelGrid, cohortEvolution] = await Promise.all([
     loadJSON<Headline>("headline"),
     loadJSON<Manifold>("manifold"),
     loadJSON<UserRow[]>("users"),
     loadJSON<FunnelGrid>("funnel_grid"),
+    loadJSON<CohortEvolution>("cohort_evolution"),
   ]);
 
   return (
@@ -54,9 +57,18 @@ export default async function Page() {
         <FunnelExplorer grid={funnelGrid} />
       </Section>
 
+      <Section
+        kicker="06"
+        title="Cohort evolution over time"
+        subtitle="Each frame is a single weekly signup cohort. Watch how stage-reach % changes across cohorts — auto-plays from Sept 2025 to Apr 2026, scrub the chart to jump to any week. Use it to tell whether the recent upgrade spike comes from product improvements or just accumulated eligibility."
+      >
+        <CohortTimeline data={cohortEvolution} />
+      </Section>
+
       <footer className="text-center text-xs text-slate-600 pt-10 mt-6 border-t border-slate-800/60">
         Built end-to-end in Zerve · 3.5M events · 17,541 users · 2025-09-01 → 2026-04-16
       </footer>
+      <VersionBadge />
     </main>
   );
 }

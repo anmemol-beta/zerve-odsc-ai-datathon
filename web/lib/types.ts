@@ -64,3 +64,23 @@ export type FunnelGrid = {
 };
 
 export type TopEvent = { event: string; count: number };
+
+export type CohortPoint = {
+  week: string;
+  n: number;
+  active_pct: number;
+  created_pct: number;
+  ai_pct: number;
+  engaged_pct: number;
+  at_risk_pct: number;
+  upgraded_pct: number;
+  cum_n: number;
+  cum_upgraded: number;
+  cum_upgrade_rate: number;
+};
+
+export type CohortEvolution = {
+  cohorts: CohortPoint[];
+  total_users: number;
+  total_upgraded: number;
+};
