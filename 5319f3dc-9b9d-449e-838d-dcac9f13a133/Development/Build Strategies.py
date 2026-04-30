@@ -45,7 +45,7 @@ REPO_RAW = (
     "anmemol-beta/zerve-odsc-ai-datathon/main"
 )
 CACHED_STRATEGIES_URL = f"{REPO_RAW}/web/public/data/strategies.json"
-PLAYBOOK_URL = f"{REPO_RAW}/business_playbook.md"
+PLAYBOOK_URL = f"{REPO_RAW}/docs/business_playbook.md"
 
 
 # ═══ 2. K2 client (inlined; no llm_client.py import needed) ═════════════

@@ -1,0 +1,177 @@
+{
+  "generated_at": "2026-04-30T00:00:00Z",
+  "model": "MBZUAI-IFM/K2-Think-v2",
+  "n_segments": 14,
+  "_source": "cached-stub",
+  "_note": "Curated fallback when K2_API_KEY is unset. Real-time path overwrites this with live K2 output. Action shapes match downstream ROI Ranking + Strategy Heatmap consumers.",
+  "segments": [
+    {
+      "segment_id": "new",
+      "label": "1.New",
+      "stats": {"size": 4200, "observed_rate": 0.008},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Day-0 onboarding email — show the AI block", "channel": "email", "expected_uplift_pp": 0.6, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 8.0, "rationale": "70% of upgrades happen within 3 days; first-touch matters most for New stage", "playbook_alignment": "Activation: surface AI block before drop-off"},
+          {"rank": 2, "title": "Tour-finish nudge in-app modal", "channel": "in_app_modal", "expected_uplift_pp": 0.4, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 12.0, "rationale": "Tour finish correlates with 4x stage progression", "playbook_alignment": "Activation: complete tour"},
+          {"rank": 3, "title": "Lifecycle drip: 3-step canvas walkthrough", "channel": "lifecycle_drip", "expected_uplift_pp": 0.3, "estimated_cost_per_user_usd": 0.10, "estimated_roi_multiple": 5.0, "rationale": "Multi-touch boost for users who don't engage on day-0", "playbook_alignment": "Activation: scaffolded path to first canvas"}
+        ]
+      }
+    },
+    {
+      "segment_id": "exploring",
+      "label": "2.Exploring",
+      "stats": {"size": 3100, "observed_rate": 0.012},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Surface AI starter templates", "channel": "in_app_modal", "expected_uplift_pp": 0.8, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 18.0, "rationale": "Exploring users browse but don't commit; templates lower barrier", "playbook_alignment": "Activation: bridge to AI usage"},
+          {"rank": 2, "title": "Email: 5-minute first project", "channel": "email", "expected_uplift_pp": 0.5, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 9.0, "rationale": "Reduces time-to-value for hesitant users", "playbook_alignment": "Activation: minimum viable canvas"},
+          {"rank": 3, "title": "Push: someone in your team just deployed", "channel": "push_notification", "expected_uplift_pp": 0.3, "estimated_cost_per_user_usd": 0.01, "estimated_roi_multiple": 24.0, "rationale": "Social proof low cost", "playbook_alignment": "Activation: peer-driven progression"}
+        ]
+      }
+    },
+    {
+      "segment_id": "used_ai",
+      "label": "4.UsedAI",
+      "stats": {"size": 2800, "observed_rate": 0.025},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Lifecycle drip: code → integration tutorial", "channel": "lifecycle_drip", "expected_uplift_pp": 1.2, "estimated_cost_per_user_usd": 0.10, "estimated_roi_multiple": 12.0, "rationale": "UsedAI is the top of the conversion funnel — push to WroteCode", "playbook_alignment": "Engagement: depth over breadth"},
+          {"rank": 2, "title": "In-app: connect a data source", "channel": "in_app_modal", "expected_uplift_pp": 0.7, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 21.0, "rationale": "Data integration is the strongest pre-upgrade signal in v3 SHAP", "playbook_alignment": "Engagement: integrate to retain"},
+          {"rank": 3, "title": "Email: showcase peer success stories", "channel": "email", "expected_uplift_pp": 0.4, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 7.0, "rationale": "Stories from users with similar stage", "playbook_alignment": "Engagement: aspirational anchor"}
+        ]
+      }
+    },
+    {
+      "segment_id": "wrote_code",
+      "label": "5.WroteCode",
+      "stats": {"size": 1900, "observed_rate": 0.045},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Surface deployment block tutorial", "channel": "in_app_modal", "expected_uplift_pp": 1.5, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 35.0, "rationale": "Deploy is the main blocker between WroteCode and Integrated", "playbook_alignment": "Engagement: deploy gate"},
+          {"rank": 2, "title": "Drip: source-control + collab workflow", "channel": "lifecycle_drip", "expected_uplift_pp": 0.8, "estimated_cost_per_user_usd": 0.10, "estimated_roi_multiple": 9.0, "rationale": "Team workflows compound retention", "playbook_alignment": "Engagement: multi-user moat"},
+          {"rank": 3, "title": "Retargeting: free pro trial", "channel": "ad_retargeting", "expected_uplift_pp": 0.6, "estimated_cost_per_user_usd": 0.30, "estimated_roi_multiple": 3.0, "rationale": "Higher cost, but matches paid intent stage", "playbook_alignment": "Conversion: trial to upgrade"}
+        ]
+      }
+    },
+    {
+      "segment_id": "integrated",
+      "label": "6.Integrated",
+      "stats": {"size": 1200, "observed_rate": 0.085},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Sales call: power-user upgrade chat", "channel": "sales_call", "expected_uplift_pp": 3.5, "estimated_cost_per_user_usd": 12.00, "estimated_roi_multiple": 4.5, "rationale": "Integrated users are the highest-intent pre-upgrade cohort; warm sales pays off", "playbook_alignment": "Conversion: human touch on highest-intent"},
+          {"rank": 2, "title": "Email: ROI calculator showing pro features", "channel": "email", "expected_uplift_pp": 1.5, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 60.0, "rationale": "Quantify upgrade value for technical users", "playbook_alignment": "Conversion: quantified value"},
+          {"rank": 3, "title": "In-app: time-limited upgrade discount", "channel": "in_app_modal", "expected_uplift_pp": 1.2, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 60.0, "rationale": "Scarcity converts integrated users near upgrade threshold", "playbook_alignment": "Conversion: urgency"}
+        ]
+      }
+    },
+    {
+      "segment_id": "engaged",
+      "label": "7.Engaged",
+      "stats": {"size": 800, "observed_rate": 0.18},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Sales call: solutions-engineering deep-dive", "channel": "sales_call", "expected_uplift_pp": 6.0, "estimated_cost_per_user_usd": 18.00, "estimated_roi_multiple": 5.0, "rationale": "Engaged users have the highest base rate (18%); SE call seals enterprise tier", "playbook_alignment": "Conversion: enterprise expansion"},
+          {"rank": 2, "title": "Drip: case studies + advanced features", "channel": "lifecycle_drip", "expected_uplift_pp": 2.5, "estimated_cost_per_user_usd": 0.10, "estimated_roi_multiple": 35.0, "rationale": "Self-serve education for high-intent users", "playbook_alignment": "Conversion: enabled self-upgrade"},
+          {"rank": 3, "title": "In-app: usage-based upgrade prompt at 80% credit limit", "channel": "in_app_modal", "expected_uplift_pp": 1.8, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 100.0, "rationale": "Just-in-time prompt at the moment of usage friction", "playbook_alignment": "Conversion: friction-aware nudge"}
+        ]
+      }
+    },
+    {
+      "segment_id": "upgraded",
+      "label": "8.Upgraded",
+      "stats": {"size": 323, "observed_rate": 1.0},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Day-1 onboarding for paid features", "channel": "email", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 1.0, "rationale": "36% of paying users churn within 60 days — onboarding to value is critical", "playbook_alignment": "Retention: prevent post-upgrade churn"},
+          {"rank": 2, "title": "QBR-style usage report at day 30", "channel": "email", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 1.0, "rationale": "Show ROI to lock in renewal", "playbook_alignment": "Retention: prove value"},
+          {"rank": 3, "title": "Sales: account manager check-in at day 14", "channel": "sales_call", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 12.00, "estimated_roi_multiple": 1.0, "rationale": "Catch silent churn before day-60 dropoff", "playbook_alignment": "Retention: high-touch save"}
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_used_ai",
+      "label": "9.AtRisk@UsedAI",
+      "stats": {"size": 1500, "observed_rate": 0.005},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Reactivation drip: what's new since you left", "channel": "lifecycle_drip", "expected_uplift_pp": 0.3, "estimated_cost_per_user_usd": 0.10, "estimated_roi_multiple": 3.0, "rationale": "Inactive but still in the AI bucket — show new AI features", "playbook_alignment": "Reactivation: fresh-feature pull"},
+          {"rank": 2, "title": "Push: personalized 'come back' with AI suggestion", "channel": "push_notification", "expected_uplift_pp": 0.2, "estimated_cost_per_user_usd": 0.01, "estimated_roi_multiple": 20.0, "rationale": "Cheap, high frequency for reactivation", "playbook_alignment": "Reactivation: low-cost ping"},
+          {"rank": 3, "title": "Retargeting: AI-as-coding-partner ad", "channel": "ad_retargeting", "expected_uplift_pp": 0.15, "estimated_cost_per_user_usd": 0.30, "estimated_roi_multiple": 0.5, "rationale": "Last-resort paid touch", "playbook_alignment": "Reactivation: paid recapture"}
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_wrote_code",
+      "label": "9.AtRisk@WroteCode",
+      "stats": {"size": 950, "observed_rate": 0.008},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Email: your draft canvas is waiting", "channel": "email", "expected_uplift_pp": 0.5, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 10.0, "rationale": "User invested code already — sunk-cost recall", "playbook_alignment": "Reactivation: anchor on prior work"},
+          {"rank": 2, "title": "Drip: show successful peers' deploys", "channel": "lifecycle_drip", "expected_uplift_pp": 0.3, "estimated_cost_per_user_usd": 0.10, "estimated_roi_multiple": 3.0, "rationale": "WroteCode-but-stalled needs deploy unblock", "playbook_alignment": "Reactivation: peer aspiration"},
+          {"rank": 3, "title": "In-app: deploy-help wizard on next login", "channel": "in_app_modal", "expected_uplift_pp": 0.4, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 20.0, "rationale": "If they return, remove the deploy blocker", "playbook_alignment": "Reactivation: friction removal"}
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_integrated",
+      "label": "9.AtRisk@Integrated",
+      "stats": {"size": 600, "observed_rate": 0.018},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Sales call: win-back from CSM", "channel": "sales_call", "expected_uplift_pp": 1.5, "estimated_cost_per_user_usd": 12.00, "estimated_roi_multiple": 1.3, "rationale": "Integrated users gone silent — high-value win-back", "playbook_alignment": "Reactivation: CSM personal touch"},
+          {"rank": 2, "title": "Email: data pipeline you built last month — keep going", "channel": "email", "expected_uplift_pp": 0.7, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 14.0, "rationale": "Anchor on real artifact they shipped", "playbook_alignment": "Reactivation: artifact anchor"},
+          {"rank": 3, "title": "Retargeting: case study in their industry", "channel": "ad_retargeting", "expected_uplift_pp": 0.4, "estimated_cost_per_user_usd": 0.30, "estimated_roi_multiple": 1.3, "rationale": "Industry-relevant proof", "playbook_alignment": "Reactivation: relevance"}
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_engaged",
+      "label": "9.AtRisk@Engaged",
+      "stats": {"size": 400, "observed_rate": 0.04},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Sales call: power-user save", "channel": "sales_call", "expected_uplift_pp": 3.0, "estimated_cost_per_user_usd": 18.00, "estimated_roi_multiple": 1.6, "rationale": "Engaged-but-fading; the highest-value save bucket", "playbook_alignment": "Reactivation: priority save"},
+          {"rank": 2, "title": "Email: invite to private power-user beta", "channel": "email", "expected_uplift_pp": 1.5, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 30.0, "rationale": "Status / exclusivity hook for power users", "playbook_alignment": "Reactivation: status motivation"},
+          {"rank": 3, "title": "In-app: 'we miss you' personalized dashboard on return", "channel": "in_app_modal", "expected_uplift_pp": 1.0, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 50.0, "rationale": "If they return, immediately surface their KPIs", "playbook_alignment": "Reactivation: re-engagement value"}
+        ]
+      }
+    },
+    {
+      "segment_id": "atrisk_upgraded",
+      "label": "9.AtRisk@Upgraded",
+      "stats": {"size": 100, "observed_rate": 0.0},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "CSM call: account-health intervention", "channel": "sales_call", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 18.00, "estimated_roi_multiple": 1.0, "rationale": "Paying customer going silent — top priority for revenue retention", "playbook_alignment": "Retention: revenue save"},
+          {"rank": 2, "title": "Drip: personalized onboarding-redo", "channel": "lifecycle_drip", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 0.10, "estimated_roi_multiple": 1.0, "rationale": "They paid but didn't activate; restart the journey", "playbook_alignment": "Retention: re-onboard"},
+          {"rank": 3, "title": "Email: discount on annual upgrade if you stay", "channel": "email", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 1.0, "rationale": "Pricing lever to stop pre-churn", "playbook_alignment": "Retention: pricing save"}
+        ]
+      }
+    },
+    {
+      "segment_id": "churned_upgraded",
+      "label": "9.Churned@Upgraded",
+      "stats": {"size": 116, "observed_rate": 0.0},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Win-back: founder-letter exit interview email", "channel": "email", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 1.0, "rationale": "Understand churn reason; high-leverage learning + re-acquisition", "playbook_alignment": "Win-back: learn + recover"},
+          {"rank": 2, "title": "Retargeting: come back with new feature ad", "channel": "ad_retargeting", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 0.30, "estimated_roi_multiple": 1.0, "rationale": "Wait 60 days then re-engage with what changed", "playbook_alignment": "Win-back: timed paid recapture"},
+          {"rank": 3, "title": "Sales: enterprise migration call", "channel": "sales_call", "expected_uplift_pp": 0.0, "estimated_cost_per_user_usd": 18.00, "estimated_roi_multiple": 1.0, "rationale": "Some churned upgraded users left for capacity reasons; enterprise tier may save them", "playbook_alignment": "Win-back: tier upsell"}
+        ]
+      }
+    },
+    {
+      "segment_id": "model_top5_predicted",
+      "label": "model_top5_predicted",
+      "stats": {"size": 875, "observed_rate": 0.16},
+      "strategy": {
+        "actions": [
+          {"rank": 1, "title": "Sales call: priority outreach (model says 16% will upgrade)", "channel": "sales_call", "expected_uplift_pp": 5.5, "estimated_cost_per_user_usd": 18.00, "estimated_roi_multiple": 4.6, "rationale": "Top-5% by v3 ensemble score = 9× lift over base rate; warm sales has highest yield here", "playbook_alignment": "Conversion: model-targeted outreach"},
+          {"rank": 2, "title": "In-app: highest-intent upgrade prompt", "channel": "in_app_modal", "expected_uplift_pp": 2.0, "estimated_cost_per_user_usd": 0.02, "estimated_roi_multiple": 100.0, "rationale": "Cheap to show, high yield from model-scored cohort", "playbook_alignment": "Conversion: predictive nudge"},
+          {"rank": 3, "title": "Email: personalized roadmap matched to predicted features", "channel": "email", "expected_uplift_pp": 1.5, "estimated_cost_per_user_usd": 0.05, "estimated_roi_multiple": 30.0, "rationale": "Combine SHAP top features per user with playbook content", "playbook_alignment": "Conversion: explainable personalization"}
+        ]
+      }
+    }
+  ]
+}
