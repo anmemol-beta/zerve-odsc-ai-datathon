@@ -29,7 +29,7 @@ export default function Page() {
       <Section
         kicker="02"
         title="Live inference · v3 ensemble"
-        subtitle={`Pick any test-set row index — the request flies through churn-api.zerve.app, which calls zerve.variable("Train Model v3", "models") on the canvas and runs predict_proba across all 3 calibration folds. The probability you see is generated server-side, not baked into a static JSON.`}
+        subtitle={`Pick any test-set row index — the request flies through beta-zerve.hub.zerve.cloud, which calls zerve.variable("Train Model v3", "models") on the canvas and runs predict_proba across all 3 calibration folds. The probability you see is generated server-side, not baked into a static JSON.`}
       >
         <LivePredict />
       </Section>
@@ -51,7 +51,7 @@ export default function Page() {
       </Section>
 
       <footer className="mt-6 border-t border-slate-800/60 pt-10 text-center font-mono text-[10px] tracking-wider text-slate-600">
-        Zerve canvas · 22 blocks · 28 edges · churn-api.zerve.app
+        Zerve canvas · 22 blocks · 28 edges · beta-zerve.hub.zerve.cloud
       </footer>
       <VersionBadge />
     </main>

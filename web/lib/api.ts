@@ -1,10 +1,10 @@
 // Zerve deployment API client.
-// Backend lives at https://churn-api.zerve.app (the FastAPI in zerve_deploy/main.py).
+// Backend lives at https://beta-zerve.hub.zerve.cloud (the FastAPI in zerve_deploy/main.py).
 // Override with NEXT_PUBLIC_API_URL for local development.
 
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "https://churn-api.zerve.app";
+  "https://beta-zerve.hub.zerve.cloud";
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {

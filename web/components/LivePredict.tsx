@@ -38,7 +38,7 @@ export default function LivePredict() {
           <p className="text-xs leading-relaxed text-slate-400">
             Each click goes to the deployed FastAPI on{" "}
             <code className="rounded bg-slate-900 px-1.5 py-0.5 text-[10px] text-cyan-300">
-              churn-api.zerve.app
+              beta-zerve.hub.zerve.cloud
             </code>
             , which calls{" "}
             <code className="rounded bg-slate-900 px-1.5 py-0.5 text-[10px] text-pink-300">

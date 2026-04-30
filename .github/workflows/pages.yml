@@ -34,7 +34,7 @@ jobs:
       - name: Build static export
         env:
           GITHUB_PAGES: "true"
-          NEXT_PUBLIC_API_URL: https://churn-api.zerve.app
+          NEXT_PUBLIC_API_URL: https://beta-zerve.hub.zerve.cloud
         run: npm run build
       - name: Drop a .nojekyll so /_next assets are served as-is
         run: touch out/.nojekyll

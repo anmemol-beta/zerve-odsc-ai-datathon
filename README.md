@@ -1,7 +1,7 @@
 # Zerve × ODSC AI Datathon
 
 **Frontend**: <https://anmemol-beta.github.io/zerve-odsc-ai-datathon/>
-**API**: <https://churn-api.zerve.app>
+**API**: <https://beta-zerve.hub.zerve.cloud>
 
 A live mirror of the Zerve canvas: every block, every figure, every prediction is fetched in real time from the deployed FastAPI, which itself reads `zerve.variable(block, name)` straight off the running canvas.
 
@@ -9,7 +9,7 @@ A live mirror of the Zerve canvas: every block, every figure, every prediction i
 ┌──────────────────────┐        ┌──────────────────────┐        ┌──────────────────────┐
 │  Zerve canvas        │        │  Zerve deployment    │        │  GitHub Pages        │
 │  (Beta · 22 blocks)  │  ◄──►  │  api.py + zerve.var  │  ◄──►  │  Next.js static site │
-│                      │        │  churn-api.zerve.app │        │  /web                │
+│                      │        │  beta-zerve.hub.zerve.cloud │        │  /web                │
 └──────────────────────┘        └──────────────────────┘        └──────────────────────┘
         ▲                                ▲                                ▲
         │                                │                                │
@@ -33,7 +33,7 @@ The frontend never executes ML code. It draws the canvas DAG (with the exact xy 
 | `zerve_deploy/main.py` | The Zerve FastAPI deployment — paste into the deployment editor |
 | `web/` | Next.js 14 frontend (App Router, static export) |
 | `web/lib/canvas.ts` | DAG layout — block positions/edges inlined from `canvas.yaml` |
-| `web/lib/api.ts` | Typed client for `churn-api.zerve.app` |
+| `web/lib/api.ts` | Typed client for `beta-zerve.hub.zerve.cloud` |
 | `web/components/canvas/` | Reactflow DAG renderer + per-block detail pane |
 | `.github/workflows/pages.yml` | Auto-deploys `web/` to GitHub Pages on every push |
 | `pyproject.toml` / `uv.lock` | Local deps |
@@ -44,14 +44,14 @@ The frontend never executes ML code. It draws the canvas DAG (with the exact xy 
 ### 1. Backend (Zerve deployment)
 
 Open the canvas → Deploy tab → New Deployment → **Custom**:
-- DNS Name: `churn-api`
+- DNS Name: `beta-zerve` (resolves to `https://beta-zerve.hub.zerve.cloud`)
 - Run command: `uvicorn main:app --host 0.0.0.0 --port 8080`
 - Code: paste the contents of `zerve_deploy/main.py`
 
 The deployment lazy-loads canvas variables via `from zerve import variable`, caches them in-process, and exposes them over CORS-open HTTP. After the canvas re-runs:
 
 ```bash
-curl -X POST https://churn-api.zerve.app/admin/reload
+curl -X POST https://beta-zerve.hub.zerve.cloud/admin/reload
 ```
 
 …clears the cache without a container restart.
@@ -62,14 +62,14 @@ curl -X POST https://churn-api.zerve.app/admin/reload
 git push origin main
 ```
 
-The `pages.yml` workflow builds `web/` with `GITHUB_PAGES=true` and `NEXT_PUBLIC_API_URL=https://churn-api.zerve.app`, then publishes `web/out/` to Pages. First-time setup: in repo Settings → Pages, set **Source = GitHub Actions**.
+The `pages.yml` workflow builds `web/` with `GITHUB_PAGES=true` and `NEXT_PUBLIC_API_URL=https://beta-zerve.hub.zerve.cloud`, then publishes `web/out/` to Pages. First-time setup: in repo Settings → Pages, set **Source = GitHub Actions**.
 
 ### Local frontend dev
 
 ```bash
 cd web
 npm install
-NEXT_PUBLIC_API_URL=https://churn-api.zerve.app npm run dev
+NEXT_PUBLIC_API_URL=https://beta-zerve.hub.zerve.cloud npm run dev
 # → http://localhost:3000 talking to the live deployment
 ```
 
