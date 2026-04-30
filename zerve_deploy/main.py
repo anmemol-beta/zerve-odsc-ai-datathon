@@ -161,6 +161,13 @@ def jsonify(obj: Any, depth: int = 0) -> Any:
 
 
 # ─── basic ──────────────────────────────────────────────────────────────
+@app.get("/")
+def root():
+    """Zerve LB pings GET / every 10s; 404 here gets the container removed
+    from the rotation (visible to the public as 503). Keep this 200."""
+    return {"ok": True, "service": "zerve-funnel-api", "blocks": len(BLOCKS)}
+
+
 @app.get("/health")
 def health():
     return {"ok": True}
