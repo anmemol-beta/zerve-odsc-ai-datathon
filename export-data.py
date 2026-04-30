@@ -298,8 +298,8 @@ cohort_evolution.sort(key=lambda x: x["week"])
 
 dump("cohort_evolution", {
     "cohorts": cohort_evolution,
-    "total_users":    int(running_signed_up),
-    "total_upgraded": int(running_upgraded),
+    "total_users":    int(running["n"]),
+    "total_upgraded": int(running["upgraded"]),
 })
 
 
