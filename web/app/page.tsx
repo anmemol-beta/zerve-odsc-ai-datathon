@@ -7,8 +7,16 @@ import Section from "@/components/Section";
 import UserLookup from "@/components/UserLookup";
 import FunnelExplorer from "@/components/FunnelExplorer";
 import CohortTimeline from "@/components/CohortTimeline";
+import ActionCards from "@/components/ActionCards";
 import VersionBadge from "@/components/VersionBadge";
-import type { Headline, Manifold, UserRow, FunnelGrid, CohortEvolution } from "@/lib/types";
+import type {
+  Headline,
+  Manifold,
+  UserRow,
+  FunnelGrid,
+  CohortEvolution,
+  StrategiesIndex,
+} from "@/lib/types";
 
 const Manifold3D = dynamic(() => import("@/components/Manifold3D"), { ssr: false });
 const ShaderBackground = dynamic(() => import("@/components/ShaderBackground"), { ssr: false });
@@ -19,13 +27,15 @@ async function loadJSON<T>(name: string): Promise<T> {
 }
 
 export default async function Page() {
-  const [headline, manifold, users, funnelGrid, cohortEvolution] = await Promise.all([
-    loadJSON<Headline>("headline"),
-    loadJSON<Manifold>("manifold"),
-    loadJSON<UserRow[]>("users"),
-    loadJSON<FunnelGrid>("funnel_grid"),
-    loadJSON<CohortEvolution>("cohort_evolution"),
-  ]);
+  const [headline, manifold, users, funnelGrid, cohortEvolution, strategies] =
+    await Promise.all([
+      loadJSON<Headline>("headline"),
+      loadJSON<Manifold>("manifold"),
+      loadJSON<UserRow[]>("users"),
+      loadJSON<FunnelGrid>("funnel_grid"),
+      loadJSON<CohortEvolution>("cohort_evolution"),
+      loadJSON<StrategiesIndex>("strategies"),
+    ]);
 
   return (
     <main className="relative max-w-[1400px] mx-auto px-6 lg:px-8 space-y-16 pb-24">
@@ -63,6 +73,14 @@ export default async function Page() {
         subtitle="Press play and the entire panel becomes a single point-in-time snapshot of the product — cumulative funnel composition, this week's signup cohort, and the upgrade-rate trend curve all advance together from Sep 2025 to Apr 2026. Scrub to any week to compare the platform 'as of' that date."
       >
         <CohortTimeline data={cohortEvolution} />
+      </Section>
+
+      <Section
+        kicker="07"
+        title="K2 strategist — segment-specific marketing actions"
+        subtitle="Pick any funnel segment → K2-Think reads its behavior, demographics, model score, and a Zerve playbook excerpt, then returns 3 ranked actions (channel, copy, target filter, expected ROI) plus 3 risks. Every recommendation is grounded in this segment's data, not generic advice."
+      >
+        <ActionCards data={strategies} />
       </Section>
 
       <footer className="text-center text-xs text-slate-600 pt-10 mt-6 border-t border-slate-800/60">

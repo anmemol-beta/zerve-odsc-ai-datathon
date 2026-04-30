@@ -89,3 +89,73 @@ export type CohortEvolution = {
   total_users: number;
   total_upgraded: number;
 };
+
+export type StrategyChannel =
+  | "email"
+  | "in_app_modal"
+  | "sales_call"
+  | "push_notification"
+  | "ad_retargeting"
+  | "lifecycle_drip";
+
+export type StrategyAction = {
+  rank: 1 | 2 | 3;
+  title: string;
+  channel: StrategyChannel;
+  message_en: string;
+  message_ko: string;
+  target_filter: string;
+  expected_uplift_pp: number;
+  estimated_cost_per_user_usd: number;
+  estimated_roi_multiple: number;
+  rationale: string;
+  playbook_alignment: string;
+};
+
+export type SegmentStrategy = {
+  segment_id: string;
+  summary: string;
+  actions: StrategyAction[];
+  risks: string[];
+};
+
+export type StrategyBehavioralRow = {
+  feature: string;
+  seg_median: number;
+  base_median: number;
+  seg_reach: number;
+  base_reach: number;
+  reach_lift: number;
+};
+
+export type StrategySegmentStats = {
+  size: number;
+  pct_of_total: number;
+  observed_rate: number;
+  baseline_rate: number;
+  baseline_lift: number;
+  median_n_events: number;
+  median_distinct_days: number;
+  median_session_min: number;
+  median_days_since_last: number;
+  top_behavioral: StrategyBehavioralRow[];
+  demographics: Record<string, string>;
+  metadata: Record<string, string>;
+  score: { median: number; p90: number; pct_top5: number; n_scored: number };
+  stage_rank: number;
+  adjacent: string;
+};
+
+export type StrategySegmentEntry = {
+  segment_id: string;
+  label: string;
+  stats: StrategySegmentStats;
+  strategy: SegmentStrategy;
+};
+
+export type StrategiesIndex = {
+  generated_at: string;
+  model: string;
+  n_segments: number;
+  segments: StrategySegmentEntry[];
+};
