@@ -436,15 +436,13 @@
       <div class="desc">분석 리포트 6장 — 강한 예측 신호 표 (lift &gt; 10×)<br/>또는 event_lift_table.csv 시각화</div>
     </div>
     <div class="overlays">
-      <span class="chip">credits_exceeded 12×</span>
-      <span class="chip">banner_shown 22×</span>
-      <span class="chip">deployment 12-25×</span>
-      <span class="chip cyan">source_control 14×</span>
-      <span class="chip cyan">canvas_clone 14×</span>
+      <span class="chip">★ banner_shown · 22× more likely</span>
+      <span class="chip">★ credits_exceeded · 12× more likely</span>
+      <span class="chip cyan">also: deployment · source control · canvas clone (all ~14×)</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      We compared upgraders and non-upgraders for every event in the data. Hitting the credit limit — <b>twelve times more likely</b>. Seeing the limit-warning banner — <b>twenty-two times</b>. Deploying a notebook — <b>twelve to twenty-five times</b>. Source control, canvas cloning — all around fourteen times. The pattern is one sentence: <b>serious users who actually hit the free-tier ceiling are the ones who pay</b>.
+      We compared upgraders and non-upgraders for every event in the data. The two strongest signals — <b>users who saw the credit-limit warning banner are twenty-two times more likely to upgrade</b>, and <b>users who actually hit the credit limit are twelve times more likely</b>. We also considered deployment usage, source control commits, and canvas cloning — all in the same range. The pattern is one sentence: <b>serious users who hit the free-tier ceiling are the ones who pay</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -543,14 +541,13 @@
       <div class="desc">메타 컬럼 lift 표 (analysis_report.md 8장)<br/>+ tour×promo×agent_first 조합 강조</div>
     </div>
     <div class="overlays">
-      <span class="chip">power users · 16× vs others</span>
-      <span class="chip">AI-first · 13× vs notebook-first</span>
-      <span class="chip">tour completers · 10× vs skippers</span>
-      <span class="chip violet">3-flag combo · 55× more likely to pay</span>
+      <span class="chip violet">★ 3-flag combo · 55× more likely to pay</span>
+      <span class="chip">power users · 16×</span>
+      <span class="chip cyan">also: AI-first, tour completers, reactivation, exception rate, purpose, etc. (7 flags total)</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      Beyond the funnel, we extracted seven behavioral flags. "<b>Power users</b>" pay <b>sixteen times more often</b> than non-power users. "<b>Users who tried AI before notebooks</b>" — <b>thirteen times</b> more often. "<b>Users who finished onboarding</b>" — <b>ten times</b>. And the twelve hundred users who hit all three flags are <b>fifty-five times more likely to upgrade</b> than the nine thousand who hit none. We feed all three into the model.
+      Beyond the funnel, we extracted <b>seven behavioral flags</b>. The most striking finding: <b>users who hit our three strongest flags — power users, AI-first users, and onboarding completers — are fifty-five times more likely to upgrade than users with none of them</b>. We also considered reactivation patterns, exception rates, and signup purpose. All seven feed into the model.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -650,15 +647,13 @@
       <div class="desc">SHAP top-10 horizontal bar (left 60%) +<br/>각 시그널 → 마케팅 액션 매핑 패널 (right 40%)<br/>(canvas: <code>SHAP v3</code> block 출력)</div>
     </div>
     <div class="overlays">
-      <span class="chip violet">SHAP top-3 signals</span>
-      <span class="chip">1. hours to credit limit</span>
-      <span class="chip">2. limit-warning banner shown</span>
-      <span class="chip">3. first-hour AI usage</span>
-      <span class="chip cyan">각 시그널 → 1:1 캠페인 매핑</span>
+      <span class="chip violet">★ #1 SHAP signal: hours to credit limit</span>
+      <span class="chip">also: banner shown, first-hour AI usage, 7d page views, etc.</span>
+      <span class="chip cyan">SHAP top-10 → 1:1 캠페인 매핑</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · INTERPRETABILITY</span>
-      Accuracy alone is not enough. <b>SHAP values show what the model actually looks at</b>. The top three signals — <b>how fast a user hit the credit limit</b>, <b>whether they saw the limit-warning banner</b>, and <b>how much AI they used in their first hour</b>. Each one points to an exact moment for a marketing nudge — and that mapping is what powers the playbook on the next slide.
+      Accuracy alone is not enough. <b>SHAP values show what the model actually looks at</b>. The single strongest signal — <b>how fast a user hits the credit limit</b>. We also see banner exposure, first-hour AI usage, and seven other signals in the top ten. Each one points to <b>an exact moment for a marketing nudge</b> — and that mapping is what powers the playbook on the next slide.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality (interpretable)</span>
@@ -705,14 +700,14 @@
       <div class="desc">business_playbook.md TL;DR — 7-action 표<br/>+ 우선순위 lift 컬럼 highlight</div>
     </div>
     <div class="overlays">
-      <span class="chip">credit-ceiling hitters · 7× avg user</span>
-      <span class="chip">banner viewers · 16× avg user (strongest)</span>
-      <span class="chip">notebook deployers · 5× avg user</span>
-      <span class="chip cyan">top 3 actions = 1,300 people · 7% of base</span>
+      <span class="chip">★ banner viewers · 16× avg user (strongest)</span>
+      <span class="chip">★ credit-ceiling hitters · 7× avg user</span>
+      <span class="chip cyan">also: deployers, tour completers, source control users, file uploaders, power users (7 actions total)</span>
+      <span class="chip cyan">combined top 3 reach: 1,300 people · 7% of base</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · ACTION</span>
-      We translated every finding into <b>seven concrete campaigns</b>. The top three: users who hit the credit ceiling — <b>six hundred forty-nine people — convert seven times more often than the average user</b>. Users who saw the limit-warning banner — three hundred two people — <b>sixteen times</b>. Users who deployed a notebook — three hundred fifty-three people — <b>five times</b>. Combined: <b>about thirteen hundred users — just seven percent of our base — converting five to sixteen times more often than the average</b>.
+      We translated every finding into <b>seven concrete campaigns ranked by ROI</b>. The strongest: users who saw the limit-warning banner — three hundred two people — <b>convert sixteen times more often than the average user</b>. Right behind: credit-ceiling hitters — <b>seven times the average</b>. We also have ranked campaigns for notebook deployers, onboarding completers, and three more. Combined the top three reach <b>about thirteen hundred users — just seven percent of our base — converting five to sixteen times more often than the average</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R6 · Insights</span>
