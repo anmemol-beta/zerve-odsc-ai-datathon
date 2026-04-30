@@ -432,3 +432,341 @@ export const FALLBACK_PLAYBOOK: Playbook = {
       is_top: false, accent: "slate" },
   ],
 };
+
+
+// ─── §10 STRATEGIES (per-segment, K2-Think output) ──────────────────────
+export type StrategyAction = {
+  rank: number;
+  title: string;
+  channel: string;
+  message_en: string;
+  target_filter: string;
+  expected_uplift_pp: number;
+  estimated_roi_multiple: number;
+  rationale: string;
+};
+
+export type SegmentEntry = {
+  segment_id: string;
+  label: string;
+  stats: {
+    size: number;
+    pct_of_total: number;
+    observed_rate: number;
+    baseline_lift: number;
+  };
+  strategy: {
+    summary: string;
+    actions: StrategyAction[];
+    risks: string[];
+  };
+};
+
+export const FALLBACK_STRATEGIES_SEGMENTS: SegmentEntry[] = [
+  {
+    segment_id: "limit_hit_recent",
+    label: "Limit hit · last 48h",
+    stats: { size: 649, pct_of_total: 0.037, observed_rate: 0.184, baseline_lift: 10.0 },
+    strategy: {
+      summary:
+        "Highest-intent slice — they just felt the cap. Strike with a frictionless in-app upgrade prompt within the first 24 hours; otherwise the moment fades and ROI collapses by week 2.",
+      actions: [
+        {
+          rank: 1, channel: "in_app_modal",
+          title: "Frictionless 1-click upgrade modal",
+          message_en: "You just hit your credit ceiling — unlock Pro in under a minute and keep your work moving.",
+          target_filter: "credits_exceeded_within_24h == true",
+          expected_uplift_pp: 9.5, estimated_roi_multiple: 14.2,
+          rationale: "Limit-hit users convert ~10× baseline; modal eliminates friction.",
+        },
+        {
+          rank: 2, channel: "email",
+          title: "48-hour reminder with savings preview",
+          message_en: "Still hitting the cap? See exactly how much faster Pro made teams like yours.",
+          target_filter: "credits_exceeded_24_to_72h == true",
+          expected_uplift_pp: 4.2, estimated_roi_multiple: 6.1,
+          rationale: "Email reaches users who closed the modal; cohort proof builds credibility.",
+        },
+        {
+          rank: 3, channel: "sales_call",
+          title: "Outbound for >5 limit-hits",
+          message_en: "Hand-off to AE for quick demo + custom plan.",
+          target_filter: "credits_exceeded_count_7d > 5",
+          expected_uplift_pp: 14.8, estimated_roi_multiple: 4.7,
+          rationale: "High intent + high CAC tolerance.",
+        },
+      ],
+      risks: [
+        "Aggressive modal can feel pushy — A/B test the copy before global rollout.",
+        "Cap users with daily frequency lock so the same person doesn't see 5 modals.",
+      ],
+    },
+  },
+  {
+    segment_id: "banner_seen",
+    label: "Limit-warning banner shown",
+    stats: { size: 302, pct_of_total: 0.017, observed_rate: 0.300, baseline_lift: 16.3 },
+    strategy: {
+      summary:
+        "Saw the warning, didn't act. The most surgical pre-purchase prompt — they're already considering the limit.",
+      actions: [
+        {
+          rank: 1, channel: "in_app_modal",
+          title: "Conversion modal 24-48h after banner",
+          message_en: "Last time you saw the warning — here's a 7-day Pro trial, no card required.",
+          target_filter: "banner_shown_count >= 1 AND last_banner < 48h",
+          expected_uplift_pp: 16.4, estimated_roi_multiple: 22.1,
+          rationale: "Banner-seeing cohort converts at 30%; the banner is intent-revealing.",
+        },
+        {
+          rank: 2, channel: "push_notification",
+          title: "Soft nudge during peak usage hours",
+          message_en: "Skip the cap — try Pro for 7 days.",
+          target_filter: "banner_shown AND push_opted_in",
+          expected_uplift_pp: 6.8, estimated_roi_multiple: 9.4,
+          rationale: "Push during active session catches them in flow state.",
+        },
+        {
+          rank: 3, channel: "email",
+          title: "Retargeting drip with usage stats",
+          message_en: "Your team has hit the limit 3× this week — here's what Pro unlocks.",
+          target_filter: "banner_shown AND days_since_last_session <= 3",
+          expected_uplift_pp: 3.1, estimated_roi_multiple: 5.5,
+          rationale: "Personalized stats outperform generic upgrade copy 3:1.",
+        },
+      ],
+      risks: ["Too many touchpoints in 48h — cap to 2 channel-touches per user."],
+    },
+  },
+  {
+    segment_id: "early_heavy_user",
+    label: "Heavy first-hour usage",
+    stats: { size: 720, pct_of_total: 0.041, observed_rate: 0.077, baseline_lift: 4.2 },
+    strategy: {
+      summary:
+        "Power-user signal — they're consuming credits aggressively in the first session. Trial offers retain them through the first paywall.",
+      actions: [
+        {
+          rank: 1, channel: "in_app_modal",
+          title: "14-day Pro trial offer",
+          message_en: "You're moving fast — try Pro free for 14 days, no card.",
+          target_filter: "n_credits_used_1h > 75th_percentile",
+          expected_uplift_pp: 5.8, estimated_roi_multiple: 8.3,
+          rationale: "No-card trials boost activation 2× without hurting conversion.",
+        },
+        {
+          rank: 2, channel: "lifecycle_drip",
+          title: "Power-user onboarding email series",
+          message_en: "Advanced workflow tips for users like you.",
+          target_filter: "n_events_24h > 50",
+          expected_uplift_pp: 2.4, estimated_roi_multiple: 4.6,
+          rationale: "Workflow education reduces churn-during-trial.",
+        },
+        {
+          rank: 3, channel: "ad_retargeting",
+          title: "LinkedIn retargeting for B2B context",
+          message_en: "Pro unlocks team collaboration + audit logs.",
+          target_filter: "n_events_24h > 50 AND email_domain in B2B_set",
+          expected_uplift_pp: 1.8, estimated_roi_multiple: 3.0,
+          rationale: "Decision-makers self-select via LinkedIn.",
+        },
+      ],
+      risks: ["Cannibalization: aggressive trial offers may delay paying conversions in this cohort."],
+    },
+  },
+  {
+    segment_id: "engaged_7d",
+    label: "Engaged · 7-day active",
+    stats: { size: 234, pct_of_total: 0.013, observed_rate: 0.128, baseline_lift: 7.0 },
+    strategy: {
+      summary:
+        "Steady-state power users. They've already integrated the product into their week — pricing and team-tier upsells land best here.",
+      actions: [
+        {
+          rank: 1, channel: "email",
+          title: "Power-user webinar invite",
+          message_en: "Workflows from teams getting 10× ROI — live walkthrough.",
+          target_filter: "active_days_7d >= 5",
+          expected_uplift_pp: 7.1, estimated_roi_multiple: 9.5,
+          rationale: "Webinar attendance correlates 0.7 with team-tier upgrade.",
+        },
+        {
+          rank: 2, channel: "in_app_modal",
+          title: "Team-tier discovery prompt",
+          message_en: "Bring your team — get 3 seats free for 30 days.",
+          target_filter: "company_email AND active_days_7d >= 5",
+          expected_uplift_pp: 4.4, estimated_roi_multiple: 7.8,
+          rationale: "B2B accounts upgrade at 4× the rate when team-tier is offered first.",
+        },
+        {
+          rank: 3, channel: "sales_call",
+          title: "AE outreach for top 10% by usage",
+          message_en: "Custom plan + onboarding for your team.",
+          target_filter: "n_events_7d > 90th_percentile",
+          expected_uplift_pp: 11.2, estimated_roi_multiple: 5.2,
+          rationale: "AE touch unlocks contract-tier deals.",
+        },
+      ],
+      risks: ["Webinar saturation — limit invites to 1/quarter per user."],
+    },
+  },
+  {
+    segment_id: "company_signup",
+    label: "Company-purpose signup",
+    stats: { size: 412, pct_of_total: 0.023, observed_rate: 0.094, baseline_lift: 5.1 },
+    strategy: {
+      summary:
+        "B2B intent at signup. Sales-led handoff converts 5× better than self-serve trial here.",
+      actions: [
+        {
+          rank: 1, channel: "sales_call",
+          title: "SDR contact within 24h of signup",
+          message_en: "Quick discovery call to scope your team's use case.",
+          target_filter: "purpose == 'company' AND signup_age_h < 24",
+          expected_uplift_pp: 9.2, estimated_roi_multiple: 11.4,
+          rationale: "Speed-to-lead is a 7× ROI driver in B2B SaaS.",
+        },
+        {
+          rank: 2, channel: "email",
+          title: "Case studies for similar-size teams",
+          message_en: "How teams of 5-50 people use this.",
+          target_filter: "purpose == 'company' AND not contacted",
+          expected_uplift_pp: 3.6, estimated_roi_multiple: 6.0,
+          rationale: "Social proof shortens sales cycles.",
+        },
+        {
+          rank: 3, channel: "in_app_modal",
+          title: "Demo booking modal",
+          message_en: "Book a 20-min demo — see Pro features for teams.",
+          target_filter: "purpose == 'company' AND days_active >= 2",
+          expected_uplift_pp: 5.1, estimated_roi_multiple: 7.2,
+          rationale: "In-app demo bookings 2× higher than email CTA.",
+        },
+      ],
+      risks: ["SDR capacity bottleneck — automate the case-study email leg first."],
+    },
+  },
+  {
+    segment_id: "tour_finisher",
+    label: "Onboarding tour finished · 24h",
+    stats: { size: 720, pct_of_total: 0.041, observed_rate: 0.059, baseline_lift: 3.2 },
+    strategy: {
+      summary:
+        "Finished the tour but hasn't hit the cap yet. Trial offer keeps them in the flow before they bounce.",
+      actions: [
+        {
+          rank: 1, channel: "in_app_modal",
+          title: "Auto-enroll 14-day Pro trial",
+          message_en: "You're set up — here's 14 days of Pro on us.",
+          target_filter: "tour_finished_24h == true AND not paying",
+          expected_uplift_pp: 3.6, estimated_roi_multiple: 5.5,
+          rationale: "Tour completers convert 3× baseline when given the trial early.",
+        },
+        {
+          rank: 2, channel: "email",
+          title: "Use-case templates email",
+          message_en: "Three templates to try first.",
+          target_filter: "tour_finished AND day_2",
+          expected_uplift_pp: 1.8, estimated_roi_multiple: 4.2,
+          rationale: "Templates accelerate first-value moment.",
+        },
+        {
+          rank: 3, channel: "push_notification",
+          title: "Day-3 re-engagement push",
+          message_en: "You've got 11 days of Pro left — try saving a workflow.",
+          target_filter: "trial_started AND day_3 AND no_save_event",
+          expected_uplift_pp: 0.9, estimated_roi_multiple: 2.6,
+          rationale: "Push reactivates 18% of trial-starts that never returned.",
+        },
+      ],
+      risks: ["Trial fatigue if too many cohorts get auto-enroll — segment by purpose."],
+    },
+  },
+  {
+    segment_id: "atrisk_paying",
+    label: "At-risk paying users",
+    stats: { size: 102, pct_of_total: 0.006, observed_rate: 0.547, baseline_lift: 0.45 },
+    strategy: {
+      summary:
+        "Already paying but activity is declining. Pure retention play — drip + 1:1 coach offer to get them back to value.",
+      actions: [
+        {
+          rank: 1, channel: "lifecycle_drip",
+          title: "Use-case suggestions drip",
+          message_en: "Three things teams in your industry just shipped with Pro.",
+          target_filter: "paying AND active_drop_pct_7d > 50",
+          expected_uplift_pp: 12.1, estimated_roi_multiple: 3.2,
+          rationale: "Use-case relevance correlates 0.8 with renewal.",
+        },
+        {
+          rank: 2, channel: "sales_call",
+          title: "1:1 success-coach offer",
+          message_en: "Free 30-min session to get unstuck.",
+          target_filter: "paying AND active_drop AND high_LTV_signal",
+          expected_uplift_pp: 18.4, estimated_roi_multiple: 4.0,
+          rationale: "Coaching halves churn for high-LTV at-risk users.",
+        },
+        {
+          rank: 3, channel: "email",
+          title: "Win-back offer (discount + extension)",
+          message_en: "Two free months on us — let's get you back on track.",
+          target_filter: "paying AND active_drop AND no_response_to_drip",
+          expected_uplift_pp: 6.0, estimated_roi_multiple: 2.0,
+          rationale: "Discount-as-last-resort — only for cohorts that ignored softer touches.",
+        },
+      ],
+      risks: [
+        "Discount cohort may set precedent — limit to once per user lifetime.",
+        "Coach capacity is the bottleneck — cap to 5 sessions/week.",
+      ],
+    },
+  },
+];
+
+// ─── §06 INSIGHTS CARD TEXT (fan-in narrative) ──────────────────────────
+export const FALLBACK_INSIGHTS_TEXT = `INSIGHTS CARD · v3 ENSEMBLE
+
+PR-AUC 0.265 (random 0.018, lift 14.4×)
+ROC-AUC 0.812 · Brier 0.0222 · isotonic-calibrated
+
+KEY FINDINGS
+─────────────────────────────
+1. Credit-limit moment is the #1 predictor.
+   - 49.9% of upgraders hit the limit (vs 4.0% of non-upgraders → 12× lift).
+   - SHAP confirms: hours_to_first_trigger dominates with mean |SHAP|=0.0273.
+
+2. Limit-warning banner is the #2 predictor.
+   - 39.9% of upgraders saw the banner (1.8% of non — 22× lift).
+   - Banner-seeing cohort converts at 30% within 48h.
+
+3. The funnel is steep but stable.
+   - 17,541 → 13,377 → 7,175 → 4,760 → 2,590 → 1,452 → 557 → 323 (1.84%).
+   - 51% of users who connect external tools become engaged (strongest natural transition).
+   - 12.8% of engaged users convert to paying (~7× the average).
+
+4. Leakage audit: 21/21 PASS.
+   - obs_days raw feature dropped (ROC 0.939 alone — too good = leak).
+   - 25-event blacklist applied (subscription_upgraded, clicked_upgrade, etc).
+   - User-disjoint train/test split + 30-day cutoff gap.
+
+PLAYBOOK PRIORITIES (from ROI ranking)
+─────────────────────────────
+#1  In-app modal at limit-hit          649 users · +9.5pp uplift · 14.2× ROI
+#2  Conversion modal after banner      302 users · +16.4pp uplift · 22.1× ROI
+#3  14-day Pro trial for early heavy   720 users · +5.8pp uplift · 8.3× ROI
+#4  Power-user webinar invite          234 users · +7.1pp uplift · 9.5× ROI
+#5  B2B SDR outreach within 24h        412 users · +9.2pp uplift · 11.4× ROI
+
+TOTAL TARGET: 1,300 users (7.4% of base) → projected +180 net upgrades = 56% lift over baseline.
+
+MODEL CONFIDENCE
+─────────────────────────────
+Calibration ECE 0.018 → predicted probabilities are reliable scoring inputs.
+PSI all-features < 0.10 → train↔test distribution stable, no covariate shift.
+
+DEPLOYMENT
+─────────────────────────────
+Champion: calibrated-ensemble (XGB + RF + HistGB, 3-fold soft-vote, isotonic).
+Inference latency: ~12ms p50 / ~28ms p99 on test slice.
+Pipeline gate: training_gate_passed == True (PSI + class balance + min sample).
+`;

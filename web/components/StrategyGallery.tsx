@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "@/lib/api";
+import { FALLBACK_STRATEGIES_SEGMENTS } from "@/lib/fallbacks";
 
 type StrategyAction = {
   rank?: number;
@@ -45,9 +46,15 @@ export default function StrategyGallery() {
   const segments = useQuery({
     queryKey: ["strategy-segments"],
     queryFn: api.strategySegments,
+    retry: 1,
   });
 
-  const list = (segments.data as SegmentEntry[] | undefined) ?? [];
+  // Fall back to the inline canon if the API isn't reachable.
+  const live = (segments.data as SegmentEntry[] | undefined) ?? [];
+  const list: SegmentEntry[] =
+    live.length > 0 ? live : (FALLBACK_STRATEGIES_SEGMENTS as SegmentEntry[]);
+  const usingFallback = live.length === 0;
+
   const [selected, setSelected] = useState<string | null>(null);
 
   const current = useMemo(
@@ -58,41 +65,31 @@ export default function StrategyGallery() {
   if (segments.isLoading)
     return <div className="glass h-[420px] animate-pulse rounded-2xl" />;
 
-  if (segments.isError)
-    return (
-      <div className="glass rounded-2xl p-6 text-sm text-rose-200">
-        <strong>could not load /strategies/segments.</strong>{" "}
-        Make sure the Build Strategies block has run on the canvas and that
-        the variable name in zerve_deploy/main.py matches.
-        <pre className="mt-2 text-[10px] text-rose-300/80">{String(segments.error)}</pre>
-      </div>
-    );
-
-  if (!list.length)
-    return (
-      <div className="glass rounded-2xl p-6 text-sm text-slate-400">
-        no segments returned — Build Strategies may not have published anything yet.
-      </div>
-    );
-
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
-      <SegmentList
-        segments={list}
-        selected={current?.segment_id ?? null}
-        onSelect={setSelected}
-      />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current?.segment_id ?? "empty"}
-          initial={{ opacity: 0, x: 12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -12 }}
-          transition={{ duration: 0.25 }}
-        >
-          {current && <SegmentDetail segment={current} />}
-        </motion.div>
-      </AnimatePresence>
+    <div className="space-y-3">
+      {usingFallback && (
+        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-200">
+          live <code className="rounded bg-slate-900 px-1 py-0.5">/strategies/segments</code> unavailable — showing the offline cohort baked into the bundle.
+        </div>
+      )}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
+        <SegmentList
+          segments={list}
+          selected={current?.segment_id ?? null}
+          onSelect={setSelected}
+        />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current?.segment_id ?? "empty"}
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.25 }}
+          >
+            {current && <SegmentDetail segment={current} />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

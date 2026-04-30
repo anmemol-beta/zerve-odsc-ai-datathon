@@ -4,7 +4,14 @@ import Section from "@/components/Section";
 import HealthBadge from "@/components/HealthBadge";
 import DiscoveryCards from "@/components/DiscoveryCards";
 import FunnelView from "@/components/FunnelView";
+import TransitionHeatmap from "@/components/TransitionHeatmap";
+import SignalCombo from "@/components/SignalCombo";
+import LeakageAudit from "@/components/LeakageAudit";
+import ModelComparison from "@/components/ModelComparison";
+import FeatureImportance from "@/components/FeatureImportance";
+import TopKSimulator from "@/components/TopKSimulator";
 import LivePredict from "@/components/LivePredict";
+import PlaybookList from "@/components/PlaybookList";
 import StrategyGallery from "@/components/StrategyGallery";
 import InsightsCard from "@/components/InsightsCard";
 import VersionBadge from "@/components/VersionBadge";
@@ -41,6 +48,78 @@ export default function Page() {
 
       <Section
         kicker="03"
+        title="Stage-to-stage transitions"
+        subtitle="Row-stochastic matrix derived from the user_features_v4 cohort. Pink-bordered cells are the transitions worth investing in — Connected → Engaged is the strongest natural progression."
+      >
+        <TransitionHeatmap />
+      </Section>
+
+      <Section
+        kicker="04"
+        title="Signal combinations · live recompute"
+        subtitle="Three behavioral flags multiply upgrade probability. Toggle them to see how the conditional rate keys into the lookup table the model uses for thin segments."
+      >
+        <SignalCombo />
+      </Section>
+
+      <Section
+        kicker="05"
+        title="Leakage audit"
+        subtitle="Every guardrail green. The mechanical 21-check sweep across cutoffs, blacklists, splits, and calibration — and the obs_days story behind why we dropped 39 features."
+      >
+        <LeakageAudit />
+      </Section>
+
+      <Section
+        kicker="06"
+        title="Model comparison"
+        subtitle="Five models, same test cohort. The calibrated ensemble takes the crown on PR-AUC and Brier. Curves are PR (precision-recall) and reliability (predicted vs observed) overlaid before/after isotonic calibration."
+      >
+        <ModelComparison />
+      </Section>
+
+      <Section
+        kicker="06.5"
+        title="Feature importance · marketing bridge"
+        subtitle="SHAP top-10 for the champion ensemble. Each top-3 feature already has a corresponding playbook action — the bridge from prediction to revenue."
+      >
+        <FeatureImportance />
+      </Section>
+
+      <Section
+        kicker="07"
+        title="Top-K simulator ★"
+        subtitle="Drag the slider — pick what fraction of the user base to target by score. The curve is exact for the synthetic test cohort; the right pane recomputes precision, recall, lift, and net ROI in real time."
+      >
+        <TopKSimulator />
+      </Section>
+
+      <Section
+        kicker="08"
+        title="Live inference · v3 ensemble"
+        subtitle={`Pick any test-set row index — when canvas is reachable, the request flies through beta-zerve.hub.zerve.cloud and runs predict_proba across all 3 calibration folds. Otherwise we fall back to the offline cohort. Predicted stage and top-3 features come along for the ride.`}
+      >
+        <LivePredict />
+      </Section>
+
+      <Section
+        kicker="09"
+        title="Playbook · 7 ranked actions"
+        subtitle="ROI-ranked. Top-3 are the must-ship moves; the rest cover retention and B2B. Every row maps back to a SHAP-positive feature, and the target counts come straight from the per-segment performance table."
+      >
+        <PlaybookList />
+      </Section>
+
+      <Section
+        kicker="10"
+        title="K2-Think strategies · per-segment"
+        subtitle="14 v4 funnel segments. Each one shipped through the Build Strategies node, which prompts K2-Think with the segment's behavioral profile and a Zerve playbook excerpt. The 3 ranked actions, target filters, expected uplift, and ROI multipliers come back from the deployed canvas."
+      >
+        <StrategyGallery />
+      </Section>
+
+      <Section
+        kicker="11"
         title="The canvas, in your browser"
         subtitle="Every block here is a real Zerve canvas node. Coordinates, edges, descriptions all read straight from canvas.yaml. Click a block to pull its live matplotlib figure or variable from the deployed FastAPI — same calibrated XGB ensemble, same cohort tables, same K2 strategies that the data scientist sees inside the canvas."
       >
@@ -48,25 +127,9 @@ export default function Page() {
       </Section>
 
       <Section
-        kicker="04"
-        title="Live inference · v3 ensemble"
-        subtitle={`Pick any test-set row index — the request flies through beta-zerve.hub.zerve.cloud, which calls zerve.variable("Train Model v3", "models") on the canvas and runs predict_proba across all 3 calibration folds. The probability you see is generated server-side, not baked into a static JSON.`}
-      >
-        <LivePredict />
-      </Section>
-
-      <Section
-        kicker="05"
-        title="K2-Think strategies · per-segment"
-        subtitle="14 v4 funnel segments. Each one shipped through the Build Strategies node, which prompts K2-Think with the segment's behavioral profile and a Zerve playbook excerpt. The 3 ranked actions, target filters, expected uplift, and ROI multipliers come back in real time from the deployed canvas."
-      >
-        <StrategyGallery />
-      </Section>
-
-      <Section
-        kicker="06"
+        kicker="12"
         title="Insights card · the fan-in"
-        subtitle="The final canvas node — fan-in from Diagnose v3, SHAP v3, Compare Models, Per-Segment Performance, Build Strategies, and ROI Ranking. The PNG and the text both come from the same canvas variables, fetched live."
+        subtitle="The final canvas node — fan-in from Diagnose v3, SHAP v3, Compare Models, Per-Segment Performance, Build Strategies, and ROI Ranking. The PNG and the text both come from the same canvas variables."
       >
         <InsightsCard />
       </Section>
