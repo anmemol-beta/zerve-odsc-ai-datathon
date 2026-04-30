@@ -14,7 +14,6 @@ import LivePredict from "@/components/LivePredict";
 import PlaybookList from "@/components/PlaybookList";
 import InsightsCard from "@/components/InsightsCard";
 import VersionBadge from "@/components/VersionBadge";
-import CanvasDAGLazy from "@/components/canvas/CanvasDAGLazy";
 
 export default function Page() {
   return (
@@ -26,17 +25,6 @@ export default function Page() {
       </div>
 
       <HeroStats />
-
-      {/* §00 — prologue: the canvas establishes the workshop before we walk
-          through findings. Every subsequent section's data comes from a node
-          you can see in this graph. */}
-      <Section
-        kicker="00"
-        title="The canvas, in your browser"
-        subtitle="Everything you'll see below was assembled in one Zerve canvas — 32 blocks, 42 edges. Coordinates, kinds, and descriptions all read straight from canvas.yaml. Each section ahead is a slice of this graph."
-      >
-        <CanvasDAGLazy />
-      </Section>
 
       {/* §01 — storyboard scenes 2-3 (Discovery: lifetime + top events) */}
       <Section
