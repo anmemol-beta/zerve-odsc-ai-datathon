@@ -1,3 +1,4 @@
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
 # Slim-load the event log: only the 3 columns downstream blocks use, parsed

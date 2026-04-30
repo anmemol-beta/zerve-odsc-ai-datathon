@@ -10,6 +10,8 @@ Outputs:
     chosen_model           str  — "ensemble_v3"
     comparison_summary     dict — for the report block
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

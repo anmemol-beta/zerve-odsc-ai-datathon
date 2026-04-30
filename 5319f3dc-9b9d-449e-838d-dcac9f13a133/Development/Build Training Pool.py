@@ -24,6 +24,8 @@ Outputs:
     training_pool_meta     dict          — gate results + recency stats
     training_gate_passed   bool          — should retraining proceed?
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import os
 import pandas as pd
 

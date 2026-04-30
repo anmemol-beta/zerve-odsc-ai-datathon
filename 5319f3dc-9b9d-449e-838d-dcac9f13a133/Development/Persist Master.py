@@ -25,6 +25,8 @@ Outputs:
     persist_master_meta   dict   — local path, sha hash, gate state,
                                    target upload url, would-promote flag
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import os
 import json
 import hashlib

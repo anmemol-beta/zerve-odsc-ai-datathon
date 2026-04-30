@@ -19,6 +19,8 @@ The PDF rubric line "If we gave your definitions and rules to an engineer,
 could they implement it exactly?" is answered by these assertions running
 green at canvas execution time.
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import pandas as pd
 
 uf = user_features_v4

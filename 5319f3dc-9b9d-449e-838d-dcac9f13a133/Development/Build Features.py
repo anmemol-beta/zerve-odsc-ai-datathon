@@ -1,3 +1,4 @@
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
 # Per-user "activity snapshot" pattern for upgrade prediction.

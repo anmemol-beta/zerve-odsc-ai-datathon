@@ -17,6 +17,8 @@ explicitly rewards:
 Outputs:
     features_v3_validation   dict
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 

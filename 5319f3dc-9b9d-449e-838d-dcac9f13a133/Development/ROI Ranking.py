@@ -15,6 +15,8 @@ Outputs:
     roi_per_channel          pd.DataFrame  — channel summary stats
     roi_per_segment          pd.DataFrame  — best ROI per segment
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

@@ -28,6 +28,8 @@ Outputs:
     events_pipeline_trainable pd.DataFrame  — label-stable subset (for retraining)
     merge_summary             dict          — counts before/after dedup, lag cutoff
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import os
 import pandas as pd
 

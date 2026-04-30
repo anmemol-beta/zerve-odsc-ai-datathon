@@ -1,3 +1,4 @@
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
 # Trains TWO models on the leakage-safe (X_train, y_train) snapshot:

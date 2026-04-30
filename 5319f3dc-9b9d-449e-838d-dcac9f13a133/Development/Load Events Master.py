@@ -24,6 +24,8 @@ Outputs:
     master_source      str           — "github-raw" | "env-url" | "fallback-events"
     master_meta        dict          — n_rows, n_users, time range, source url
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import os
 import io
 import urllib.request

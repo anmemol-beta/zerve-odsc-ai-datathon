@@ -21,6 +21,8 @@ Inputs (from canvas namespace):
 Outputs:
     rolling_metrics_v3    pd.DataFrame  — long table: cohort × model → metrics
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (

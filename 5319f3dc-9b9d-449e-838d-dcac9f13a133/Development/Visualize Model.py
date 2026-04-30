@@ -1,3 +1,4 @@
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
 # 4-panel diagnostic dashboard for the upgrade-prediction models.

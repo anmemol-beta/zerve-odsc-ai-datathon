@@ -29,6 +29,8 @@ Outputs:
     artifacts_path     str   — directory we wrote to
     artifacts_meta     dict  — same content as meta.json
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import json
 import os
 from datetime import datetime, timezone

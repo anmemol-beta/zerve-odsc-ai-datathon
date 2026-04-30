@@ -24,6 +24,8 @@ Outputs:
     current_champion         str
     champion_summary         dict
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

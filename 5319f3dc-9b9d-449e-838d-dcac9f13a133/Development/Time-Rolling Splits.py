@@ -21,6 +21,8 @@ Outputs:
           "n_test_pos": int }
     user_signup_month  pd.Series  — month-period per person_id
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 

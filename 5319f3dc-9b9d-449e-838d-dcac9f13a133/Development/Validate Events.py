@@ -12,6 +12,8 @@ Why this block exists:
     *enforces* its assumptions at every stage is strictly stronger than one
     that only documents them in a README.
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import pandas as pd
 
 # ─── 1. schema ────────────────────────────────────────────────────────────

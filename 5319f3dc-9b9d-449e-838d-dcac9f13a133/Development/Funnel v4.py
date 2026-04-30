@@ -1,3 +1,4 @@
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
 # Funnel v4 — 15-category Time-Aware classifier with post-upgrade lifecycle.

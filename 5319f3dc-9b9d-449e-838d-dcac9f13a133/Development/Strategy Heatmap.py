@@ -8,6 +8,8 @@ sales calls reserved for late-funnel cohorts only?
 Outputs:
     strategy_heatmap_data    pd.DataFrame   — segments × channels with max ROI
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

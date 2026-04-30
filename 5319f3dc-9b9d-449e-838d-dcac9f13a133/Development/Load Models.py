@@ -12,6 +12,8 @@ Outputs:
     model_age_hours     float — how stale is the champion?
     inference_ready     bool  — True only when champion model loaded OK
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import json
 import urllib.request
 from datetime import datetime, timezone

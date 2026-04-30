@@ -1,3 +1,4 @@
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
 # 4-panel cohort / time-travel dashboard, mirroring the web app's #06 section

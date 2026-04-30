@@ -29,6 +29,8 @@ Either way, outputs are interchangeable:
 Inputs (from canvas namespace):
     X_v3_train, y_v3_train, X_v3_test, y_v3_test, feature_cols_v3
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import warnings
 import numpy as np
 

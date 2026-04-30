@@ -25,6 +25,8 @@ Outputs:
     inference_pool        pd.DataFrame   — events used for THIS week's scoring
     inference_pool_meta   dict           — n_rows, n_users, recency stats
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import os
 import pandas as pd
 

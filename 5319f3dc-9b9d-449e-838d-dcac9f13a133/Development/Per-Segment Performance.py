@@ -18,6 +18,8 @@ Inputs (from canvas namespace):
 Outputs:
     segment_performance_v3   pd.DataFrame  — one row per stage
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

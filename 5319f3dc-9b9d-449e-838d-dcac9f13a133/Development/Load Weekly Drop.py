@@ -19,6 +19,8 @@ Outputs:
     weekly_drop          pd.DataFrame  — this week's incoming events
     weekly_drop_meta     dict          — week id, source url, row count
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import os
 import io
 import urllib.request

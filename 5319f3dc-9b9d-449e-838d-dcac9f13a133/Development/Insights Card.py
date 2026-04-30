@@ -16,6 +16,8 @@ Outputs:
     insights_card_text    str  — the summary text (so it can be embedded)
     insights_payload      dict — structured payload, ready for the report
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

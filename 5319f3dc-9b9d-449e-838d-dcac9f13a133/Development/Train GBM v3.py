@@ -13,6 +13,8 @@ Outputs:
     gbm_metrics_v3          dict
     gbm_backend             str  — "sklearn_gbm"
 """
+
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 import warnings
 import numpy as np
 

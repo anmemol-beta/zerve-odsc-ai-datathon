@@ -1,3 +1,4 @@
+# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
 
 
 # Train Model v3 — calibrated XGBoost + RandomForest + HistGB ensemble.
