@@ -111,34 +111,34 @@ psp_fig, psp_axes = plt.subplots(2, 1, figsize=(13, 8))
 stages = segment_performance_v3["final_stage"].tolist()
 
 # [Top] Segment size + pos count
-ax = psp_axes[0]
-ax.bar(stages, segment_performance_v3["n_users"], color="#06b6d4",
+psp_ax = psp_axes[0]
+psp_ax.bar(stages, segment_performance_v3["n_users"], color="#06b6d4",
        label="users in segment")
-psp_ax2 = ax.twinx()
+psp_ax2 = psp_ax.twinx()
 psp_ax2.plot(stages, segment_performance_v3["n_pos"], color="#ec4899",
          marker="o", linewidth=2, label="positives")
-ax.set_ylabel("users", color="#06b6d4")
+psp_ax.set_ylabel("users", color="#06b6d4")
 psp_ax2.set_ylabel("positives (upgrades)", color="#ec4899")
-ax.set_title("Segment size and positive count")
-ax.set_xticks(range(len(stages)))
-ax.set_xticklabels(stages, rotation=30, ha="right", fontsize=8)
-ax.grid(alpha=0.3, axis="y")
+psp_ax.set_title("Segment size and positive count")
+psp_ax.set_xticks(range(len(stages)))
+psp_ax.set_xticklabels(stages, rotation=30, ha="right", fontsize=8)
+psp_ax.grid(alpha=0.3, axis="y")
 
 # [Bottom] PR-AUC + lift
-ax = psp_axes[1]
+psp_ax = psp_axes[1]
 pr_vals = segment_performance_v3["pr_auc"].fillna(0)
 lift_vals = segment_performance_v3["lift_over_base"].fillna(0)
 xs = np.arange(len(stages))
-ax.bar(xs - 0.2, pr_vals, 0.4, color="#a855f7", label="PR-AUC")
-psp_ax2 = ax.twinx()
+psp_ax.bar(xs - 0.2, pr_vals, 0.4, color="#a855f7", label="PR-AUC")
+psp_ax2 = psp_ax.twinx()
 psp_ax2.bar(xs + 0.2, lift_vals, 0.4, color="#10b981", label="top-5% lift", alpha=0.85)
-ax.set_ylabel("PR-AUC", color="#a855f7")
+psp_ax.set_ylabel("PR-AUC", color="#a855f7")
 psp_ax2.set_ylabel("top-5% lift over segment base rate", color="#10b981")
-ax.set_title("Where does the v3 model add lift? "
+psp_ax.set_title("Where does the v3 model add lift? "
              "(missing bars = no positives in test segment)")
-ax.set_xticks(xs)
-ax.set_xticklabels(stages, rotation=30, ha="right", fontsize=8)
-ax.grid(alpha=0.3, axis="y")
+psp_ax.set_xticks(xs)
+psp_ax.set_xticklabels(stages, rotation=30, ha="right", fontsize=8)
+psp_ax.grid(alpha=0.3, axis="y")
 
 plt.tight_layout()
 plt.show()

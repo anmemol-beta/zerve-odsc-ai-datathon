@@ -198,40 +198,40 @@ else:
 ddm_fig, ddm_axes = plt.subplots(2, 1, figsize=(14, 10))
 
 # [Top] heatmap (feature × week) of PSI
-ax = ddm_axes[0]
+ddm_ax = ddm_axes[0]
 pivot = drift_per_week_per_feature.pivot_table(
     index="feature", columns="week", values="psi"
 ).reindex(index=MONITORED_FEATURES, columns=all_weeks)
-im = ax.imshow(pivot.values, aspect="auto", cmap="RdPu",
+im = ddm_ax.imshow(pivot.values, aspect="auto", cmap="RdPu",
                vmin=0, vmax=max(0.5, np.nanmax(pivot.values) if pivot.notna().any().any() else 0.5))
-ax.set_xticks(range(len(all_weeks)))
-ax.set_xticklabels(all_weeks, rotation=60, ha="right", fontsize=7)
-ax.set_yticks(range(len(MONITORED_FEATURES)))
-ax.set_yticklabels(MONITORED_FEATURES, fontsize=9)
-ax.set_title("PSI per (feature × week) vs baseline\n"
+ddm_ax.set_xticks(range(len(all_weeks)))
+ddm_ax.set_xticklabels(all_weeks, rotation=60, ha="right", fontsize=7)
+ddm_ax.set_yticks(range(len(MONITORED_FEATURES)))
+ddm_ax.set_yticklabels(MONITORED_FEATURES, fontsize=9)
+ddm_ax.set_title("PSI per (feature × week) vs baseline\n"
              "(red = drifted > 0.25, pink = moderate 0.10-0.25, faded = stable)")
-plt.colorbar(im, ax=ax, label="PSI")
+plt.colorbar(im, ddm_ax=ddm_ax, label="PSI")
 # annotate cells with PSI value if drifted
 for i, feat in enumerate(MONITORED_FEATURES):
     for j, w in enumerate(all_weeks):
         v = pivot.values[i, j] if i < pivot.shape[0] and j < pivot.shape[1] else float("nan")
         if not np.isnan(v) and v > PSI_THRESHOLD_MODERATE:
-            ax.text(j, i, f"{v:.2f}", ha="center", va="center",
+            ddm_ax.text(j, i, f"{v:.2f}", ha="center", va="center",
                     fontsize=7, color="white" if v > 0.3 else "black")
 
 # [Bottom] line plot — overall drift over time
-ax = ddm_axes[1]
+ddm_ax = ddm_axes[1]
 xs = range(len(weekly_drift_index))
-ax.plot(xs, weekly_drift_index["mean_psi"], "o-", color="#06b6d4", label="mean PSI")
-ax.plot(xs, weekly_drift_index["max_psi"], "s-", color="#ec4899", label="max PSI")
-ax.axhline(PSI_THRESHOLD_MODERATE, linestyle="--", color="#f59e0b", linewidth=1, label="moderate (0.10)")
-ax.axhline(PSI_THRESHOLD_MATERIAL, linestyle="--", color="#ef4444", linewidth=1, label="material (0.25)")
-ax.set_xticks(xs)
-ax.set_xticklabels(weekly_drift_index["week"], rotation=60, ha="right", fontsize=7)
-ax.set_ylabel("PSI")
-ax.set_title("Weekly drift index over time")
-ax.legend(loc="upper left", fontsize=8)
-ax.grid(alpha=0.3)
+ddm_ax.plot(xs, weekly_drift_index["mean_psi"], "o-", color="#06b6d4", label="mean PSI")
+ddm_ax.plot(xs, weekly_drift_index["max_psi"], "s-", color="#ec4899", label="max PSI")
+ddm_ax.axhline(PSI_THRESHOLD_MODERATE, linestyle="--", color="#f59e0b", linewidth=1, label="moderate (0.10)")
+ddm_ax.axhline(PSI_THRESHOLD_MATERIAL, linestyle="--", color="#ef4444", linewidth=1, label="material (0.25)")
+ddm_ax.set_xticks(xs)
+ddm_ax.set_xticklabels(weekly_drift_index["week"], rotation=60, ha="right", fontsize=7)
+ddm_ax.set_ylabel("PSI")
+ddm_ax.set_title("Weekly drift index over time")
+ddm_ax.legend(loc="upper left", fontsize=8)
+ddm_ax.grid(alpha=0.3)
 
 plt.suptitle("Data Drift Monitor — input distribution vs baseline",
              fontsize=13, y=1.0)

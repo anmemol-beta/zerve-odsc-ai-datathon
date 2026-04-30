@@ -160,7 +160,7 @@ shp_axes[0].tick_params(axis="y", labelsize=9)
 shp_axes[0].grid(alpha=0.3, axis="x")
 
 # [R] contrasting upgrader vs non-upgrader (works for both paths)
-ax = shp_axes[1]
+shp_ax = shp_axes[1]
 pos_idx = np.where(y_explain == 1)[0]
 neg_idx = np.where(y_explain == 0)[0]
 if len(pos_idx) and len(neg_idx):
@@ -169,18 +169,18 @@ if len(pos_idx) and len(neg_idx):
     n_shap = shap_values_v3[n_i]
     top10 = np.argsort(-np.abs(p_shap))[:10]
     ys = np.arange(10)
-    ax.barh(ys - 0.2, p_shap[top10], 0.4, color="#ec4899", label="example upgrader")
-    ax.barh(ys + 0.2, n_shap[top10], 0.4, color="#06b6d4", label="example non-upgrader")
-    ax.set_yticks(ys)
-    ax.set_yticklabels([feature_cols_v3[i] for i in top10], fontsize=9)
-    ax.axvline(0, color="#475569", linewidth=0.8)
-    ax.set_xlabel("SHAP value  (push toward upgrade →)")
-    ax.set_title("Two contrasting cases (top-10 by |SHAP|)")
-    ax.legend(fontsize=9)
-    ax.grid(alpha=0.3, axis="x")
-    ax.invert_yaxis()
+    shp_ax.barh(ys - 0.2, p_shap[top10], 0.4, color="#ec4899", label="example upgrader")
+    shp_ax.barh(ys + 0.2, n_shap[top10], 0.4, color="#06b6d4", label="example non-upgrader")
+    shp_ax.set_yticks(ys)
+    shp_ax.set_yticklabels([feature_cols_v3[i] for i in top10], fontsize=9)
+    shp_ax.axvline(0, color="#475569", linewidth=0.8)
+    shp_ax.set_xlabel("SHAP value  (push toward upgrade →)")
+    shp_ax.set_title("Two contrasting cases (top-10 by |SHAP|)")
+    shp_ax.legend(fontsize=9)
+    shp_ax.grid(alpha=0.3, axis="x")
+    shp_ax.invert_yaxis()
 else:
-    ax.text(0.5, 0.5, "(not enough positives in sample)", ha="center")
+    shp_ax.text(0.5, 0.5, "(not enough positives in sample)", ha="center")
 
 plt.suptitle(f"v3 ensemble interpretability  ({interpret_method})",
              fontsize=14, y=1.0)

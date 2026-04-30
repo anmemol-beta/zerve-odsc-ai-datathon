@@ -89,70 +89,70 @@ COLORS = {"xgb_v3": "#ec4899", "rf_v3": "#06b6d4",
           "hgb_v3": "#a855f7", "ensemble_v3": "#10b981"}
 
 # [TL] Reliability diagram
-ax = diag_axes[0, 0]
-ax.plot([0, 1], [0, 1], "--", color="#475569", label="perfect")
+diag_ax = diag_axes[0, 0]
+diag_ax.plot([0, 1], [0, 1], "--", color="#475569", label="perfect")
 for name, p in preds_v3.items():
     p = np.asarray(p)
     # 8 bins, only show bins with >=10 samples
     frac_pos, mean_pred = calibration_curve(y, p, n_bins=10, strategy="quantile")
-    ax.plot(mean_pred, frac_pos, "o-",
+    diag_ax.plot(mean_pred, frac_pos, "o-",
             color=COLORS.get(name, "#64748b"),
             label=f"{name}  ECE={diagnose_v3[name]['ece']:.4f}",
             linewidth=2 if name == "ensemble_v3" else 1)
-ax.set_xlabel("predicted probability")
-ax.set_ylabel("observed positive rate")
-ax.set_title("Reliability diagram (calibration)\nlower curve below diagonal = under-confident")
-ax.legend(loc="upper left", fontsize=8)
-ax.grid(alpha=0.3)
+diag_ax.set_xlabel("predicted probability")
+diag_ax.set_ylabel("observed positive rate")
+diag_ax.set_title("Reliability diagram (calibration)\nlower curve below diagonal = under-confident")
+diag_ax.legend(loc="upper left", fontsize=8)
+diag_ax.grid(alpha=0.3)
 
 # [TR] ROC curves
-ax = diag_axes[0, 1]
-ax.plot([0, 1], [0, 1], "--", color="#475569")
+diag_ax = diag_axes[0, 1]
+diag_ax.plot([0, 1], [0, 1], "--", color="#475569")
 for name, p in preds_v3.items():
     p = np.asarray(p)
     fpr, tpr, _ = roc_curve(y, p)
-    ax.plot(fpr, tpr, color=COLORS.get(name, "#64748b"),
+    diag_ax.plot(fpr, tpr, color=COLORS.get(name, "#64748b"),
             label=f"{name}  AUC={diagnose_v3[name]['roc_auc']:.3f}",
             linewidth=2 if name == "ensemble_v3" else 1)
-ax.set_xlabel("false positive rate")
-ax.set_ylabel("true positive rate")
-ax.set_title("ROC curves")
-ax.legend(loc="lower right", fontsize=8)
-ax.grid(alpha=0.3)
+diag_ax.set_xlabel("false positive rate")
+diag_ax.set_ylabel("true positive rate")
+diag_ax.set_title("ROC curves")
+diag_ax.legend(loc="lower right", fontsize=8)
+diag_ax.grid(alpha=0.3)
 
 # [BL] PR curves
-ax = diag_axes[1, 0]
+diag_ax = diag_axes[1, 0]
 diagnose_base_rate = y.mean()
-ax.axhline(diagnose_base_rate, linestyle="--", color="#475569",
+diag_ax.axhline(diagnose_base_rate, linestyle="--", color="#475569",
            label=f"baseline ({diagnose_base_rate:.4f})")
 for name, p in preds_v3.items():
     p = np.asarray(p)
     prec, rec, _ = precision_recall_curve(y, p)
-    ax.plot(rec, prec, color=COLORS.get(name, "#64748b"),
+    diag_ax.plot(rec, prec, color=COLORS.get(name, "#64748b"),
             label=f"{name}  AP={diagnose_v3[name]['pr_auc']:.3f}",
             linewidth=2 if name == "ensemble_v3" else 1)
-ax.set_xlabel("recall")
-ax.set_ylabel("precision")
-ax.set_title("Precision-Recall curves\n(flat baseline = base rate)")
-ax.legend(loc="upper right", fontsize=8)
-ax.grid(alpha=0.3)
-ax.set_ylim(0, max(0.4, ax.get_ylim()[1]))
+diag_ax.set_xlabel("recall")
+diag_ax.set_ylabel("precision")
+diag_ax.set_title("Precision-Recall curves\n(flat baseline = base rate)")
+diag_ax.legend(loc="upper right", fontsize=8)
+diag_ax.grid(alpha=0.3)
+diag_ax.set_ylim(0, max(0.4, diag_ax.get_ylim()[1]))
 
 # [BR] Brier decomposition
-ax = diag_axes[1, 1]
+diag_ax = diag_axes[1, 1]
 names = list(diagnose_v3.keys())
 rels = [diagnose_v3[n]["brier_reliability"] for n in names]
 ress = [diagnose_v3[n]["brier_resolution"] for n in names]
 xs = np.arange(len(names))
 w = 0.35
-ax.bar(xs - w/2, rels, w, label="reliability ↓", color="#f43f5e")
-ax.bar(xs + w/2, ress, w, label="resolution ↑", color="#10b981")
-ax.set_xticks(xs)
-ax.set_xticklabels(names, rotation=15, ha="right")
-ax.set_ylabel("score component")
-ax.set_title("Brier decomposition\nreliability ↓ better, resolution ↑ better")
-ax.legend()
-ax.grid(alpha=0.3, axis="y")
+diag_ax.bar(xs - w/2, rels, w, label="reliability ↓", color="#f43f5e")
+diag_ax.bar(xs + w/2, ress, w, label="resolution ↑", color="#10b981")
+diag_ax.set_xticks(xs)
+diag_ax.set_xticklabels(names, rotation=15, ha="right")
+diag_ax.set_ylabel("score component")
+diag_ax.set_title("Brier decomposition\nreliability ↓ better, resolution ↑ better")
+diag_ax.legend()
+diag_ax.grid(alpha=0.3, axis="y")
 
 plt.suptitle("v3 Model Diagnostics — calibration, discrimination, decomposition",
              fontsize=14, y=1.0)

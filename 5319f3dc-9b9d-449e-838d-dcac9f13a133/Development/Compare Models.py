@@ -133,7 +133,7 @@ titles = {
     "brier": "Brier (lower ↓ better)",
 }
 
-for ax, m in zip(cm_axes, metric_order):
+for cm_ax, m in zip(cm_axes, metric_order):
     rows = model_comparison.dropna(subset=[m])
     versions = []
     values = []
@@ -142,13 +142,13 @@ for ax, m in zip(cm_axes, metric_order):
         versions.append(label)
         values.append(r[m])
     colors = ["#06b6d4" if "v1" in v else "#ec4899" for v in versions]
-    bars = ax.barh(versions, values, color=colors)
-    ax.set_title(titles[m])
-    ax.grid(alpha=0.3, axis="x")
+    bars = cm_ax.barh(versions, values, color=colors)
+    cm_ax.set_title(titles[m])
+    cm_ax.grid(alpha=0.3, axis="x")
     for b, v in zip(bars, values):
-        ax.text(v, b.get_y() + b.get_height()/2, f" {v:.4f}",
+        cm_ax.text(v, b.get_y() + b.get_height()/2, f" {v:.4f}",
                 va="center", fontsize=8)
-    ax.invert_yaxis()
+    cm_ax.invert_yaxis()
 
 plt.suptitle("v1 vs v3 — head to head\n"
              "(v3 ensemble has 30x more test positives — narrower confidence intervals)",

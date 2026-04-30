@@ -58,26 +58,26 @@ print(strategy_heatmap_data.fillna(0).round(1).to_string())
 sh_fig, sh_axes = plt.subplots(1, 2, figsize=(16, 8))
 
 # [L] ROI heatmap
-ax = sh_axes[0]
+sh_ax = sh_axes[0]
 data = strategy_heatmap_data.fillna(0).values
-im = ax.imshow(data, aspect="auto", cmap="RdPu",
+im = sh_ax.imshow(data, aspect="auto", cmap="RdPu",
                vmin=0, vmax=max(data.max(), 1))
-ax.set_xticks(range(len(CHANNELS)))
-ax.set_xticklabels(CHANNELS, rotation=30, ha="right")
-ax.set_yticks(range(len(strategy_heatmap_data.index)))
-ax.set_yticklabels(strategy_heatmap_data.index, fontsize=9)
+sh_ax.set_xticks(range(len(CHANNELS)))
+sh_ax.set_xticklabels(CHANNELS, rotation=30, ha="right")
+sh_ax.set_yticks(range(len(strategy_heatmap_data.index)))
+sh_ax.set_yticklabels(strategy_heatmap_data.index, fontsize=9)
 for i in range(data.shape[0]):
     for j in range(data.shape[1]):
         v = data[i, j]
         if v > 0:
-            ax.text(j, i, f"{v:.0f}",
+            sh_ax.text(j, i, f"{v:.0f}",
                     ha="center", va="center", fontsize=8,
                     color="white" if v > data.max() * 0.6 else "#1e293b")
-ax.set_title("ROI heatmap\n(blank = K2 didn't recommend that channel for this segment)")
-plt.colorbar(im, ax=ax, label="ROI multiple")
+sh_ax.set_title("ROI heatmap\n(blank = K2 didn't recommend that channel for this segment)")
+plt.colorbar(im, sh_ax=sh_ax, label="ROI multiple")
 
 # [R] action count per cell
-ax = sh_axes[1]
+sh_ax = sh_axes[1]
 count_data = (
     df.pivot_table(index="segment", columns="channel",
                    values="roi_multiple", aggfunc="count")
@@ -86,19 +86,19 @@ count_data = (
     .fillna(0)
 )
 data2 = count_data.values
-im2 = ax.imshow(data2, aspect="auto", cmap="Blues", vmin=0, vmax=max(data2.max(), 1))
-ax.set_xticks(range(len(CHANNELS)))
-ax.set_xticklabels(CHANNELS, rotation=30, ha="right")
-ax.set_yticks(range(len(count_data.index)))
-ax.set_yticklabels(count_data.index, fontsize=9)
+im2 = sh_ax.imshow(data2, aspect="auto", cmap="Blues", vmin=0, vmax=max(data2.max(), 1))
+sh_ax.set_xticks(range(len(CHANNELS)))
+sh_ax.set_xticklabels(CHANNELS, rotation=30, ha="right")
+sh_ax.set_yticks(range(len(count_data.index)))
+sh_ax.set_yticklabels(count_data.index, fontsize=9)
 for i in range(data2.shape[0]):
     for j in range(data2.shape[1]):
         v = int(data2[i, j])
         if v > 0:
-            ax.text(j, i, str(v), ha="center", va="center", fontsize=9,
+            sh_ax.text(j, i, str(v), ha="center", va="center", fontsize=9,
                     color="white" if v >= 2 else "#1e293b")
-ax.set_title("Action count per (segment, channel)\n(how often K2 picked each channel)")
-plt.colorbar(im2, ax=ax, label="number of actions")
+sh_ax.set_title("Action count per (segment, channel)\n(how often K2 picked each channel)")
+plt.colorbar(im2, sh_ax=sh_ax, label="number of actions")
 
 plt.suptitle("K2 strategy distribution across 14 segments × 6 channels",
              fontsize=13, y=1.02)
