@@ -251,54 +251,78 @@ export default function TimeTravel({ data }: { data: DailyTimeline }) {
         </div>
       </div>
 
-      {/* ── Funnel composition (animated bars) ─────────────────────── */}
-      <div className="glass rounded-2xl p-5">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono">
-            cumulative funnel reach — as of {date.full}
+      {/* ── Funnel: animated donut + bars side-by-side ───────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-4">
+        <div className="glass rounded-2xl p-5 flex flex-col">
+          <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-2">
+            funnel composition donut · as-of {date.full}
           </div>
-          <div className="text-[10px] font-mono text-slate-500 tabular-nums">
-            <span className="text-cyan-300">{fmtNum(cum_events)}</span> total events · <span className="text-slate-300">{fmtNum(cum_n)}</span> users
+          <Donut valueFn={v} totalUsers={totalUsers} cumN={cum_n} />
+          <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] font-mono">
+            {STAGES.map((s) => {
+              const val = v(s);
+              const pct = (val / totalUsers) * 100;
+              return (
+                <div key={s} className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: STAGE_COLOR[s], boxShadow: `0 0 6px ${STAGE_COLOR[s]}` }} />
+                  <span className="text-slate-400 truncate flex-1">{STAGE_LABEL[s]}</span>
+                  <span className="text-slate-200 tabular-nums">{pct.toFixed(1)}%</span>
+                </div>
+              );
+            })}
           </div>
         </div>
-        <div className="space-y-1.5">
-          {STAGES.map((s) => {
-            const value = v(s);
-            const pct = (value / totalUsers) * 100;
-            return (
-              <div key={s} className="flex items-center gap-3">
-                <div className="w-20 text-xs text-slate-400 font-mono">{STAGE_LABEL[s]}</div>
-                <div className="flex-1 h-6 bg-slate-800/60 rounded-full overflow-hidden relative">
-                  <div
-                    style={{
-                      width: `${Math.min(100, pct)}%`,
-                      backgroundColor: STAGE_COLOR[s],
-                      boxShadow: `0 0 12px ${STAGE_COLOR[s]}88, inset 0 0 6px rgba(255,255,255,0.12)`,
-                    }}
-                    className="h-full rounded-full transition-none"
-                  />
-                  {/* Shimmer for active stage */}
-                  <div
-                    className="absolute inset-y-0 w-12 opacity-50 pointer-events-none"
-                    style={{
-                      left: `${Math.min(100, pct) - 6}%`,
-                      background: `linear-gradient(90deg, transparent, ${STAGE_COLOR[s]}cc, transparent)`,
-                      filter: "blur(6px)",
-                      transition: "left 0.05s linear",
-                    }}
-                  />
+
+        <div className="glass rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono">
+              cumulative reach bars
+            </div>
+            <div className="text-[10px] font-mono text-slate-500 tabular-nums">
+              <span className="text-cyan-300">{fmtNum(cum_events)}</span> events · <span className="text-slate-300">{fmtNum(cum_n)}</span> users
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            {STAGES.map((s) => {
+              const value = v(s);
+              const pct = (value / totalUsers) * 100;
+              return (
+                <div key={s} className="flex items-center gap-3">
+                  <div className="w-20 text-xs text-slate-400 font-mono">{STAGE_LABEL[s]}</div>
+                  <div className="flex-1 h-6 bg-slate-800/60 rounded-full overflow-hidden relative">
+                    <div
+                      style={{
+                        width: `${Math.min(100, pct)}%`,
+                        backgroundColor: STAGE_COLOR[s],
+                        boxShadow: `0 0 12px ${STAGE_COLOR[s]}88, inset 0 0 6px rgba(255,255,255,0.12)`,
+                      }}
+                      className="h-full rounded-full transition-none"
+                    />
+                    <div
+                      className="absolute inset-y-0 w-12 opacity-50 pointer-events-none"
+                      style={{
+                        left: `${Math.min(100, pct) - 6}%`,
+                        background: `linear-gradient(90deg, transparent, ${STAGE_COLOR[s]}cc, transparent)`,
+                        filter: "blur(6px)",
+                        transition: "left 0.05s linear",
+                      }}
+                    />
+                  </div>
+                  <div className="w-20 text-right text-xs font-mono tabular-nums text-slate-200">
+                    {fmtNum(value)}
+                  </div>
+                  <div className="w-14 text-right text-[11px] font-mono tabular-nums text-slate-500">
+                    {pct.toFixed(1)}%
+                  </div>
                 </div>
-                <div className="w-20 text-right text-xs font-mono tabular-nums text-slate-200">
-                  {fmtNum(value)}
-                </div>
-                <div className="w-14 text-right text-[11px] font-mono tabular-nums text-slate-500">
-                  {pct.toFixed(1)}%
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
+
+      {/* ── Per-frame analytics: deltas + windowed metrics ─────────── */}
+      <FrameAnalytics days={days} idx={Math.round(t)} cur={cur} v={v} totalUsers={totalUsers} />
 
       {/* ── Cumulative trend chart (multi-line with playhead) ─────── */}
       <div className="glass rounded-2xl p-5">
@@ -498,6 +522,266 @@ function Mini({ label, value, accent, pulse }: { label: string; value: number; a
       <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500 font-mono">{label}</div>
       <div className={`text-base font-black tabular-nums ${accent} ${pulse ? "animate-pulse" : ""}`}>
         {fmtNum(value)}
+      </div>
+    </div>
+  );
+}
+
+// ── Donut chart of funnel composition (one ring per stage = strict-nested
+//    so the stages are concentric — outer ring = signed_up universe, inner
+//    rings = active → engaged → upgraded). Each ring's filled arc is the
+//    pct of total signed_up users who reached that stage.
+function Donut({
+  valueFn,
+  totalUsers,
+  cumN,
+}: {
+  valueFn: (k: any) => number;
+  totalUsers: number;
+  cumN: number;
+}) {
+  const size = 240;
+  const cx = size / 2;
+  const cy = size / 2;
+  const ringW = 14;
+  const gap = 4;
+  const ringConfigs: { key: StageKey; r: number }[] = STAGES.map((k, i) => ({
+    key: k,
+    r: 100 - i * (ringW + gap),
+  }));
+
+  const arcPath = (r: number, frac: number): string => {
+    const f = Math.max(0, Math.min(1, frac));
+    const TWO_PI = Math.PI * 2;
+    const angle = TWO_PI * f - Math.PI / 2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    const largeArc = f > 0.5 ? 1 : 0;
+    if (f >= 0.999) {
+      // Full circle — draw as two arcs
+      return `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.001} ${cy - r} Z`;
+    }
+    if (f <= 0) return "";
+    return `M ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${x} ${y}`;
+  };
+
+  return (
+    <div className="relative flex items-center justify-center" style={{ height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <defs>
+          <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+        {ringConfigs.map(({ key, r }) => {
+          const value = valueFn(key);
+          const frac = totalUsers > 0 ? value / totalUsers : 0;
+          const color = STAGE_COLOR[key];
+          return (
+            <g key={key}>
+              {/* Track */}
+              <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1e293b" strokeWidth={ringW} opacity={0.7} />
+              {/* Filled arc */}
+              <path
+                d={arcPath(r, frac)}
+                fill="none"
+                stroke={color}
+                strokeWidth={ringW}
+                strokeLinecap="round"
+                filter="url(#ringGlow)"
+                style={{ transition: "none" }}
+              />
+            </g>
+          );
+        })}
+        {/* Center label */}
+        <text x={cx} y={cy - 6} textAnchor="middle" fill="#f1f5f9" fontSize={26} fontWeight={900} fontFamily="ui-sans-serif">
+          {fmtNum(cumN)}
+        </text>
+        <text x={cx} y={cy + 14} textAnchor="middle" fill="#94a3b8" fontSize={10} fontFamily="monospace" letterSpacing={2}>
+          USERS
+        </text>
+      </svg>
+    </div>
+  );
+}
+
+// ── Per-frame analytics: today vs yesterday deltas + 7d/30d rolling
+function FrameAnalytics({
+  days,
+  idx,
+  cur,
+  v,
+  totalUsers,
+}: {
+  days: DailyPoint[];
+  idx: number;
+  cur: DailyPoint | undefined;
+  v: (k: keyof DailyPoint) => number;
+  totalUsers: number;
+}) {
+  if (!cur) return null;
+
+  const sumWindow = (back: number, key: keyof DailyPoint): number => {
+    const start = Math.max(0, idx - back + 1);
+    let s = 0;
+    for (let i = start; i <= idx; i++) s += Number(days[i][key]) || 0;
+    return s;
+  };
+
+  const yesterday = idx > 0 ? days[idx - 1] : undefined;
+  const lastWeek = idx >= 7 ? days[idx - 7] : undefined;
+
+  const newToday = v("new_n");
+  const newYday = yesterday?.new_n ?? 0;
+  const dNewVsYday = newToday - newYday;
+
+  const eventsToday = v("events");
+  const eventsYday = yesterday?.events ?? 0;
+  const dEventsVsYday = eventsToday - eventsYday;
+
+  // 7-day window aggregates
+  const w7_events = sumWindow(7, "events");
+  const w7_new = sumWindow(7, "new_n");
+  const w7_upgrades = sumWindow(7, "upgrade_events");
+  // 30-day window
+  const w30_events = sumWindow(30, "events");
+  const w30_new = sumWindow(30, "new_n");
+  const w30_upgrades = sumWindow(30, "upgrade_events");
+
+  // Funnel conversion ratios at this point
+  const cum_n = v("cum_n");
+  const cum_active = v("cum_active");
+  const cum_engaged = v("cum_engaged");
+  const cum_upgraded = v("cum_upgraded");
+  const cum_at_risk = v("cum_at_risk");
+
+  const conv_active = cum_n > 0 ? (cum_active / cum_n) * 100 : 0;
+  const conv_engaged_of_active = cum_active > 0 ? (cum_engaged / cum_active) * 100 : 0;
+  const conv_upgraded_of_engaged = cum_engaged > 0 ? (cum_upgraded / cum_engaged) * 100 : 0;
+  const conv_upgraded_overall = cum_n > 0 ? (cum_upgraded / cum_n) * 100 : 0;
+  const at_risk_of_engaged = cum_engaged > 0 ? (cum_at_risk / cum_engaged) * 100 : 0;
+
+  // 7-day-back rolling deltas (growth velocity)
+  const dCumNVs7d = lastWeek ? cum_n - lastWeek.cum_n : 0;
+  const dEngagedVs7d = lastWeek ? cum_engaged - lastWeek.cum_engaged : 0;
+  const dUpgradedVs7d = lastWeek ? cum_upgraded - lastWeek.cum_upgraded : 0;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* TODAY vs YESTERDAY */}
+      <div className="glass rounded-2xl p-5">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-3">
+          today · vs yesterday
+        </div>
+        <div className="space-y-2">
+          <DeltaRow label="new users"   today={newToday}    delta={dNewVsYday}  goodIfPositive />
+          <DeltaRow label="events"      today={eventsToday} delta={dEventsVsYday} goodIfPositive />
+          <DeltaRow label="upgrades"    today={v("upgrade_events")} delta={v("upgrade_events") - (yesterday?.upgrade_events ?? 0)} goodIfPositive />
+        </div>
+      </div>
+
+      {/* 7-DAY ROLLING WINDOW */}
+      <div className="glass rounded-2xl p-5">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-3">
+          last 7 days · rolling window
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <Stat7 label="new users"  value={w7_new} />
+          <Stat7 label="events"     value={w7_events} />
+          <Stat7 label="upgrades"   value={w7_upgrades} accent="text-pink-200" />
+        </div>
+        <div className="mt-3 pt-3 border-t border-slate-800/60 space-y-1.5">
+          <DeltaRow label="users grew by" today={dCumNVs7d}        delta={0} hideDelta accent="text-emerald-200" />
+          <DeltaRow label="engaged grew"  today={dEngagedVs7d}     delta={0} hideDelta accent="text-emerald-200" />
+          <DeltaRow label="upgraded grew" today={dUpgradedVs7d}    delta={0} hideDelta accent="text-pink-300" />
+        </div>
+      </div>
+
+      {/* 30-DAY ROLLING WINDOW */}
+      <div className="glass rounded-2xl p-5">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-3">
+          last 30 days · rolling window
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <Stat7 label="new users"  value={w30_new} />
+          <Stat7 label="events"     value={w30_events} />
+          <Stat7 label="upgrades"   value={w30_upgrades} accent="text-pink-200" />
+        </div>
+        <div className="mt-3 pt-3 border-t border-slate-800/60">
+          <div className="text-[10px] font-mono text-slate-500 mb-1">monthly upgrade rate</div>
+          <div className="text-2xl font-black tabular-nums text-pink-200">
+            {w30_new > 0 ? ((w30_upgrades / w30_new) * 100).toFixed(2) : "0.00"}%
+          </div>
+          <div className="text-[10px] font-mono text-slate-500 mt-0.5">of users joining in last 30 days who upgraded same window</div>
+        </div>
+      </div>
+
+      {/* CONVERSION RATES — full width */}
+      <div className="glass rounded-2xl p-5 lg:col-span-3">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-3">
+          stage-to-stage conversion · cumulative as of {cur.day}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <Conversion label="signed_up → active"        rate={conv_active}                  baseline={36.1} />
+          <Conversion label="active → engaged"          rate={conv_engaged_of_active}        baseline={24.4} />
+          <Conversion label="engaged → upgraded"        rate={conv_upgraded_of_engaged}      baseline={50.5} pink />
+          <Conversion label="signed_up → upgraded"      rate={conv_upgraded_overall}         baseline={1.84} pink />
+          <Conversion label="engaged → at_risk"         rate={at_risk_of_engaged}            baseline={78}    warn />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeltaRow({ label, today, delta, goodIfPositive, accent, hideDelta }: {
+  label: string; today: number; delta: number; goodIfPositive?: boolean; accent?: string; hideDelta?: boolean;
+}) {
+  const upGood = goodIfPositive ? delta >= 0 : delta <= 0;
+  const arrow = delta > 0 ? "↑" : delta < 0 ? "↓" : "·";
+  const color = hideDelta ? "" : upGood ? "text-emerald-300" : "text-rose-300";
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex-1 text-xs text-slate-400 font-mono">{label}</div>
+      <div className={`text-lg font-black tabular-nums ${accent ?? "text-slate-100"}`}>
+        {fmtNum(today)}
+      </div>
+      {!hideDelta && (
+        <div className={`text-[11px] font-mono tabular-nums w-16 text-right ${color}`}>
+          {arrow} {fmtNum(Math.abs(delta))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Stat7({ label, value, accent }: { label: string; value: number; accent?: string }) {
+  return (
+    <div className="space-y-0.5">
+      <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500 font-mono">{label}</div>
+      <div className={`text-xl font-black tabular-nums ${accent ?? "text-slate-100"}`}>{fmtNum(value)}</div>
+    </div>
+  );
+}
+
+function Conversion({ label, rate, baseline, pink, warn }: { label: string; rate: number; baseline: number; pink?: boolean; warn?: boolean }) {
+  const color = warn ? "text-amber-300" : pink ? "text-pink-300" : "text-emerald-200";
+  const ringColor = warn ? "#f59e0b" : pink ? "#ec4899" : "#10b981";
+  const cmp = rate - baseline;
+  const cmpColor = cmp > 0 ? (warn ? "text-rose-300" : "text-emerald-300") : cmp < 0 ? (warn ? "text-emerald-300" : "text-rose-300") : "text-slate-500";
+  return (
+    <div className="rounded-xl bg-ink-950/50 border border-slate-800/50 p-3 relative overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-25 pointer-events-none"
+        style={{ background: `radial-gradient(180px circle at 80% 0%, ${ringColor}55, transparent 70%)` }}
+      />
+      <div className="relative">
+        <div className="text-[9px] uppercase tracking-[0.16em] text-slate-500 font-mono leading-tight">{label}</div>
+        <div className={`text-2xl font-black tabular-nums ${color} mt-1`}>{rate.toFixed(2)}%</div>
+        <div className={`text-[10px] font-mono mt-0.5 ${cmpColor}`}>
+          {cmp >= 0 ? "+" : ""}{cmp.toFixed(2)}pp vs final
+        </div>
       </div>
     </div>
   );
