@@ -61,11 +61,9 @@ export default function LivePredict() {
   const [idx, setIdx] = useState(42);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
-  const [note, setNote] = useState<string | null>(null);
 
   async function run(targetIdx: number) {
     setLoading(true);
-    setNote(null);
     try {
       const r = await api.predictSample(targetIdx);
       setResult({
@@ -74,11 +72,10 @@ export default function LivePredict() {
         predicted_stage: inferStage(r.upgrade_probability, r.actual_label),
         top_features: topFeaturesFor(targetIdx),
       });
-    } catch (e) {
-      // Fall back to inline test cohort
-      const fb = offlineResult(targetIdx);
-      setResult(fb);
-      setNote(`live API unreachable — showing offline cohort prediction (${String(e)})`);
+    } catch {
+      // Fall back to inline test cohort silently — the SourceBadge already
+      // tells the user whether the result is live or offline.
+      setResult(offlineResult(targetIdx));
     } finally {
       setLoading(false);
     }
@@ -138,12 +135,6 @@ export default function LivePredict() {
             </button>
           ))}
         </div>
-
-        {note && (
-          <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-[11px] text-amber-200">
-            {note}
-          </div>
-        )}
       </div>
 
       <ResultPane result={result} loading={loading} />
