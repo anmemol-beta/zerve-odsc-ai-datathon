@@ -255,22 +255,9 @@ export default function TimeTravel({ data }: { data: DailyTimeline }) {
       <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-4">
         <div className="glass rounded-2xl p-5 flex flex-col">
           <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400 font-mono mb-2">
-            funnel composition donut · as-of {date.full}
+            current-stage breakdown · pie · {date.full}
           </div>
           <Donut valueFn={v} totalUsers={totalUsers} cumN={cum_n} />
-          <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] font-mono">
-            {STAGES.map((s) => {
-              const val = v(s);
-              const pct = (val / totalUsers) * 100;
-              return (
-                <div key={s} className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: STAGE_COLOR[s], boxShadow: `0 0 6px ${STAGE_COLOR[s]}` }} />
-                  <span className="text-slate-400 truncate flex-1">{STAGE_LABEL[s]}</span>
-                  <span className="text-slate-200 tabular-nums">{pct.toFixed(1)}%</span>
-                </div>
-              );
-            })}
-          </div>
         </div>
 
         <div className="glass rounded-2xl p-5">
@@ -527,10 +514,11 @@ function Mini({ label, value, accent, pulse }: { label: string; value: number; a
   );
 }
 
-// ── Donut chart of funnel composition (one ring per stage = strict-nested
-//    so the stages are concentric — outer ring = signed_up universe, inner
-//    rings = active → engaged → upgraded). Each ring's filled arc is the
-//    pct of total signed_up users who reached that stage.
+// ── Pie chart: mutually exclusive "current stage" slices that sum to 100%.
+//   The strict-nested funnel can't itself pie-chart (every upgraded user is
+//   also engaged/active/etc), so we derive exclusive segments by subtracting
+//   each stage from the next: a user counted in "Active only" reached active
+//   but did NOT reach created, etc. This sums to cum_n ⇒ valid pie.
 function Donut({
   valueFn,
   totalUsers,
@@ -540,69 +528,100 @@ function Donut({
   totalUsers: number;
   cumN: number;
 }) {
-  const size = 240;
+  const size = 260;
   const cx = size / 2;
   const cy = size / 2;
-  const ringW = 14;
-  const gap = 4;
-  const ringConfigs: { key: StageKey; r: number }[] = STAGES.map((k, i) => ({
-    key: k,
-    r: 100 - i * (ringW + gap),
-  }));
+  const rOuter = 110;
+  const rInner = 64;
 
-  const arcPath = (r: number, frac: number): string => {
-    const f = Math.max(0, Math.min(1, frac));
+  // Mutually exclusive slices (current-state breakdown)
+  const cum_active   = valueFn("cum_active");
+  const cum_created  = valueFn("cum_created");
+  const cum_ai       = valueFn("cum_ai");
+  const cum_engaged  = valueFn("cum_engaged");
+  const cum_at_risk  = valueFn("cum_at_risk");
+  const cum_upgraded = valueFn("cum_upgraded");
+
+  const slicesRaw: { label: string; value: number; color: string }[] = [
+    { label: "signed up only",  value: Math.max(0, cumN          - cum_active),                           color: "#475569" },
+    { label: "active only",     value: Math.max(0, cum_active    - cum_created),                          color: STAGE_COLOR.cum_active },
+    { label: "created only",    value: Math.max(0, cum_created   - cum_ai),                               color: STAGE_COLOR.cum_created },
+    { label: "used AI only",    value: Math.max(0, cum_ai        - cum_engaged),                          color: STAGE_COLOR.cum_ai },
+    { label: "engaged",         value: Math.max(0, cum_engaged   - cum_upgraded - cum_at_risk),           color: STAGE_COLOR.cum_engaged },
+    { label: "at risk",         value: cum_at_risk,                                                       color: STAGE_COLOR.cum_at_risk },
+    { label: "upgraded",        value: cum_upgraded,                                                      color: STAGE_COLOR.cum_upgraded },
+  ];
+
+  const total = slicesRaw.reduce((s, x) => s + x.value, 0) || 1;
+
+  // Build arc paths
+  const arcSlice = (startFrac: number, endFrac: number): string => {
     const TWO_PI = Math.PI * 2;
-    const angle = TWO_PI * f - Math.PI / 2;
-    const x = cx + r * Math.cos(angle);
-    const y = cy + r * Math.sin(angle);
-    const largeArc = f > 0.5 ? 1 : 0;
-    if (f >= 0.999) {
-      // Full circle — draw as two arcs
-      return `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.001} ${cy - r} Z`;
-    }
-    if (f <= 0) return "";
-    return `M ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${x} ${y}`;
+    const a0 = startFrac * TWO_PI - Math.PI / 2;
+    const a1 = endFrac   * TWO_PI - Math.PI / 2;
+    const lg = endFrac - startFrac > 0.5 ? 1 : 0;
+    const xo0 = cx + rOuter * Math.cos(a0), yo0 = cy + rOuter * Math.sin(a0);
+    const xo1 = cx + rOuter * Math.cos(a1), yo1 = cy + rOuter * Math.sin(a1);
+    const xi0 = cx + rInner * Math.cos(a0), yi0 = cy + rInner * Math.sin(a0);
+    const xi1 = cx + rInner * Math.cos(a1), yi1 = cy + rInner * Math.sin(a1);
+    return `M ${xo0} ${yo0} A ${rOuter} ${rOuter} 0 ${lg} 1 ${xo1} ${yo1} L ${xi1} ${yi1} A ${rInner} ${rInner} 0 ${lg} 0 ${xi0} ${yi0} Z`;
   };
 
+  let cursor = 0;
+  const slices = slicesRaw.map((s) => {
+    const frac = s.value / total;
+    const start = cursor;
+    cursor += frac;
+    return { ...s, frac, start, end: cursor };
+  });
+
   return (
-    <div className="relative flex items-center justify-center" style={{ height: size }}>
+    <div className="relative flex flex-col items-center" style={{ minHeight: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <defs>
-          <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="b" />
+          <filter id="pieGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.5" result="b" />
             <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
-        {ringConfigs.map(({ key, r }) => {
-          const value = valueFn(key);
-          const frac = totalUsers > 0 ? value / totalUsers : 0;
-          const color = STAGE_COLOR[key];
-          return (
-            <g key={key}>
-              {/* Track */}
-              <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1e293b" strokeWidth={ringW} opacity={0.7} />
-              {/* Filled arc */}
-              <path
-                d={arcPath(r, frac)}
-                fill="none"
-                stroke={color}
-                strokeWidth={ringW}
-                strokeLinecap="round"
-                filter="url(#ringGlow)"
-                style={{ transition: "none" }}
-              />
-            </g>
-          );
-        })}
-        {/* Center label */}
-        <text x={cx} y={cy - 6} textAnchor="middle" fill="#f1f5f9" fontSize={26} fontWeight={900} fontFamily="ui-sans-serif">
+        {/* Track ring (covers gaps if total < cumN slightly) */}
+        <circle cx={cx} cy={cy} r={(rOuter + rInner) / 2} fill="none" stroke="#1e293b" strokeWidth={rOuter - rInner} opacity={0.4} />
+        {slices.map((s, i) => (
+          s.frac > 0 ? (
+            <path
+              key={s.label + i}
+              d={arcSlice(s.start, s.end)}
+              fill={s.color}
+              stroke="#020617"
+              strokeWidth={1.2}
+              opacity={0.92}
+              filter="url(#pieGlow)"
+            />
+          ) : null
+        ))}
+
+        {/* Inner labels: total in center */}
+        <text x={cx} y={cy - 8} textAnchor="middle" fill="#f1f5f9" fontSize={28} fontWeight={900} fontFamily="ui-sans-serif">
           {fmtNum(cumN)}
         </text>
-        <text x={cx} y={cy + 14} textAnchor="middle" fill="#94a3b8" fontSize={10} fontFamily="monospace" letterSpacing={2}>
-          USERS
+        <text x={cx} y={cy + 14} textAnchor="middle" fill="#94a3b8" fontSize={9} fontFamily="monospace" letterSpacing={2}>
+          USERS · BY CURRENT STAGE
         </text>
       </svg>
+
+      {/* Slice legend with %s, sorted by value desc */}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px] font-mono mt-2 w-full">
+        {slices
+          .map((s) => ({ ...s, pct: (s.value / total) * 100 }))
+          .sort((a, b) => b.value - a.value)
+          .map((s, i) => (
+            <div key={s.label + i} className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color, boxShadow: `0 0 6px ${s.color}` }} />
+              <span className="text-slate-400 truncate flex-1">{s.label}</span>
+              <span className="text-slate-200 tabular-nums">{s.pct.toFixed(1)}%</span>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }
