@@ -13,7 +13,10 @@ requirements:
 - streamlit
 - plotly
 linux_packages: []
-environment_variables: []
+environment_variables:
+- K2_API_KEY
+- K2_API_BASE
+- K2_MODEL
 is_public: false
 organization_id: ac14984c-63dc-4624-af9c-eeedc9704f1d
 layers:
@@ -220,6 +223,26 @@ layers:
     width: 1600
     x: 0
     y: 2000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: K2-Think marketing strategist over 14 v4 funnel segments. Real-time
+      if K2_API_KEY env var is set, else fetches the last-committed strategies.json
+      from this repo's github raw. Outputs `strategies` dict + `strategies_segments`
+      list.
+    height: 1000
+    id: 38732384-9a23-45f5-92bb-577330211dd7
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Build Strategies
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 850
+    y: 3500
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   edges:
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
@@ -276,6 +299,18 @@ layers:
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: 74b326c2-b2ce-43f2-ada9-088406566be2
     target: 0b8229ca-b06b-44d6-8d55-005762b6a808
+  # Funnel v4 → Build Strategies
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: a98eb0fe-e876-4c11-9fc1-7838e4225e38
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: a392ef25-1dea-4c1f-9d88-b8e4d4992079
+    target: 38732384-9a23-45f5-92bb-577330211dd7
+  # Train Model v3 → Build Strategies
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: b42f4a86-fa61-47ab-a1f3-ccaabd081fe6
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+    target: 38732384-9a23-45f5-92bb-577330211dd7
   id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Development
   type: 1
