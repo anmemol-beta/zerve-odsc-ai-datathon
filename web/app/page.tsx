@@ -6,7 +6,7 @@ import HeadlineCards from "@/components/HeadlineCards";
 import Section from "@/components/Section";
 import UserLookup from "@/components/UserLookup";
 import FunnelExplorer from "@/components/FunnelExplorer";
-import CohortTimeline from "@/components/CohortTimeline";
+import TimeTravel from "@/components/TimeTravel";
 import ActionCards from "@/components/ActionCards";
 import VersionBadge from "@/components/VersionBadge";
 import type {
@@ -14,7 +14,7 @@ import type {
   Manifold,
   UserRow,
   FunnelGrid,
-  CohortEvolution,
+  DailyTimeline,
   StrategiesIndex,
 } from "@/lib/types";
 
@@ -27,13 +27,13 @@ async function loadJSON<T>(name: string): Promise<T> {
 }
 
 export default async function Page() {
-  const [headline, manifold, users, funnelGrid, cohortEvolution, strategies] =
+  const [headline, manifold, users, funnelGrid, dailyTimeline, strategies] =
     await Promise.all([
       loadJSON<Headline>("headline"),
       loadJSON<Manifold>("manifold"),
       loadJSON<UserRow[]>("users"),
       loadJSON<FunnelGrid>("funnel_grid"),
-      loadJSON<CohortEvolution>("cohort_evolution"),
+      loadJSON<DailyTimeline>("daily_timeline"),
       loadJSON<StrategiesIndex>("strategies"),
     ]);
 
@@ -70,9 +70,9 @@ export default async function Page() {
       <Section
         kicker="06"
         title="Time-travel mode"
-        subtitle="Press play and the entire panel becomes a single point-in-time snapshot of the product — cumulative funnel composition, this week's signup cohort, and the upgrade-rate trend curve all advance together from Sep 2025 to Apr 2026. Scrub to any week to compare the platform 'as of' that date."
+        subtitle="Press play and the panel rewinds to Sept 1, 2025, then advances through every single day to Apr 16, 2026 at up to 32 days/sec — date label, headline counters, funnel composition, growth curves, daily-event spark, and weekly top-events all animate in lockstep. Pink dots above the spark are upgrade events; a flash on the date card means a user converted today. Scrub the trend chart or drag the slider to jump to any day."
       >
-        <CohortTimeline data={cohortEvolution} />
+        <TimeTravel data={dailyTimeline} />
       </Section>
 
       <Section

@@ -303,4 +303,90 @@ dump("cohort_evolution", {
 })
 
 
+# ── 10. Daily timeline — full as-of snapshot per day for the time-travel viz.
+#       Cumulative counts of {users, active, created, ai, engaged, at_risk,
+#       upgraded} as of each day, plus daily event volume + new-user count.
+#       Frontend interpolates between days at 60fps for cinematic playback.
+print("-- building daily timeline")
+day_first = events.groupby("person_id", sort=False, observed=True)["timestamp"].min()
+user_first_day = day_first.dt.normalize()  # midnight UTC
+
+per_user = pd.DataFrame({
+    "first_day": user_first_day.reindex(user_features.index).values,
+    "active":    is_active.values,
+    "created":   is_created.values,
+    "ai":        is_ai.values,
+    "engaged":   is_engaged.values,
+    "at_risk":   is_at_risk.values,
+    "upgraded":  user_features["upgraded"].values,
+})
+
+daily_new = per_user.groupby("first_day").agg(
+    new_n=("active",   "size"),
+    new_active=("active",   "sum"),
+    new_created=("created", "sum"),
+    new_ai=("ai",      "sum"),
+    new_engaged=("engaged", "sum"),
+    new_at_risk=("at_risk", "sum"),
+    new_upgraded=("upgraded", "sum"),
+).sort_index()
+
+# Daily total event volume (regardless of person_id) + upgrade events
+events_by_day = events.copy()
+events_by_day["day"] = events_by_day["timestamp"].dt.normalize()
+ev_per_day = events_by_day.groupby("day").size().rename("events")
+upgr_per_day = events_by_day.loc[events_by_day["event"] == "subscription_upgraded"].groupby("day").size().rename("upgrade_events")
+
+# Build full date range so empty days appear as zero-rows
+all_days = pd.date_range(daily_new.index.min(), daily_new.index.max(), freq="D")
+daily = daily_new.reindex(all_days, fill_value=0)
+daily["events"] = ev_per_day.reindex(all_days, fill_value=0).astype(int)
+daily["upgrade_events"] = upgr_per_day.reindex(all_days, fill_value=0).astype(int)
+
+# Cumulative columns
+for col in ["new_n", "new_active", "new_created", "new_ai", "new_engaged", "new_at_risk", "new_upgraded", "events"]:
+    daily[col.replace("new_", "cum_") if col != "events" else "cum_events"] = daily[col].cumsum()
+
+daily["cum_n"] = daily["new_n"].cumsum()  # explicit (overwrites the above for new_n)
+
+# Top events per week (window for ticker)
+weekly_events = (
+    events_by_day.assign(week=events_by_day["timestamp"].dt.to_period("W").dt.start_time)
+    .groupby(["week", "event"])
+    .size()
+    .rename("c")
+    .reset_index()
+)
+top_per_week: dict[str, list] = {}
+for week, sub in weekly_events.groupby("week"):
+    top = sub.nlargest(8, "c")
+    top_per_week[pd.Timestamp(week).strftime("%Y-%m-%d")] = [
+        {"event": str(r.event), "count": int(r.c)} for r in top.itertuples()
+    ]
+
+daily_records = []
+for ts in all_days:
+    r = daily.loc[ts]
+    daily_records.append({
+        "day":           pd.Timestamp(ts).strftime("%Y-%m-%d"),
+        "new_n":         int(r["new_n"]),
+        "events":        int(r["events"]),
+        "upgrade_events": int(r["upgrade_events"]),
+        "cum_n":         int(r["cum_n"]),
+        "cum_active":    int(r["cum_active"]),
+        "cum_created":   int(r["cum_created"]),
+        "cum_ai":        int(r["cum_ai"]),
+        "cum_engaged":   int(r["cum_engaged"]),
+        "cum_at_risk":   int(r["cum_at_risk"]),
+        "cum_upgraded":  int(r["cum_upgraded"]),
+        "cum_events":    int(r["cum_events"]),
+    })
+
+dump("daily_timeline", {
+    "days":       daily_records,
+    "top_per_week": top_per_week,
+    "total_days":  len(daily_records),
+})
+
+
 print("-- done")

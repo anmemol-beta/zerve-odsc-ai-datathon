@@ -159,3 +159,24 @@ export type StrategiesIndex = {
   n_segments: number;
   segments: StrategySegmentEntry[];
 };
+
+export type DailyPoint = {
+  day: string;
+  new_n: number;
+  events: number;
+  upgrade_events: number;
+  cum_n: number;
+  cum_active: number;
+  cum_created: number;
+  cum_ai: number;
+  cum_engaged: number;
+  cum_at_risk: number;
+  cum_upgraded: number;
+  cum_events: number;
+};
+
+export type DailyTimeline = {
+  days: DailyPoint[];
+  top_per_week: Record<string, { event: string; count: number }[]>;
+  total_days: number;
+};
