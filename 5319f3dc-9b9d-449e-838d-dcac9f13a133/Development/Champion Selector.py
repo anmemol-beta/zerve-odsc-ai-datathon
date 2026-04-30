@@ -136,7 +136,7 @@ fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
 COLORS = {
     "ensemble_v3": "#10b981", "xgb_v3": "#ec4899", "rf_v3": "#06b6d4",
-    "hgb_v3": "#a855f7", "mlp_v3": "#f59e0b", "catboost_v3": "#f43f5e",
+    "hgb_v3": "#a855f7", "mlp_v3": "#f59e0b", "gbm_v3": "#f43f5e",
 }
 
 # [L] Champion per cohort

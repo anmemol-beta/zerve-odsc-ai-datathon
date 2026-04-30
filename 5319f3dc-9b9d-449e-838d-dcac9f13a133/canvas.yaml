@@ -18,7 +18,6 @@ requirements:
 - torch<3
 - streamlit
 - plotly
-- catboost
 - optuna
 - imbalanced-learn
 linux_packages: []
@@ -472,14 +471,15 @@ layers:
       compute_environment_type: 2
       ephemeral_storage_gib: 20
       size: small
-    description: CatBoost classifier with auto class weights + isotonic CV=3
-      calibration. Categorical-aware GBM rounds out the candidate pool with a
-      different bias from XGBoost. Outputs `catboost_v3`, `catboost_proba_v3`,
-      `catboost_metrics_v3`.
+    description: Bias-diverse GBM candidate. sklearn GradientBoostingClassifier
+      (classic CART trees) wrapped with isotonic CalibratedClassifierCV(cv=3).
+      Block opportunistically uses catboost if importable, otherwise pure
+      sklearn — primary path in Zerve. Outputs `gbm_v3`, `gbm_proba_v3`,
+      `gbm_metrics_v3`, `gbm_backend`.
     height: 1000
     id: 7808a43a-63e4-49ec-8521-acbf44685678
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-    name: Train CatBoost v3
+    name: Train GBM v3
     parent_id: null
     properties: {}
     status: 1
@@ -515,7 +515,7 @@ layers:
       ephemeral_storage_gib: 20
       size: small
     description: AutoML core. Evaluates every candidate model (xgb_v3, rf_v3,
-      hgb_v3, ensemble_v3, mlp_v3, catboost_v3) on every rolling cohort. Outputs
+      hgb_v3, ensemble_v3, mlp_v3, gbm_v3) on every rolling cohort. Outputs
       `rolling_metrics_v3` long dataframe (cohort × model → PR-AUC, ROC-AUC,
       Brier, top-K precision, lift).
     height: 1000
@@ -745,7 +745,7 @@ layers:
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: ffc35448-b11d-45a1-93d4-8ea9f45d35f7
     target: 6d61ebe2-68f6-4250-9cc0-fe6e9cbb7206
-  # Build Features v3 → Train CatBoost v3
+  # Build Features v3 → Train GBM v3
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
     id: 75e51478-ed08-4c12-a88c-55b21fafe067
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
@@ -781,7 +781,7 @@ layers:
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: 6d61ebe2-68f6-4250-9cc0-fe6e9cbb7206
     target: 85a9cfb6-a0b5-4c36-a24a-aa77f9936abd
-  # Train CatBoost v3 → Train Across Time
+  # Train GBM v3 → Train Across Time
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
     id: 4c633ddb-1cd2-4378-b857-5f50d724e881
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a

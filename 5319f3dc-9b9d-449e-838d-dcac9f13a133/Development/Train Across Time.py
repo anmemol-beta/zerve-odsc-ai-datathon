@@ -16,7 +16,7 @@ Inputs (from canvas namespace):
     y_v3_test             (Build Features v3)
     preds_v3              (Train Model v3)        — XGB, RF, HGB, ensemble
     mlp_proba_v3          (Train MLP v3)
-    catboost_proba_v3     (Train CatBoost v3)
+    gbm_proba_v3          (Train GBM v3 — sklearn GradientBoosting / catboost)
 
 Outputs:
     rolling_metrics_v3    pd.DataFrame  — long table: cohort × model → metrics
@@ -40,7 +40,7 @@ for name, p in preds_v3.items():
 candidates["mlp_v3"] = np.asarray(mlp_proba_v3)
 
 # Additional GBM candidate
-candidates["catboost_v3"] = np.asarray(catboost_proba_v3)
+candidates["gbm_v3"] = np.asarray(gbm_proba_v3)
 
 print(f"[AutoML] {len(candidates)} candidate models × "
       f"{len(rolling_splits)} rolling cohorts = "

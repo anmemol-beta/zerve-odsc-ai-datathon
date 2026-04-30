@@ -118,7 +118,7 @@ COLORS = {
     "rf_v3": "#06b6d4",
     "hgb_v3": "#a855f7",
     "mlp_v3": "#f59e0b",
-    "catboost_v3": "#f43f5e",
+    "gbm_v3": "#f43f5e",
 }
 for model, g in df.groupby("model"):
     ax.plot(g["cohort_idx"], g["pr_auc"],
