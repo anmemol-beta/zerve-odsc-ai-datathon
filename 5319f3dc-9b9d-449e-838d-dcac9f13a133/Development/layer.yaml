@@ -65,27 +65,6 @@ blocks:
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   compute_settings:
     compute_environment_type: 1
-  description: Per-week champion-model inference dashboard. Joins predictions with
-    v4 stage to produce `weekly_predictions` (user-level), `weekly_pred_summary` (week-level),
-    `weekly_pred_by_stage` (week × stage). Decoupled from training — just reads the
-    persisted champion + scores incoming weekly slices.
-  height: 1000
-  id: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  name: Weekly Inference
-  parent_id: null
-  properties:
-    interactive_execution: true
-  status: 1
-  type: 1
-  variables: null
-  width: 1600
-  x: 6800
-  y: 1500
-- auto_size: false
-  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  compute_settings:
-    compute_environment_type: 1
   description: Trains logistic regression + LightGBM. Reports PR-AUC, recall@K, SHAP
     feature importance. Exports models for the UI/Streamlit demo.
   height: 1000
@@ -408,49 +387,6 @@ blocks:
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   compute_settings:
     compute_environment_type: 1
-  description: Head of INFER tier. Loads models from /tmp/zerve-models/v3 if available;
-    otherwise fetches from this repo's GitHub raw (models/v3/*.joblib + meta.json).
-    Outputs `loaded_models` dict, `loaded_meta`, `model_age_hours`, `inference_ready`
-    bool.
-  height: 1000
-  id: a858f620-5c72-4a88-9da7-a84d9a309a7f
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  name: Load Models
-  parent_id: null
-  properties:
-    interactive_execution: true
-  status: 1
-  type: 1
-  variables: null
-  width: 1600
-  x: 6800
-  y: 1000
-- auto_size: false
-  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  compute_settings:
-    compute_environment_type: 2
-    ephemeral_storage_gib: 20
-    size: small
-  description: End of TRAIN tier. Pickles every candidate model + meta.json (champion
-    + metrics + trained_at) into /tmp/zerve-models/v3/. Schedule this on a weekly
-    cron via Zerve UI; the Inference tier loads from the same path on demand.
-  height: 1000
-  id: b414a1f0-5bb3-4a35-865a-ee11a8101de6
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  name: Persist Models
-  parent_id: null
-  properties:
-    interactive_execution: true
-  status: 1
-  type: 1
-  variables: null
-  width: 1600
-  x: 5100
-  y: 5000
-- auto_size: false
-  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  compute_settings:
-    compute_environment_type: 1
   description: Slim-loads zerve_events.csv with usecols=[person_id, timestamp, event],
     pyarrow engine, ISO8601 timestamps, categorical event dtype. Produces `events`.
   height: 1000
@@ -723,20 +659,10 @@ edges:
   source: e60588f1-a7dd-4f74-92aa-d66f75a32a98
   target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: 3738791c-b4e5-471b-9879-6b70da85273d
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: 6d61ebe2-68f6-4250-9cc0-fe6e9cbb7206
-  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: 3eabc225-deaa-400a-b38b-7cdbc78a4b6f
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
   target: 60158a32-c7b5-4329-be45-5acdda206696
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: 45a439c5-08c3-4e35-b7f1-4e51a5b7a59e
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: 7808a43a-63e4-49ec-8521-acbf44685678
-  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: 4b276338-dab5-4d66-a784-6b36456bbffc
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
@@ -788,11 +714,6 @@ edges:
   source: bbd1b635-38e8-4533-b331-c647f51a44a2
   target: 4d3699d9-98e5-4ade-a997-b60b19cf14fa
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: 7a4eaa86-fa17-4c07-9786-7ebcd6550ade
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: a858f620-5c72-4a88-9da7-a84d9a309a7f
-  target: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: 7cdcc258-b746-4ec9-ae59-43e11c9edc65
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: bbd1b635-38e8-4533-b331-c647f51a44a2
@@ -803,20 +724,10 @@ edges:
   source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
   target: 7c24b7dd-684a-40c0-8463-aea4ece90422
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: 88c22123-5e01-41df-8003-1f026aff60aa
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: 4d3699d9-98e5-4ade-a997-b60b19cf14fa
-  target: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: 8d6d4f12-5187-4b1e-8391-79a5cf0d18c8
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: 38732384-9a23-45f5-92bb-577330211dd7
   target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: 93726a5f-2334-4e88-ae76-ed86886e5f8c
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
-  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: 99563456-d22d-40f1-a43b-c0c226b0cd0b
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
@@ -827,11 +738,6 @@ edges:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: a392ef25-1dea-4c1f-9d88-b8e4d4992079
   target: 7c24b7dd-684a-40c0-8463-aea4ece90422
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: a19f1ec3-3334-4cca-9abd-303dd72a8791
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
-  target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: a26344f2-b376-4182-9064-f404e0052e9f
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
@@ -872,11 +778,6 @@ edges:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: bbd1b635-38e8-4533-b331-c647f51a44a2
   target: a392ef25-1dea-4c1f-9d88-b8e4d4992079
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: c2506c4d-d8ef-40d6-a228-056f038b439a
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: b414a1f0-5bb3-4a35-865a-ee11a8101de6
-  target: a858f620-5c72-4a88-9da7-a84d9a309a7f
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: c26ef973-83e6-4c73-a67f-c0aab9992a8e
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
@@ -952,8 +853,3 @@ edges:
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: a8883fc7-e9f2-4d50-bac5-bf0cd8a1855a
   target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
-- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
-  id: f8a9b0c1-1234-4d5e-8a9b-0c1234d5e6f7
-  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
-  source: 60158a32-c7b5-4329-be45-5acdda206696
-  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6

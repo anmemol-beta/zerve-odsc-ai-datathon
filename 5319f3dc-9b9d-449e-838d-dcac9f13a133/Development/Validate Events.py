@@ -23,7 +23,7 @@ assert not missing_cols, f"events missing required columns: {missing_cols}"
 
 # ─── 2. nulls (must be 0 in required cols) ────────────────────────────────
 nulls = {c: int(events[c].isna().sum()) for c in REQUIRED}
-assert all(v == 0 for v in nulls.values()), f"unexpected nulls: {nulls}"
+assert all(_v == 0 for _v in nulls.values()), f"unexpected nulls: {nulls}"
 
 # ─── 3. timestamp range + monotonic ───────────────────────────────────────
 ts_min = events["timestamp"].min()
@@ -53,7 +53,7 @@ LEAKAGE_EVENTS = [
 leakage_counts = {
     e: int((events["event"] == e).sum()) for e in LEAKAGE_EVENTS
 }
-leakage_present = {k: v for k, v in leakage_counts.items() if v > 0}
+leakage_present = {ek: ev for ek, ev in leakage_counts.items() if ev > 0}
 
 # ─── 7. positive-class anchor (subscription_upgraded count) ───────────────
 upg_count = leakage_counts.get("subscription_upgraded", 0)

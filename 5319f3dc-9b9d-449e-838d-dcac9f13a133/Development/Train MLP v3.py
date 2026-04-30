@@ -241,8 +241,8 @@ print(f"  PR-AUC      : {mlp_metrics_v3['pr_auc']:.4f}")
 print(f"  ROC-AUC     : {mlp_metrics_v3['roc_auc']:.4f}")
 print(f"  Brier       : {mlp_metrics_v3['brier']:.4f}")
 print(f"  test +      : {mlp_metrics_v3['n_test_pos']}")
-for k, v in backend_meta.items():
-    print(f"  {k:<11} : {v}")
+for kk, mv in backend_meta.items():
+    print(f"  {kk:<11} : {mv}")
 print()
 print("Note: this is the deep-learning candidate, not necessarily the winner.")
 print("On tabular data with ~17k users, tree boosting usually wins by a margin —")

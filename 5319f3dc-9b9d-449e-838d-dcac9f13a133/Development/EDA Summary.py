@@ -44,8 +44,8 @@ ax1.set_yticklabels(top20.index, fontsize=9)
 ax1.invert_yaxis()
 ax1.set_xlabel("event count")
 ax1.set_title(f"Top 20 events  ·  {n_users:,} users  ·  base upgrade rate {100*upgraded_users/n_users:.2f}%")
-for i, v in enumerate(top20.values):
-    ax1.text(v, i, f"  {v:,}", va="center", fontsize=8)
+for i, ev in enumerate(top20.values):
+    ax1.text(ev, i, f"  {ev:,}", va="center", fontsize=8)
 ax1.legend(handles=[
     plt.Rectangle((0, 0), 1, 1, color="#4c72b0", label="safe to use as feature"),
     plt.Rectangle((0, 0), 1, 1, color="#dd8452", label="leakage — excluded"),

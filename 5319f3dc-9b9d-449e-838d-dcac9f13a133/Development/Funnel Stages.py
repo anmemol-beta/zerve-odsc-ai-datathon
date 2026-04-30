@@ -183,9 +183,9 @@ ax2.set_yticklabels(funnel_labels)
 ax2.invert_yaxis()
 ax2.set_xlabel("users (cumulative reach, strict-nested)")
 ax2.set_title("Strict-nested funnel — every higher stage requires all lower")
-for i, v in enumerate(funnel_counts):
-    pct = 100 * v / total if total else 0.0
-    ax2.text(v, i, f"  {v:,}  ({pct:.1f}%)", va="center", fontsize=9)
+for i, fv in enumerate(funnel_counts):
+    pct = 100 * fv / total if total else 0.0
+    ax2.text(fv, i, f"  {fv:,}  ({pct:.1f}%)", va="center", fontsize=9)
 
 plt.tight_layout()
 plt.show()

@@ -283,14 +283,14 @@
   <div>
     <div class="logo">Zerve × ODSC AI Datathon · April 2026</div>
     <h1>3-min video storyboard</h1>
-    <div class="sub">14 cuts · 180s · findings-first · audience-friendly naming · leakage 21/21 ✓</div>
+    <div class="sub">15 cuts · 180s · findings + interpretability · audience-friendly · leakage 21/21 ✓</div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="v">180s</div><div class="l">total</div></div>
-    <div class="stat"><div class="v">14</div><div class="l">cuts</div></div>
+    <div class="stat"><div class="v">180s</div><div class="l">target (edited)</div></div>
+    <div class="stat"><div class="v">194s</div><div class="l">raw → 7% speed-up</div></div>
+    <div class="stat"><div class="v">15</div><div class="l">cuts</div></div>
     <div class="stat"><div class="v">21/21</div><div class="l">leak audit</div></div>
     <div class="stat"><div class="v">3.5M</div><div class="l">events</div></div>
-    <div class="stat"><div class="v">17,541</div><div class="l">users</div></div>
   </div>
 </header>
 
@@ -357,10 +357,11 @@
     <div class="seg k-leakage"  style="flex:12"> <span class="tlab">1:37</span><span class="ttitle">leakage</span></div>
     <div class="seg k-model"    style="flex:14"> <span class="tlab">1:49</span><span class="ttitle">ensemble</span></div>
     <div class="seg k-model"    style="flex:12"> <span class="tlab">2:03</span><span class="ttitle">top-K</span></div>
-    <div class="seg k-mlops"    style="flex:16"> <span class="tlab">2:15</span><span class="ttitle">champion</span></div>
-    <div class="seg k-business" style="flex:14"> <span class="tlab">2:31</span><span class="ttitle">playbook</span></div>
-    <div class="seg k-business" style="flex:12"> <span class="tlab">2:45</span><span class="ttitle">K2 demo</span></div>
-    <div class="seg k-meta"     style="flex:3">  <span class="tlab">2:57</span><span class="ttitle">end</span></div>
+    <div class="seg k-model"    style="flex:14" style="border-top: 2px solid var(--pink); background: linear-gradient(180deg, #2a1a3a, #0d1224)"> <span class="tlab">2:15</span><span class="ttitle">★ SHAP→마케팅</span></div>
+    <div class="seg k-mlops"    style="flex:16"> <span class="tlab">2:29</span><span class="ttitle">champion</span></div>
+    <div class="seg k-business" style="flex:14"> <span class="tlab">2:45</span><span class="ttitle">playbook</span></div>
+    <div class="seg k-business" style="flex:12"> <span class="tlab">2:59</span><span class="ttitle">K2 demo</span></div>
+    <div class="seg k-meta"     style="flex:3">  <span class="tlab">3:11</span><span class="ttitle">end</span></div>
   </div>
   <div class="legend">
     <span class="li"><span class="dot" style="background:var(--pink)"></span>discovery / business</span>
@@ -393,8 +394,8 @@
       <span class="chip violet">323 upgraders · base 1.84%</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      <b>350만 이벤트, 1만 7천 사용자</b> 데이터로 두 가지를 풀었습니다 — <b>누가 결제할지 예측하는 모델</b>과 <b>사용자 행동을 단계로 설명하는 퍼널</b>.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      <b>Three and a half million events. Seventeen thousand users.</b> We built two things — a model that predicts who will upgrade, and a funnel that explains how users behave over time.
     </div>
   </div>
 
@@ -415,8 +416,8 @@
       <span class="chip violet">61% same-day</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      데이터에서 가장 먼저 본 건 두 가지 — 사용자 절반이 가입 후 <b>14분 안에 사라집니다</b>. 그리고 결제하는 사람의 <b>76%가 7일 안에, 61%가 같은 날</b> 결제합니다. 모델이 봐야 할 건 오랜 history가 아니라 <b>첫 1시간·24시간 시그널</b>.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      Two things jumped out of the data right away. First — <b>half of all users disappear within fourteen minutes of signing up</b>. Second — <b>three out of four upgraders pay within their first week, and over sixty percent pay on day one</b>. So our model can't rely on long histories. It has to read the first hour, the first day.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -442,8 +443,8 @@
       <span class="chip cyan">canvas_clone 14×</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      결제자와 비결제자 행동을 비교해 lift가 큰 시그널 5개를 뽑았습니다. <b>credits_exceeded 12배, AI credit 배너 노출 22배, deployment 12-25배, source control 14배, canvas clone 14배.</b> 한 줄로 요약하면 <b>"진지하게 일하다 무료 한도에 부딪힌 사용자"</b>가 결제합니다.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      We compared upgraders and non-upgraders for every event in the data. Hitting the credit limit — <b>twelve times more likely</b>. Seeing the limit-warning banner — <b>twenty-two times</b>. Deploying a notebook — <b>twelve to twenty-five times</b>. Source control, canvas cloning — all around fourteen times. The pattern is one sentence: <b>serious users who actually hit the free-tier ceiling are the ones who pay</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -469,8 +470,8 @@
       <span class="chip cyan">9.Churned@Upgraded 28</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      이 행동 패턴 위에 퍼널을 정의했습니다. 단계는 <b>15개</b>, 핵심은 결정적 규칙이라는 점 — Engaged는 "3일 이상 활동", At-Risk는 "14일 무활동". 모든 사용자가 정확히 한 단계에 들어가고, 엔지니어가 그대로 코드로 옮길 수 있습니다.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      On top of those patterns we built a <b>fifteen-stage funnel</b>. Every rule is deterministic — <b>"Engaged" means three or more active days. "At-Risk" means fourteen days of silence.</b> Every user lands in exactly one stage, and an engineer could rebuild the whole thing from our definitions.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R4 · Funnel Design</span>
@@ -495,8 +496,8 @@
       <span class="chip">결제자 32% 위험</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER · KEY FINDING</span>
-      <b>가장 중요한 발견</b> — 결제한 323명을 끝까지 추적하니, <b>지금도 활발히 쓰는 사람은 68%뿐</b>입니다. 23%는 결제 후 30일 넘게 안 들어왔고, 9%는 이미 해지·다운그레이드. 단순히 "결제 = 끝"으로 보면 <b>결제자 셋 중 한 명이 위험 상태</b>라는 사실이 가려집니다. 그래서 "결제 후 위험" 단계를 따로 만들었습니다.
+      <span class="vlabel">VOICE-OVER · EN · KEY FINDING</span>
+      Here is our biggest finding. We tracked all <b>three hundred twenty-three upgraders</b> after they paid. <b>Only sixty-eight percent are still active.</b> Twenty-three percent went silent for thirty days or more. Nine percent already canceled or downgraded. Treating "upgraded" as the end of the funnel hides the fact that <b>one in three paying users is at risk</b>. So we added two new stages — "at-risk after upgrade" and "churned after upgrade".
     </div>
     <div class="footer-tags">
       <span class="rubric match">R4 · Funnel Design</span>
@@ -521,8 +522,8 @@
       <span class="chip">UsedAI → Created 82%</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      단계 사이의 전이 확률을 보면 핵심 패턴이 드러납니다. <b>외부 도구를 연결한 사용자(Integrated)의 절반은 꾸준히 활동(Engaged) 단계로 진행</b>, <b>꾸준히 활동하는 사용자의 13%가 결제로 이어집니다</b>. 즉 'integration → engagement' 구간이 <b>비즈니스 개입 ROI가 가장 높은 지점</b>입니다.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      The transitions between stages show one clear pattern. <b>Half of the users who connect an external tool go on to become consistent users.</b> And <b>thirteen percent of consistent users convert to paid</b> — that's seven times the platform average. So the <b>"integration to engagement" step is where every dollar of growth budget should go</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R5 · Transition Logic</span>
@@ -549,8 +550,8 @@
       <span class="chip violet">55× spread</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      퍼널 단계와 별개로 7개의 행동 시그널을 더 추출했습니다. "<b>꾸준한 사용자</b>" 16배, "<b>AI를 먼저 써본 사용자</b>" 13배, "<b>온보딩 완주자</b>" 10배. 이 셋이 모두 해당되는 1,204명은 결제율 <b>11.5%</b>, 셋 다 아닌 9,324명은 <b>0.21%</b> — <b>55배 차이</b>입니다. 이 시그널들을 모델에도 그대로 넣었습니다.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      Beyond the funnel, we extracted seven behavioral flags. "<b>Power users</b>" — sixteen times more likely to upgrade. "<b>Users who tried AI before notebooks</b>" — thirteen times. "<b>Users who finished onboarding</b>" — ten times. The <b>twelve hundred users who hit all three flags pay at eleven and a half percent</b>. The nine thousand who hit none pay at <b>zero point two percent</b>. That is a <b>fifty-five-fold spread</b>, and we feed all three signals into the model.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -566,18 +567,17 @@
     </div>
     <div class="screen">
       <div class="label">SCREEN</div>
-      <div class="desc">피처 자동 감사 블록 출력 (21/21 ✓) +<br/>발견된 leak 사례 강조 (observation_days ROC 0.939)</div>
+      <div class="desc">피처 감사 블록 21/21 통과 표시 +<br/>"score: 0.37 → 0.265" 큰 숫자 비교 (앰버)</div>
     </div>
     <div class="overlays">
-      <span class="chip amber">25개 leak event 제거</span>
-      <span class="chip amber">사용자별 cutoff (−1µs)</span>
-      <span class="chip amber">leak feature 39개 추가 발견·삭제</span>
-      <span class="chip">초기 PR-AUC 0.37 → 정직한 0.265 (−28%)</span>
-      <span class="chip cyan">실데이터 audit 21/21 통과</span>
+      <span class="chip amber">Hidden leak caught after training</span>
+      <span class="chip amber">39 features dropped to fix</span>
+      <span class="chip">Score: 0.37 → 0.265 (−28%)</span>
+      <span class="chip emerald">21/21 audit · production-honest</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER · METHODOLOGY</span>
-      가장 어려웠던 부분은 leakage입니다. 결제 의도성 이벤트 25개를 블랙리스트로 제거한 뒤에도, <b>"관찰 기간 길이" 자체가 단독으로 ROC 0.939</b> — 즉 <b>거의 완벽한 leak signal</b>이었습니다. 결제자는 결제 시점에서 잘리니까 짧고, 비결제자는 데이터 끝까지 길어서 생긴 인공 신호. 이걸 <b>모델 학습 후 발견하고 39개 feature를 추가로 제거</b>했고, PR-AUC가 0.37에서 0.265로 <b>28% 떨어졌지만 정직한 성능</b>입니다.
+      <span class="vlabel">VOICE-OVER · EN · TRUST</span>
+      Our biggest discipline check — we caught a <b>hidden data leak that was inflating our early scores</b>. Fixing it cost us <b>twenty-eight percent of our number</b>. The benefit: <b>every metric we show today will hold up in production</b>, not just in a notebook.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R2 · Leakage &amp; Rigor</span>
@@ -603,8 +603,8 @@
       <span class="chip cyan">단순 majority 대비 결제자 +323명</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER · NUMBERS</span>
-      <b>5개 후보 모델</b>을 동시에 학습시켜 비교했습니다. 단순 다수 예측은 정확도 97.5%지만 결제자 0명을 잡고, 로지스틱은 PR-AUC <b>0.13</b>, 단일 XGBoost가 <b>0.24</b>, 그리고 <b>3개 트리 모델을 캘리브레이션 앙상블</b>한 최종 모델이 <b>0.265 — 무작위 0.025의 10.6배</b>. 동시에 isotonic calibration으로 <b>확률 정확도(Brier)가 0.09에서 0.022로 4배 개선</b> — 순위뿐 아니라 "이 사용자가 결제할 확률 23%" 같은 숫자를 그대로 신뢰할 수 있게 됐습니다.
+      <span class="vlabel">VOICE-OVER · EN · NUMBERS</span>
+      We trained <b>five candidate models</b> side by side. Always predicting "no upgrade" gets ninety-seven percent accuracy and catches zero upgraders. Logistic regression scored <b>zero point one three</b>. A single XGBoost scored <b>zero point two four</b>. Our final model — <b>three tree models, all calibrated, voting together</b> — scored <b>zero point two six five</b>. That is <b>ten point six times better than random</b>. And calibration cut our probability error by <b>four times</b>. So when we say "this user has a twenty-three percent chance of upgrading", that number is real.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -630,8 +630,8 @@
       <span class="chip cyan">캠페인 비용 1/20</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER · BUSINESS</span>
-      비즈니스 적용은 단순합니다. <b>전체 1만 7천 명 중 점수 상위 5%인 371명</b>에게만 캠페인을 보내면 <b>전체 결제자 185명 중 90명(49%)을 포착</b>합니다. 무작위로 같은 5%를 보내면 9명 잡는 게 한계 — <b>10배 효율</b>. 더 적은 1% (74명)만 보내도 <b>34명 결제 · 적중률 46% · 무작위 대비 18배</b>. 즉 <b>캠페인 예산을 20분의 1로 줄여도 결제자 절반</b>을 잡을 수 있습니다.
+      <span class="vlabel">VOICE-OVER · EN · BUSINESS</span>
+      Here is what that means in practice. Out of seventeen thousand users, <b>send a campaign to just the top five percent — three hundred seventy-one people</b>. You catch <b>ninety upgraders. Half of all upgraders, with one-twentieth of the budget</b>. Random targeting on the same five percent catches only nine. So the model gives <b>ten times the efficiency</b>. Push it tighter — top one percent, seventy-four people — and you still catch thirty-four upgraders. <b>Eighteen times better than random</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -639,10 +639,38 @@
     </div>
   </div>
 
-  <!-- 11 -->
-  <div class="shot k-mlops">
+  <!-- 11 NEW: SHAP / interpretability bridge -->
+  <div class="shot k-model" style="border: 1px solid rgba(236, 72, 153, 0.4); background: linear-gradient(180deg, rgba(236, 72, 153, 0.04), var(--panel));">
     <div class="shot-head">
       <span class="pill-time">2:15</span>
+      <span class="duration">14s · ★ NEW</span>
+      <span class="kind-tag">interpretability</span>
+    </div>
+    <div class="screen">
+      <div class="label">SCREEN</div>
+      <div class="desc">SHAP top-10 horizontal bar (left 60%) +<br/>각 시그널 → 마케팅 액션 매핑 패널 (right 40%)<br/>(canvas: <code>SHAP v3</code> block 출력)</div>
+    </div>
+    <div class="overlays">
+      <span class="chip violet">SHAP top-3 signals</span>
+      <span class="chip">1. hours to credit limit</span>
+      <span class="chip">2. limit-warning banner shown</span>
+      <span class="chip">3. first-hour AI usage</span>
+      <span class="chip cyan">각 시그널 → 1:1 캠페인 매핑</span>
+    </div>
+    <div class="voice">
+      <span class="vlabel">VOICE-OVER · EN · INTERPRETABILITY</span>
+      Accuracy alone is not enough. <b>SHAP values show what the model actually looks at</b>. The top three signals — <b>how fast a user hit the credit limit</b>, <b>whether they saw the limit-warning banner</b>, and <b>how much AI they used in their first hour</b>. Each one points to an exact moment for a marketing nudge — and that mapping is what powers the playbook on the next slide.
+    </div>
+    <div class="footer-tags">
+      <span class="rubric match">R3 · Predictive Quality (interpretable)</span>
+      <span class="rubric match">R6 · Insights</span>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="shot k-mlops">
+    <div class="shot-head">
+      <span class="pill-time">2:29</span>
       <span class="duration">16s</span>
       <span class="kind-tag">mlops</span>
     </div>
@@ -656,8 +684,8 @@
       <span class="chip">no-label drift watch</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      단일 split만 보면 함정이 있어서, <b>5개 후보 모델 × 월별 4개 코호트 = 20번의 평가</b>를 돌리고 <b>"안정성"에 50% 가중치</b>를 둬서 챔피언을 뽑습니다. 한 달 운 좋아서 잘 나온 모델은 떨어지게 설계. 그리고 매주 새로 들어오는 데이터에 <b>PSI·KS로 라벨 없이 드리프트 감시</b> — 임계 0.25를 넘으면 재학습 알림이 뜹니다.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      Picking a champion from a single train-test split is a trap. So we run <b>all five models against four monthly cohorts — twenty evaluations</b> — and weight <b>stability at fifty percent</b>. A model that got lucky on March alone will not win. After deployment, we watch incoming data every week using two distribution-shift metrics. <b>No labels needed</b>. If drift crosses zero point two five, the system flags it for retraining.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -665,10 +693,10 @@
     </div>
   </div>
 
-  <!-- 12 -->
+  <!-- 13 -->
   <div class="shot k-business">
     <div class="shot-head">
-      <span class="pill-time">2:31</span>
+      <span class="pill-time">2:45</span>
       <span class="duration">14s</span>
       <span class="kind-tag">business</span>
     </div>
@@ -683,18 +711,18 @@
       <span class="chip cyan">상위 3액션 공통 타겟 1,300명 (전체의 7%)</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER · ACTION</span>
-      이 모든 발견을 <b>7개 즉시 실행 가능한 액션</b>으로 정리했습니다. 가장 강한 시그널 셋만 보면 — 무료 크레딧 한도에 도달한 649명은 결제율 <b>13.4% (전체 평균 1.84%의 7.3배)</b>, 한도 임박 배너를 본 302명은 <b>23.8% (16.4배)</b>, 배포 기능을 사용한 353명은 <b>9.1% (5.4배)</b>. 이 셋의 <b>공통 타겟은 약 1,300명, 전체 사용자의 7%</b>인데 결제 가능성은 평균 대비 5~16배. 캠페인 ROI 측면에서 압도적입니다.
+      <span class="vlabel">VOICE-OVER · EN · ACTION</span>
+      We translated every finding into <b>seven concrete campaigns</b>. The top three: users who hit the credit ceiling — <b>six hundred forty-nine people, who upgrade at thirteen percent — over seven times the platform average</b>. Users who saw the limit-warning banner — <b>three hundred two people, twenty-four percent</b>. Users who deployed a notebook — three hundred fifty-three people, nine percent. Combined that's <b>about thirteen hundred users, seven percent of the base, converting at five to sixteen times the average</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R6 · Insights</span>
     </div>
   </div>
 
-  <!-- 13 -->
+  <!-- 14 -->
   <div class="shot k-business">
     <div class="shot-head">
-      <span class="pill-time">2:45</span>
+      <span class="pill-time">2:59</span>
       <span class="duration">12s</span>
       <span class="kind-tag">demo</span>
     </div>
@@ -708,8 +736,8 @@
       <span class="chip cyan">실시간 LLM 호출 (캐시 fallback 있음)</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER · LIVE DEMO</span>
-      이 모든 인사이트를 <b>K2-Think LLM이 14개 사용자 세그먼트마다 자동으로 3개씩 액션을 생성</b>해서 카드로 보여줍니다. 채널, 문구, 예상 결제율 상승, ROI 배수 — 총 <b>42개의 즉시 실행 가능한 캠페인</b>이 한 화면에. 프론트엔드는 GitHub Pages에 라이브 배포돼 있어 누구나 클릭으로 확인 가능합니다.
+      <span class="vlabel">VOICE-OVER · EN · LIVE DEMO</span>
+      Finally, we hand all of this to <b>K2-Think — an LLM that generates three ranked actions for every one of our fourteen user segments</b>. Channel, message copy, expected lift, ROI multiple. <b>Forty-two ready-to-launch campaigns on one screen</b>. The whole thing runs as a live web app — every number you see is fetched from the canvas in real time, not baked in.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R7 · Communication</span>
@@ -732,8 +760,8 @@
       <span class="chip cyan">repo + live demo</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER</span>
-      링크는 아래. 감사합니다.
+      <span class="vlabel">VOICE-OVER · EN</span>
+      Links below. Thank you.
     </div>
   </div>
 

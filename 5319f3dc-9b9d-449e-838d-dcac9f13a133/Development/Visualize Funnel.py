@@ -20,9 +20,9 @@ ax1.set_yticklabels(labels)
 ax1.invert_yaxis()
 ax1.set_xlabel("users (cumulative reach, strict-nested)")
 ax1.set_title("User funnel — each higher stage requires all lower")
-for i, v in enumerate(counts):
-    pct = 100 * v / total if total else 0.0
-    ax1.text(v, i, f"  {v:,}  ({pct:.1f}%)", va="center", fontsize=9)
+for i, vc in enumerate(counts):
+    pct = 100 * vc / total if total else 0.0
+    ax1.text(vc, i, f"  {vc:,}  ({pct:.1f}%)", va="center", fontsize=9)
 # Annotate at_risk as a lateral note on the engaged row (index 4)
 ax1.text(counts[4] * 0.55, 4.4, f"at_risk: {at_risk_count:,} (engaged → inactive)",
          color="#c44e52", fontsize=8, style="italic")
@@ -34,8 +34,8 @@ ax2.set_yticklabels(top.index, fontsize=9)
 ax2.invert_yaxis()
 ax2.set_xlabel("event count")
 ax2.set_title("Top 15 events by frequency")
-for i, v in enumerate(top.values):
-    ax2.text(v, i, f"  {v:,}", va="center", fontsize=8)
+for i, vt in enumerate(top.values):
+    ax2.text(vt, i, f"  {vt:,}", va="center", fontsize=8)
 
 plt.tight_layout()
 plt.show()
