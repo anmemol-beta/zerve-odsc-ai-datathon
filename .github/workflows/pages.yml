@@ -33,8 +33,19 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ""
         run: npm run build
-      - name: Pack web/out → web-dist.tar.gz
-        run: tar -czf web-dist.tar.gz -C out .
+      - name: Pack web/out + dist/ → web-dist.tar.gz
+        run: |
+          rm -rf /tmp/bundle
+          mkdir -p /tmp/bundle
+          cp -r out/. /tmp/bundle/
+          if [ -d ../dist ]; then
+            echo "including dist/ (offline fallback bundle)"
+            cp -r ../dist /tmp/bundle/dist
+          else
+            echo "no dist/ at repo root — tarball will not contain offline fallbacks"
+          fi
+          tar -czf web-dist.tar.gz -C /tmp/bundle .
+          ls -lh web-dist.tar.gz
       - name: Publish to GitHub Releases (rolling tag = web-dist)
         uses: softprops/action-gh-release@v2
         with:

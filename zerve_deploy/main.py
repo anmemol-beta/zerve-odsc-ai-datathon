@@ -16,6 +16,7 @@ Serves two things from one container:
 """
 import hashlib
 import io
+import json
 import shutil
 import tarfile
 import time
@@ -191,6 +192,36 @@ def get(block: str, slot: str) -> Any:
     return _cache[key]
 
 
+# ─── offline fallback ────────────────────────────────────────────────────
+# When `zerve.variable()` can't reach the canvas (cross-container isolation),
+# many endpoints fall back to pre-baked JSON / PNG that `export_artifacts.py`
+# wrote to dist/ before the GH Action packed it into web-dist.tar.gz.
+DIST_DIR = WEB_DIR / "dist"
+
+
+def fallback_json(name: str) -> Any:
+    p = DIST_DIR / "api" / name
+    if not p.exists():
+        raise HTTPException(
+            503,
+            f"canvas unreachable and offline bundle missing dist/api/{name} "
+            f"(run `python export_artifacts.py` locally and push to populate)",
+        )
+    return json.loads(p.read_text())
+
+
+def fallback_figure(block: str) -> bytes | None:
+    p = DIST_DIR / "figures" / f"{block}.png"
+    return p.read_bytes() if p.exists() else None
+
+
+def try_canvas_then_disk(canvas_fn, disk_name: str) -> Any:
+    try:
+        return canvas_fn()
+    except Exception:
+        return fallback_json(disk_name)
+
+
 def fig_to_png(fig) -> bytes:
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=120, bbox_inches="tight")
@@ -240,12 +271,18 @@ def health():
 
 @app.get("/api/info")
 def api_info():
+    api_files = sorted(p.name for p in (DIST_DIR / "api").glob("*.json")) if (DIST_DIR / "api").exists() else []
+    fig_files = sorted(p.name for p in (DIST_DIR / "figures").glob("*.png")) if (DIST_DIR / "figures").exists() else []
     return {
         "ok": True,
         "service": "zerve-funnel-api",
         "blocks": len(BLOCKS),
         "dist_sha": _dist_sha,
         "frontend_present": (WEB_DIR / "index.html").exists(),
+        "offline_bundle": {
+            "api_responses": len(api_files),
+            "figures": len(fig_files),
+        },
     }
 
 
@@ -300,8 +337,14 @@ def block_vars(block: str):
 # ─── figures ────────────────────────────────────────────────────────────
 @app.get("/figure/{block}")
 def figure(block: str):
-    fig = get(block, "figure")
-    return Response(fig_to_png(fig), media_type="image/png")
+    try:
+        fig = get(block, "figure")
+        return Response(fig_to_png(fig), media_type="image/png")
+    except Exception:
+        png = fallback_figure(block)
+        if png is None:
+            raise HTTPException(404, f"no live or cached figure for {block}")
+        return Response(png, media_type="image/png")
 
 
 # ─── prediction ─────────────────────────────────────────────────────────
@@ -323,61 +366,101 @@ def predict(req: PredictRequest):
 
 @app.get("/predict/sample/{idx}")
 def predict_sample(idx: int):
-    """Predict on the idx-th test-set row — frontend uses this to demo
-    end-to-end inference without needing to reconstruct the full feature vector."""
-    X_test = get("Build Features v3", "X_test")
-    y_test = get("Build Features v3", "y_test")
-    if idx < 0 or idx >= len(X_test):
-        raise HTTPException(404, f"idx out of range [0, {len(X_test)})")
-    row = X_test.iloc[[idx]] if hasattr(X_test, "iloc") else X_test[idx:idx + 1]
-    models = get("Train Model v3", "models")
-    probas = np.mean(
-        [m.predict_proba(row)[:, 1] for m in models.values()],
-        axis=0,
-    )
-    label = int(y_test.iloc[idx]) if hasattr(y_test, "iloc") else int(y_test[idx])
-    return {
-        "idx": idx,
-        "n_test": int(len(X_test)),
-        "upgrade_probability": float(probas[0]),
-        "actual_label": label,
-        "feature_count": int(row.shape[1]),
-    }
+    """Predict on the idx-th test-set row. Tries the live canvas first;
+    falls back to dist/api/predict_samples.json that export_artifacts.py
+    pre-baked from the same model."""
+    try:
+        X_test = get("Build Features v3", "X_test")
+        y_test = get("Build Features v3", "y_test")
+        if idx < 0 or idx >= len(X_test):
+            raise HTTPException(404, f"idx out of range [0, {len(X_test)})")
+        row = X_test.iloc[[idx]] if hasattr(X_test, "iloc") else X_test[idx:idx + 1]
+        models = get("Train Model v3", "models")
+        probas = np.mean(
+            [m.predict_proba(row)[:, 1] for m in models.values()],
+            axis=0,
+        )
+        label = int(y_test.iloc[idx]) if hasattr(y_test, "iloc") else int(y_test[idx])
+        return {
+            "idx": idx,
+            "n_test": int(len(X_test)),
+            "upgrade_probability": float(probas[0]),
+            "actual_label": label,
+            "feature_count": int(row.shape[1]),
+        }
+    except HTTPException:
+        raise
+    except Exception:
+        samples = fallback_json("predict_samples.json")
+        if idx < 0 or idx >= len(samples):
+            raise HTTPException(404, f"idx out of range [0, {len(samples)})")
+        return samples[idx]
 
 
 @app.get("/metrics")
 def metrics():
-    df = get("Train Model v3", "metrics")
-    return df.to_dict(orient="records")
+    try:
+        df = get("Train Model v3", "metrics")
+        return df.to_dict(orient="records")
+    except Exception:
+        m = fallback_json("metrics.json")
+        # JSON-baked DataFrame snapshot uses {"_type":"DataFrame","head":[…]}
+        return m["head"] if isinstance(m, dict) and "head" in m else m
 
 
 # ─── strategies / insights ──────────────────────────────────────────────
+def _df_records(maybe_df: Any) -> Any:
+    if hasattr(maybe_df, "to_dict") and hasattr(maybe_df, "columns"):
+        return maybe_df.to_dict(orient="records")
+    if isinstance(maybe_df, dict) and "head" in maybe_df:
+        return maybe_df["head"]
+    return maybe_df
+
+
 @app.get("/strategies")
 def strategies():
-    return get("Build Strategies", "strategies")
+    return try_canvas_then_disk(
+        lambda: get("Build Strategies", "strategies"),
+        "strategies.json",
+    )
 
 
 @app.get("/strategies/segments")
 def strategy_segments():
-    return get("Build Strategies", "segments")
+    return try_canvas_then_disk(
+        lambda: get("Build Strategies", "segments"),
+        "strategies_segments.json",
+    )
 
 
 @app.get("/roi/top10")
 def roi_top10():
-    return get("ROI Ranking", "top10").to_dict(orient="records")
+    try:
+        return get("ROI Ranking", "top10").to_dict(orient="records")
+    except Exception:
+        return _df_records(fallback_json("roi_top10.json"))
 
 
 @app.get("/roi/heatmap")
 def roi_heatmap():
-    return get("Strategy Heatmap", "data").to_dict(orient="records")
+    try:
+        return get("Strategy Heatmap", "data").to_dict(orient="records")
+    except Exception:
+        return _df_records(fallback_json("roi_heatmap.json"))
 
 
 @app.get("/insights")
 def insights():
-    return {
-        "text": get("Insights Card", "text"),
-        "payload": get("Insights Card", "payload"),
-    }
+    try:
+        return {
+            "text": get("Insights Card", "text"),
+            "payload": get("Insights Card", "payload"),
+        }
+    except Exception:
+        return {
+            "text": fallback_json("insights_text.json"),
+            "payload": fallback_json("insights_payload.json"),
+        }
 
 
 # ─── AutoML / champion / drift shortcuts ────────────────────────────────
