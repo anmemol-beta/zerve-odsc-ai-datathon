@@ -1,10 +1,14 @@
 // Zerve deployment API client.
-// Backend lives at https://beta-zerve.hub.zerve.cloud (the FastAPI in zerve_deploy/main.py).
-// Override with NEXT_PUBLIC_API_URL for local development.
-
+// In production the frontend ships inside the same FastAPI container that
+// exposes these endpoints (zerve_deploy/main.py mounts web/out at /), so the
+// default base is the empty string — every request becomes same-origin and
+// CORS never enters the picture.
+//
+// For local `npm run dev`, set NEXT_PUBLIC_API_URL=https://beta-zerve.hub.zerve.cloud
+// (or whatever your dev backend is) so the dev server can talk to a remote API.
+const RAW = process.env.NEXT_PUBLIC_API_URL;
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "https://beta-zerve.hub.zerve.cloud";
+  RAW && RAW.length > 0 ? RAW.replace(/\/$/, "") : "";
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {

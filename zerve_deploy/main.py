@@ -3,10 +3,24 @@ Zerve Deployment FastAPI — paste this into the deployment editor's main.py.
 
 Run command:  uvicorn main:app --host 0.0.0.0 --port 8080
 
-Reads canvas block outputs via `zerve.variable(block_name, var_name)` and
-exposes them to the standalone Next.js frontend.
+Serves two things from one container:
+
+  1. The Zerve canvas output API — `zerve.variable(block, var)` resolved
+     under /health, /dag, /predict, /figure/{block}, /strategies, etc.
+  2. The Next.js static frontend — fetched on boot from a GitHub Release
+     (tag = `web-dist`, asset = `web-dist.tar.gz`, auto-built by
+     .github/workflows/pages.yml on every push), extracted to /tmp/zerve-web-out,
+     and mounted at /. Same-origin → no CORS issues.
+
+`POST /admin/refresh` re-pulls the bundle without a container restart.
 """
+import hashlib
 import io
+import shutil
+import tarfile
+import time
+import urllib.request
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -16,8 +30,66 @@ import matplotlib.pyplot as plt
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from zerve import variable
+
+# ─── frontend bundle source ─────────────────────────────────────────────
+DIST_URL = (
+    "https://github.com/anmemol-beta/zerve-odsc-ai-datathon"
+    "/releases/download/web-dist/web-dist.tar.gz"
+)
+WEB_DIR = Path("/tmp/zerve-web-out")
+_dist_sha = ""
+
+
+def fetch_and_extract() -> tuple[int, str]:
+    global _dist_sha
+    # Cache-bust the CDN that fronts release downloads.
+    url = f"{DIST_URL}?t={int(time.time())}"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "zerve-deploy",
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        payload = resp.read()
+    sha = hashlib.sha256(payload).hexdigest()[:12]
+    if WEB_DIR.exists():
+        shutil.rmtree(WEB_DIR)
+    WEB_DIR.mkdir(parents=True)
+    with tarfile.open(fileobj=io.BytesIO(payload), mode="r:gz") as tf:
+        tf.extractall(WEB_DIR)
+    _dist_sha = sha
+    return len(payload), sha
+
+
+def ensure_placeholder() -> None:
+    """Make sure WEB_DIR has at least an index.html so StaticFiles can mount
+    cleanly even if the boot fetch fails. The Zerve LB pings GET / every 10s,
+    and a 200 there is what keeps the container in the healthy rotation."""
+    WEB_DIR.mkdir(parents=True, exist_ok=True)
+    idx = WEB_DIR / "index.html"
+    if not idx.exists():
+        idx.write_text(
+            "<!doctype html><html><body style='font-family:sans-serif;padding:40px;"
+            "background:#020617;color:#e2e8f0'><h2>Frontend bundle not yet fetched.</h2>"
+            "<p>POST <code>/admin/refresh</code> to pull the latest from GitHub Releases.</p>"
+            "</body></html>"
+        )
+
+
+# Try to bring the frontend up at boot — but don't crash the API if it fails.
+ensure_placeholder()
+try:
+    _size, _sha = fetch_and_extract()
+    print(f"[boot] frontend bundle: {_size} bytes (sha {_sha})")
+except Exception as _e:  # noqa: BLE001 — boot resilience
+    print(f"[boot] WARNING: failed to fetch frontend bundle: {_e}")
+
 
 app = FastAPI(title="Zerve Funnel & Upgrade API")
 app.add_middleware(
@@ -161,16 +233,20 @@ def jsonify(obj: Any, depth: int = 0) -> Any:
 
 
 # ─── basic ──────────────────────────────────────────────────────────────
-@app.get("/")
-def root():
-    """Zerve LB pings GET / every 10s; 404 here gets the container removed
-    from the rotation (visible to the public as 503). Keep this 200."""
-    return {"ok": True, "service": "zerve-funnel-api", "blocks": len(BLOCKS)}
-
-
 @app.get("/health")
 def health():
     return {"ok": True}
+
+
+@app.get("/api/info")
+def api_info():
+    return {
+        "ok": True,
+        "service": "zerve-funnel-api",
+        "blocks": len(BLOCKS),
+        "dist_sha": _dist_sha,
+        "frontend_present": (WEB_DIR / "index.html").exists(),
+    }
 
 
 @app.get("/dag")
@@ -183,9 +259,23 @@ def dag():
 
 
 @app.post("/admin/reload")
-def reload():
+def admin_reload():
+    """Clear the in-process cache of zerve.variable() values. Use after the
+    canvas re-runs a block so the next API call sees fresh outputs."""
     _cache.clear()
     return {"ok": True, "cleared": True}
+
+
+@app.post("/admin/refresh")
+def admin_refresh():
+    """Re-pull the frontend bundle from GitHub Releases without a restart.
+    StaticFiles re-reads the filesystem on every request, so the new files
+    are served immediately."""
+    try:
+        size, sha = fetch_and_extract()
+    except Exception as e:  # noqa: BLE001 — surface to caller
+        raise HTTPException(502, f"refresh failed: {e}")
+    return {"ok": True, "bytes": size, "sha": sha}
 
 
 # ─── generic per-block introspection ────────────────────────────────────
@@ -337,3 +427,10 @@ def weekly_inference():
 @app.get("/validate/{block}")
 def validate(block: str):
     return get(block, "validation")
+
+
+# ─── static frontend ────────────────────────────────────────────────────
+# MOUNTED LAST so every explicit route above takes precedence. StaticFiles
+# matches whatever the explicit routes don't claim — index.html for /,
+# _next/* for the JS chunks, etc.
+app.mount("/", StaticFiles(directory=str(WEB_DIR), html=True), name="frontend")
