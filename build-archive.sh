@@ -1,24 +1,37 @@
 #!/usr/bin/env bash
-# Builds a single deploy archive for Zerve Hosted Apps.
+# One-shot deploy pipeline for the Zerve Custom Deployment.
 #
 # Steps:
-#   1. Re-export model artifacts from the canvas pipeline → web/public/data/
-#   2. Build Next.js static export → web/out/
-#   3. Zip { server.py, web/out/, requirements.txt } → app.zip
+#   1. Re-export model + funnel artifacts from the canvas pipeline → JSON
+#   2. Build the Next.js static export → web/out/
+#   3. Pack { server.py, web/out/, requirements.txt } → app.zip
+#   4. Commit + push app.zip so the deployed main.py can pull it from
+#      raw.githubusercontent.com on next Restart.
 #
-# Upload app.zip via Zerve UI → Hosted Apps → Python.
+# After this script: open Zerve UI → Deployment → Restart. The container
+# re-fetches the new zip and serves the updated bundle.
 set -euo pipefail
 cd "$(dirname "$0")"
 
-echo "── 1/3  exporting model + funnel data → JSON"
+echo "── 1/4  exporting model + funnel data → JSON"
 uv run python export-data.py
 
-echo "── 2/3  building Next.js static export"
+echo "── 2/4  building Next.js static export"
 ( cd web && npm run build )
 
-echo "── 3/3  packaging app.zip"
+echo "── 3/4  packaging app.zip"
 rm -f app.zip
 zip -rq app.zip server.py requirements.txt web/out
 ls -lh app.zip
 
-echo "✓ done. Upload app.zip via Zerve UI → Hosted Apps → Python."
+echo "── 4/4  committing + pushing app.zip"
+if git diff --quiet app.zip 2>/dev/null && git diff --cached --quiet app.zip 2>/dev/null; then
+    echo "   (no zip changes — skipping commit)"
+else
+    git add app.zip
+    git commit -m "chore: refresh app.zip ($(date -u +%Y-%m-%dT%H:%MZ))"
+    git push
+fi
+
+echo
+echo "✓ done. Open Zerve UI → Deployment → Restart to pull the new zip."
