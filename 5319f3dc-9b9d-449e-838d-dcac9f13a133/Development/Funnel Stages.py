@@ -118,3 +118,70 @@ for s in stage_order:
     c = int(counts[s])
     pct = 100 * c / total if total else 0.0
     print(f"  {s:<22}{c:>8,}  ({pct:>5.2f}%)")
+
+# ── Visualization on the canvas node: pie of mutually-exclusive current
+# stages + horizontal bar of strict-nested cumulative reach.
+import matplotlib.pyplot as plt
+
+stage_color = {
+    "1_signed_up":       "#475569",
+    "2_active":          "#3b82f6",
+    "3_created_content": "#06b6d4",
+    "4_used_ai":         "#10b981",
+    "5_engaged":         "#84cc16",
+    "5b_at_risk":        "#f59e0b",
+    "6_upgraded":        "#ec4899",
+}
+nice = {
+    "1_signed_up":       "signed up only",
+    "2_active":          "active only",
+    "3_created_content": "created only",
+    "4_used_ai":         "used AI only",
+    "5_engaged":         "engaged",
+    "5b_at_risk":        "at risk",
+    "6_upgraded":        "upgraded",
+}
+
+# Order from "stuck" to "deepest" so the pie reads clockwise from churn → conversion.
+pie_order = ["1_signed_up", "2_active", "3_created_content", "4_used_ai", "5_engaged", "5b_at_risk", "6_upgraded"]
+pie_labels = [nice[s] for s in pie_order]
+pie_values = [int(counts[s]) for s in pie_order]
+pie_colors = [stage_color[s] for s in pie_order]
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7), gridspec_kw={"width_ratios": [1, 1.2]})
+
+# Donut pie (mutually exclusive — sums to 100%)
+wedges, _, autotexts = ax1.pie(
+    pie_values,
+    labels=None,
+    colors=pie_colors,
+    startangle=90,
+    counterclock=False,
+    autopct=lambda p: f"{p:.1f}%" if p > 2.0 else "",
+    pctdistance=0.78,
+    wedgeprops={"width": 0.42, "edgecolor": "#020617", "linewidth": 1.2},
+    textprops={"color": "white", "fontsize": 9, "fontweight": "bold"},
+)
+ax1.text(0, 0.06, f"{total:,}", ha="center", va="center", fontsize=22, fontweight="bold")
+ax1.text(0, -0.10, "USERS", ha="center", va="center", fontsize=9, color="#94a3b8")
+ax1.set_title("Current stage breakdown — mutually exclusive (sums to 100%)")
+ax1.legend(wedges, [f"{l}  ({c:,})" for l, c in zip(pie_labels, pie_values)],
+           loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=9, frameon=False)
+
+# Strict-nested funnel (cumulative reach)
+funnel_order = ["1_signed_up", "2_active", "3_created_content", "4_used_ai", "5_engaged", "6_upgraded"]
+funnel_labels = [s.split("_", 1)[1].replace("_", " ") for s in funnel_order]
+funnel_counts = [int(funnel_reach[s]) for s in funnel_order]
+funnel_colors = [stage_color[s] for s in funnel_order]
+ax2.barh(range(len(funnel_counts)), funnel_counts, color=funnel_colors, edgecolor="#020617")
+ax2.set_yticks(range(len(funnel_counts)))
+ax2.set_yticklabels(funnel_labels)
+ax2.invert_yaxis()
+ax2.set_xlabel("users (cumulative reach, strict-nested)")
+ax2.set_title("Strict-nested funnel — every higher stage requires all lower")
+for i, v in enumerate(funnel_counts):
+    pct = 100 * v / total if total else 0.0
+    ax2.text(v, i, f"  {v:,}  ({pct:.1f}%)", va="center", fontsize=9)
+
+plt.tight_layout()
+plt.show()

@@ -200,6 +200,26 @@ layers:
     width: 1600
     x: 1700
     y: 3000
+  - auto_size: false
+    canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    compute_settings:
+      compute_environment_type: 1
+    description: "Mirrors the web app's #06 Time-travel section onto the canvas.
+      Four panels - cumulative growth lines, daily activity sparkline + upgrade
+      markers, weekly cohort upgrade rate vs cumulative baseline, day-of-week
+      x hour heatmap."
+    height: 1000
+    id: 0b8229ca-b06b-44d6-8d55-005762b6a808
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    name: Visualize Cohort
+    parent_id: null
+    properties: {}
+    status: 1
+    type: 1
+    variables: null
+    width: 1600
+    x: 0
+    y: 2000
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   edges:
   - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
@@ -250,6 +270,12 @@ layers:
     layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
     source: ffc35448-b11d-45a1-93d4-8ea9f45d35f7
     target: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+  # Funnel Stages → Visualize Cohort
+  - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+    id: c26ef973-83e6-4c73-a67f-c0aab9992a8e
+    layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+    source: 74b326c2-b2ce-43f2-ada9-088406566be2
+    target: 0b8229ca-b06b-44d6-8d55-005762b6a808
   id: d4c770ac-c591-4c73-a787-9d4824a1884a
   name: Development
   type: 1
