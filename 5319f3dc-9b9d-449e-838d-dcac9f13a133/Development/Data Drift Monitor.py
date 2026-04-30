@@ -55,7 +55,7 @@ baseline_df = pd.concat(
     axis=0, ignore_index=True,
 )
 print(f"[drift] baseline pooled from {len(baseline_weeks)} weeks → "
-      f"{len(baseline_df):,} user-rows")
+      f"{len(baseline_df):,} user-ddm_rows")
 
 
 # ─── 2. PSI helper ───────────────────────────────────────────────────────
@@ -95,7 +95,7 @@ def _ks_pvalue(a: np.ndarray, b: np.ndarray) -> float:
 
 
 # ─── 3. compute drift per (week, feature) ────────────────────────────────
-rows = []
+ddm_rows = []
 for w_id in all_weeks:
     snap = weekly_slices[w_id]
     for feat in MONITORED_FEATURES:
@@ -105,7 +105,7 @@ for w_id in all_weeks:
         current_vals = snap[feat].values.astype(float)
         psi = _psi(baseline_vals, current_vals)
         ks_p = _ks_pvalue(baseline_vals, current_vals)
-        rows.append({
+        ddm_rows.append({
             "week": w_id,
             "feature": feat,
             "n_current": len(current_vals),
@@ -116,7 +116,7 @@ for w_id in all_weeks:
             "drifted_ks": (not np.isnan(ks_p)) and ks_p < KS_PVAL_THRESHOLD,
         })
 
-drift_per_week_per_feature = pd.DataFrame(rows)
+drift_per_week_per_feature = pd.DataFrame(ddm_rows)
 print(f"[drift] computed {len(drift_per_week_per_feature)} (week, feature) "
       f"drift measurements")
 

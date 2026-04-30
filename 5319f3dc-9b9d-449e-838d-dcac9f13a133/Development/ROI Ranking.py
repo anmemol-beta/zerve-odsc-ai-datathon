@@ -22,7 +22,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # ─── 1. flatten ───────────────────────────────────────────────────────────
-rows = []
+roi_rows = []
 for seg in strategies["segments"]:
     if not seg.get("strategy") or not seg["strategy"].get("actions"):
         continue
@@ -31,7 +31,7 @@ for seg in strategies["segments"]:
     seg_size = seg["stats"]["size"]
     pos_rate = seg["stats"]["observed_rate"]
     for a in seg["strategy"]["actions"]:
-        rows.append({
+        roi_rows.append({
             "segment_id": seg_id,
             "segment_label": label,
             "segment_size": seg_size,
@@ -46,7 +46,7 @@ for seg in strategies["segments"]:
             "playbook_alignment": a.get("playbook_alignment", ""),
         })
 
-actions_long = pd.DataFrame(rows)
+actions_long = pd.DataFrame(roi_rows)
 print(f"[ROI] flattened {len(actions_long)} actions across "
       f"{actions_long['segment_id'].nunique()} segments")
 

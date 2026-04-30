@@ -18,19 +18,19 @@ CHANNELS = ["email", "in_app_modal", "sales_call",
             "push_notification", "ad_retargeting", "lifecycle_drip"]
 
 # build flat table (avoid depending on ROI Ranking having run)
-rows = []
+sh_rows = []
 for seg in strategies["segments"]:
     if not seg.get("strategy") or not seg["strategy"].get("actions"):
         continue
     for a in seg["strategy"]["actions"]:
-        rows.append({
+        sh_rows.append({
             "segment": seg["label"],
             "segment_rank": seg["stats"].get("stage_rank", 99),
             "channel": a.get("channel", ""),
             "roi_multiple": float(a.get("estimated_roi_multiple", 0)),
             "expected_uplift_pp": float(a.get("expected_uplift_pp", 0)),
         })
-df = pd.DataFrame(rows)
+df = pd.DataFrame(sh_rows)
 print(f"[heatmap] {len(df)} actions over "
       f"{df['segment'].nunique()} segments × {df['channel'].nunique()} channels")
 
@@ -41,7 +41,7 @@ strategy_heatmap_data = (
     .reindex(columns=CHANNELS)
 )
 
-# order rows by funnel rank
+# order sh_rows by funnel rank
 seg_rank = (df.drop_duplicates("segment").set_index("segment")["segment_rank"])
 strategy_heatmap_data = strategy_heatmap_data.reindex(
     seg_rank.sort_values().index

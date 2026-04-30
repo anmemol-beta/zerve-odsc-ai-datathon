@@ -1,12 +1,33 @@
 """
-Generate all 11 PNG visual assets for the 3-min video.
+Generate all 13 PNG visual assets for the 3-min video.
 
 Output: 1920x1080 PNGs in this directory, named cut_<time>_<topic>.png
 Run from this directory:  python3 generate_assets.py
 
 Theme: dark (slate-950 bg) with pink/violet/cyan/amber/emerald accents,
 matching docs/video_storyboard.html.
+
+Glyph rule: NO unicode stars / arrows / em-dashes — Helvetica fallback
+boxes them. Use ASCII alternatives ([1], >, -) that render reliably.
 """
+
+# ── leak event blacklist (mirrors Build Features v3) ────────────────────────
+LEAK_EVENTS = {
+    "subscription_upgraded","upgrade_subscription","clicked_upgrade","billing_info",
+    "addon_credits_purchased","add_credits","clicked_add_credits",
+    "agent_add_credits_button_clicked","agent_add_on_credits_popup_opened",
+    "claim_free_offer_clicked","promo_code_redeemed","team_plan_modal",
+    "agent_resume_plan_button_clicked","watermark_remove_upgrade_clicked",
+    "seats_exceeded_share_resource_warning_clicked_upgrade",
+    "subscription_downgraded","downgrade_subscription","subscription_cancelled",
+    "cancel_subscription","open_cancel_plan_modal","renew_plan",
+    "ai_credit_banner_clicked","work_email_bonus_credits_received",
+    "referral_bonus_credits_received","referral_credits_awarded",
+    "commercial_credits_received","referral_upgrade_bonus_awarded",
+    "deployment_credit_limit_modal","agent_cancel_plan_button_clicked",
+    # post-upgrade-intent events (CSV's is_leak_candidate misses these)
+    "agent_retry_message_button_clicked",
+}
 import os
 import numpy as np
 import pandas as pd
@@ -123,20 +144,25 @@ def make_discovery1():
 # ── 0:23 LIFT TABLE ──────────────────────────────────────────────────────────
 def make_lift_table():
     df = pd.read_csv(f"{DATA}/event_lift_table.csv")
-    df = df.loc[~df["is_leak_candidate"]].copy()
-    df = df.loc[df["upg_users"] >= 30].sort_values("lift_reach", ascending=False).head(6)
+    # Filter both is_leak_candidate AND our explicit leak event set
+    df = df.loc[~df["is_leak_candidate"] & ~df["event"].isin(LEAK_EVENTS)].copy()
+    df = df.loc[df["upg_users"] >= 50].sort_values("lift_reach", ascending=False).head(6)
 
     label_map = {
         "ai_credit_banner_shown":             "Limit-warning banner shown",
         "credits_exceeded":                   "Hit credit limit",
-        "agent_tool_call_analyze_attachment_tool": "Used analyze tool",
-        "notebook_deployment_deployed":       "Deployed a notebook",
-        "source_control_commit":              "Git commit",
-        "canvas_clone":                       "Cloned a canvas",
-        "agent_retry_message_button_clicked": "Retried agent message",
-        "notebook_deployment_preview_created":"Notebook preview deployed",
         "credits_below_4":                    "Credits running low",
+        "agent_tool_call_analyze_attachment_tool": "Used 'analyze' AI tool",
+        "notebook_deployment_deployed":       "Deployed a notebook",
+        "notebook_deployment_preview_created":"Created notebook preview",
+        "notebook_deployment_preview_updated":"Updated notebook preview",
+        "notebook_deployment_updated":        "Updated a deployment",
+        "source_control_commit":              "Made a Git commit",
+        "source_control_pull":                "Pulled from Git",
+        "canvas_clone":                       "Cloned a canvas",
         "credits_used":                       "Used credits",
+        "agent_message":                      "Sent a message to AI agent",
+        "files_upload":                       "Uploaded a file",
     }
     df["label"] = df["event"].map(lambda e: label_map.get(e, e))
 
@@ -148,20 +174,22 @@ def make_lift_table():
              fontsize=14, color=PINK, weight="bold", family="monospace")
 
     y_pos = np.arange(len(df))[::-1]
-    bars = ax.barh(y_pos, df["lift_reach"].values, color=[PINK, AMBER, VIOLET, CYAN, CYAN, CYAN])
+    palette = [PINK, AMBER, VIOLET, CYAN, CYAN, CYAN]
+    ax.barh(y_pos, df["lift_reach"].values, color=palette[:len(df)])
     ax.set_yticks(y_pos)
     ax.set_yticklabels(df["label"].values, fontsize=20)
-    ax.set_xlabel("Lift (× more likely than non-upgraders)", fontsize=18, color=MUTED, labelpad=14)
-    ax.set_xlim(0, df["lift_reach"].max() * 1.15)
+    ax.set_xlabel("Lift (x more likely than non-upgraders)", fontsize=18, color=MUTED, labelpad=14)
+    ax.set_xlim(0, df["lift_reach"].max() * 1.18)
     for spine in ("top", "right"):
         ax.spines[spine].set_visible(False)
     for sp in ("left", "bottom"):
         ax.spines[sp].set_color(BORDER)
     for y, v in zip(y_pos, df["lift_reach"].values):
-        ax.text(v + 0.5, y, f"{v:.1f}×", color=TEXT, va="center", fontsize=22, weight="bold")
-    fig.text(0.05, 0.06, "★ banner shown 22× and credit-limit hit 12× are the two strongest signals.",
+        ax.text(v + df["lift_reach"].max() * 0.015, y, f"{v:.1f}x",
+                color=TEXT, va="center", fontsize=22, weight="bold")
+    fig.text(0.05, 0.06, "Banner shown ~22x and credit-limit hit ~12x are the two strongest signals.",
              fontsize=18, color=EMERALD)
-    fig.subplots_adjust(left=0.30, right=0.95, top=0.78, bottom=0.15)
+    fig.subplots_adjust(left=0.32, right=0.96, top=0.78, bottom=0.15)
     save(fig, "cut_0_23_lift_table.png")
 
 # ── 0:41 FUNNEL 15-STAGE DISTRIBUTION ────────────────────────────────────────
@@ -260,7 +288,7 @@ def make_post_upg():
         fig.text(0.72, y - 0.005, sub, fontsize=14, color=MUTED, family="monospace",
                  transform=fig.transFigure)
     fig.text(0.5, 0.05,
-             "→ Treating 'upgraded' as the end of the funnel hides this. We added 2 new stages.",
+             "> Treating 'upgraded' as the end of the funnel hides this. We added 2 new stages.",
              fontsize=18, color=AMBER, ha="center", weight="bold")
     save(fig, "cut_0_53_post_upgrade_donut.png")
 
@@ -282,7 +310,7 @@ def make_transitions():
     im = ax.imshow(P, cmap="magma", aspect="auto", vmin=0, vmax=0.6)
     ax.set_xticks(range(8)); ax.set_xticklabels(stages, rotation=30, ha="right", fontsize=13)
     ax.set_yticks(range(8)); ax.set_yticklabels(stages, fontsize=13)
-    ax.set_xlabel("→ to stage", fontsize=16, color=MUTED, labelpad=14)
+    ax.set_xlabel("> to stage", fontsize=16, color=MUTED, labelpad=14)
     ax.set_ylabel("from stage", fontsize=16, color=MUTED, labelpad=14)
     for i in range(8):
         for j in range(8):
@@ -291,12 +319,12 @@ def make_transitions():
                 ax.text(j, i, f"{v*100:.0f}%", ha="center", va="center",
                         color=BG if v > 0.3 else TEXT, fontsize=13, weight="bold")
     # Highlight key cells
-    for (i, j, label) in [(5, 6, "51%\nIntegrated→Engaged"), (6, 7, "13%\nEngaged→Upgraded")]:
+    for (i, j, label) in [(5, 6, "51%\nIntegrated > Engaged"), (6, 7, "13%\nEngaged > Upgraded")]:
         ax.add_patch(plt.Rectangle((j-0.5, i-0.5), 1, 1, fill=False,
                                     edgecolor=PINK, linewidth=4))
 
     fig.text(0.05, 0.06,
-             "★ Half of users who connect a tool become consistent users. 13% of those convert to paid (7× the average).",
+             "> Half of users who connect a tool become consistent users. 13% of those convert to paid (7× the average).",
              fontsize=16, color=EMERALD)
     fig.subplots_adjust(left=0.18, right=0.92, top=0.79, bottom=0.18)
     save(fig, "cut_1_09_transitions.png")
@@ -337,7 +365,7 @@ def make_combos():
         ax.text(xi, -1.0, f"n={n:,}", ha="center", color=DIM, fontsize=12, family="monospace")
     ax.set_ylim(-2, 14)
     fig.text(0.5, 0.05,
-             "★ All three ON: 11.5% upgrade rate · All three OFF: 0.21% · 55× spread",
+             "> All three ON: 11.5% upgrade rate · All three OFF: 0.21% · 55× spread",
              fontsize=18, color=PINK, ha="center", weight="bold")
     fig.subplots_adjust(left=0.08, right=0.96, top=0.79, bottom=0.18)
     save(fig, "cut_1_23_flag_combos.png")
@@ -350,7 +378,7 @@ def make_models():
         ("Single XGBoost",       0.240, CYAN,   "10× random"),
         ("MLP (PyTorch)",        0.220, VIOLET, "9× random"),
         ("GBM (sklearn)",        0.230, AMBER,  "9× random"),
-        ("★ Calibrated ensemble", 0.265, PINK,   "11× random"),
+        ("* Calibrated ensemble", 0.265, PINK,   "11× random"),
     ]
     fig, ax = plt.subplots(figsize=(W, H))
     fig.patch.set_facecolor(BG); ax.set_facecolor(BG)
@@ -376,7 +404,7 @@ def make_models():
         ax.text(sc + 0.005, yi, f"{sc:.3f}  ·  {nt}",
                 color=TEXT, va="center", fontsize=15, family="monospace")
     fig.text(0.05, 0.06,
-             "★ Calibration: Brier 0.090 → 0.022 (4× more accurate probabilities)",
+             "> Calibration: Brier 0.090 -> 0.022 (4× more accurate probabilities)",
              fontsize=18, color=EMERALD)
     fig.subplots_adjust(left=0.30, right=0.96, top=0.79, bottom=0.16)
     save(fig, "cut_1_37_models.png")
@@ -409,11 +437,11 @@ def make_topk():
     caught5_random = cut5 * n_pos / n
     ax.scatter([5], [caught5_model],  color=PINK,  s=300, zorder=5, edgecolor=BG, lw=3)
     ax.scatter([5], [caught5_random], color=DIM,   s=300, zorder=5, edgecolor=BG, lw=3)
-    ax.annotate(f"top 5% → {caught5_model} upgraders\n(half of all upgraders)",
+    ax.annotate(f"top 5% > {caught5_model} upgraders\n(half of all upgraders)",
                 xy=(5, caught5_model), xytext=(15, caught5_model - 5),
                 fontsize=18, color=PINK, weight="bold",
                 arrowprops=dict(arrowstyle="->", color=PINK, lw=2))
-    ax.annotate(f"random 5% → only {int(caught5_random)} upgraders",
+    ax.annotate(f"random 5% > only {int(caught5_random)} upgraders",
                 xy=(5, caught5_random), xytext=(15, caught5_random + 8),
                 fontsize=15, color=MUTED,
                 arrowprops=dict(arrowstyle="->", color=DIM, lw=1.5))
@@ -427,22 +455,22 @@ def make_topk():
 
 # ── 2:03 SHAP + MARKETING MAPPING ────────────────────────────────────────────
 def make_shap_mapping():
-    df = pd.read_csv(f"{DATA}/mission1_v2_xgb_importance.csv").head(8)
+    df = pd.read_csv(f"{DATA}/mission1_v2_xgb_importance.csv").head(7)
     label_map = {
-        "os_Linux":                "Linux user (heavy compute)",
-        "hours_to_first_trigger":  "★ Hours to credit limit",
-        "country_India":           "Country = India",
-        "n_pageview_7d":           "Page views (first week)",
-        "n_credits_used_1h":       "Credits used (first hour)",
-        "n_agent_tool_1h":         "AI tool calls (first hour)",
-        "n_create_24h":            "Items created (first day)",
-        "purpose_Company Work":    "Purpose: company work",
-        "did_see_banner_7d":       "Limit-warning banner shown",
+        "os_Linux":                "Linux user",
+        "hours_to_first_trigger":  "Hours to credit limit",
+        "country_India":           "Country: India",
+        "n_pageview_7d":           "Page views (7d)",
+        "n_credits_used_1h":       "Credits used (1h)",
+        "n_agent_tool_1h":         "AI tool calls (1h)",
+        "n_create_24h":            "Items created (24h)",
+        "purpose_Company Work":    "Purpose: Company",
+        "did_see_banner_7d":       "Limit banner shown",
         "did_hit_credit_limit_7d": "Hit credit limit",
     }
     action_map = {
-        "os_Linux":                "Power-tier targeting; Linux-friendly Pro features",
-        "hours_to_first_trigger":  "★ In-app upgrade prompt within 24h of limit hit",
+        "os_Linux":                "Power-tier targeting; Linux Pro features",
+        "hours_to_first_trigger":  "In-app upgrade prompt within 24h of limit hit",
         "country_India":           "Regional pricing test for India users",
         "n_pageview_7d":           "Re-engagement email after first quiet day",
         "n_credits_used_1h":       "Free-trial offer to early heavy users",
@@ -452,13 +480,13 @@ def make_shap_mapping():
     }
     fig = plt.figure(figsize=(W, H))
     fig.patch.set_facecolor(BG)
-    fig.text(0.05, 0.92, "Why the model works · SHAP → Action",
-             fontsize=42, color=TEXT, weight="bold")
-    fig.text(0.05, 0.87, "09 · INTERPRETABILITY · each signal maps 1:1 to a marketing nudge",
+    fig.text(0.05, 0.92, "Why the model works  >  Marketing action",
+             fontsize=40, color=TEXT, weight="bold")
+    fig.text(0.05, 0.87, "09 · INTERPRETABILITY · each SHAP signal maps 1:1 to a marketing nudge",
              fontsize=14, color=PINK, weight="bold", family="monospace")
 
-    # left bar
-    ax = fig.add_axes([0.05, 0.10, 0.45, 0.70])
+    # left bar (wider left margin)
+    ax = fig.add_axes([0.18, 0.12, 0.30, 0.68])
     ax.set_facecolor(BG)
     y = np.arange(len(df))[::-1]
     feats = df["feature"].values
@@ -466,22 +494,23 @@ def make_shap_mapping():
     colors = [PINK if "trigger" in f else VIOLET for f in feats]
     ax.barh(y, gains, color=colors)
     ax.set_yticks(y)
-    ax.set_yticklabels([label_map.get(f, f) for f in feats], fontsize=14)
+    ax.set_yticklabels([label_map.get(f, f) for f in feats], fontsize=15)
     ax.set_xlabel("SHAP / feature importance", fontsize=14, color=MUTED, labelpad=12)
     for s in ("top", "right"): ax.spines[s].set_visible(False)
     for s in ("left", "bottom"): ax.spines[s].set_color(BORDER)
 
     # right column: marketing actions
-    fig.text(0.55, 0.78, "→  Marketing action", fontsize=20, color=CYAN,
-             weight="bold", family="monospace")
-    yspan = 0.70
+    fig.text(0.55, 0.78, "Marketing action",
+             fontsize=22, color=CYAN, weight="bold", family="monospace")
+    yspan = 0.65
     for i, f in enumerate(feats):
-        ypos = 0.78 - (i + 1) * (yspan / (len(feats) + 1))
+        ypos = 0.74 - (i + 1) * (yspan / (len(feats) + 1))
         action = action_map.get(f, "(other)")
         is_top = "trigger" in f
-        fig.text(0.55, ypos, "→ ", fontsize=20, color=PINK if is_top else MUTED, family="monospace")
-        fig.text(0.575, ypos, action,
-                 fontsize=15 if not is_top else 17,
+        fig.text(0.55, ypos, ">", fontsize=22, color=PINK if is_top else MUTED,
+                 family="monospace", weight="bold")
+        fig.text(0.58, ypos, action,
+                 fontsize=15 if not is_top else 18,
                  color=PINK if is_top else TEXT,
                  weight="bold" if is_top else "regular")
     save(fig, "cut_2_03_shap_action.png")
@@ -510,15 +539,15 @@ def make_guardrails():
                  ha="center", transform=fig.transFigure)
         fig.text(x + 0.02, 0.18, body, fontsize=15, color=MUTED, transform=fig.transFigure,
                  linespacing=1.7)
-    fig.text(0.5, 0.04, "→ Every metric we show today holds up in production, not just in a notebook.",
+    fig.text(0.5, 0.04, "> Every metric we show today holds up in production, not just in a notebook.",
              fontsize=18, color=EMERALD, ha="center", weight="bold")
     save(fig, "cut_2_17_guardrails.png")
 
 # ── 2:33 PLAYBOOK 7 ACTIONS ──────────────────────────────────────────────────
 def make_playbook():
     actions = [
-        ("Banner viewers (limit-warning shown)", 302,  16.4, PINK,    "★ strongest"),
-        ("Credit-ceiling hitters",                649,   9.6, PINK,    "★ #2"),
+        ("Banner viewers (limit-warning shown)", 302,  16.4, PINK,    "* strongest"),
+        ("Credit-ceiling hitters",                649,   9.6, PINK,    "#2"),
         ("Notebook deployers",                    353,   5.4, VIOLET,  ""),
         ("Power users (7+ engagement days)",      154,   2.5, CYAN,    ""),
         ("Tour completers (24h)",                2955,   3.1, CYAN,    ""),
