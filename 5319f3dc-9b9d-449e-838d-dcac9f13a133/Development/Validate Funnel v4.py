@@ -32,7 +32,7 @@ EXPECTED_STAGES = {
     "9.AtRisk@Engaged", "9.AtRisk@Upgraded", "9.Churned@Upgraded",
 }
 
-results: dict = {}
+results = {}
 
 # ─── 1. exactly one stage per user ────────────────────────────────────────
 n_total = len(uf)
@@ -79,7 +79,7 @@ ATRISK_MIN_RANK = {
     "9.AtRisk@Integrated": 6, "9.AtRisk@Engaged": 7,
     "9.AtRisk@Upgraded": 8,
 }
-atrisk_violations: dict = {}
+atrisk_violations = {}
 for label, min_rank in ATRISK_MIN_RANK.items():
     sub = uf[uf["final_stage"] == label]
     bad = int((sub["highest"].astype(int) < min_rank).sum())

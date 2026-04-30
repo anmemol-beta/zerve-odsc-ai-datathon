@@ -24,7 +24,7 @@ import pandas as pd
 
 # ─── 1. user-level disjoint ───────────────────────────────────────────────
 overlap = sorted(set(X_v3_train.index) & set(X_v3_test.index))
-results: dict = {}
+results = {}
 results["user_disjoint"] = {
     "overlap_count": len(overlap),
     "examples": [str(x) for x in overlap[:5]],
