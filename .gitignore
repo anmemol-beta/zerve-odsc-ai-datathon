@@ -5,3 +5,11 @@
 /app.zip
 __pycache__/
 .DS_Store
+
+# secrets — NEVER commit
+.env
+.env.local
+.env.*.local
+*.key
+api_keys.txt
+llm_cache/
