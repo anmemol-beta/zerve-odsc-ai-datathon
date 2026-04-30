@@ -31,8 +31,6 @@ Inputs (canvas namespace):
     X_v3_train            — used as the "background distribution" for sampling
     feature_cols_v3       — column order
 """
-from __future__ import annotations
-
 import time
 import numpy as np
 import pandas as pd

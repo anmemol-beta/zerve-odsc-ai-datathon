@@ -18,8 +18,6 @@ Inputs (from canvas namespace):
 Outputs:
     segment_performance_v3   pd.DataFrame  — one row per stage
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

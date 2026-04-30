@@ -24,8 +24,6 @@ Why per-(week, user) and not just per-week aggregate:
     flat even if the variance explodes). Per-(week, user) lets the drift
     block use PSI / KS / JS divergence on each feature.
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 

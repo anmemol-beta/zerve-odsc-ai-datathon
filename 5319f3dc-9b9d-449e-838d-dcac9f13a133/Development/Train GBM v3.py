@@ -27,8 +27,6 @@ The historical name 'CatBoost' is retained as a comment because earlier
 canvas runs used real catboost; the block intent (bias-diverse GBM) is
 unchanged.
 """
-from __future__ import annotations
-
 import warnings
 import numpy as np
 

@@ -29,8 +29,6 @@ Either way, outputs are interchangeable:
 Inputs (from canvas namespace):
     X_v3_train, y_v3_train, X_v3_test, y_v3_test, feature_cols_v3
 """
-from __future__ import annotations
-
 import warnings
 import numpy as np
 

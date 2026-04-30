@@ -12,8 +12,6 @@ Outputs:
     model_age_hours     float — how stale is the champion?
     inference_ready     bool  — True only when champion model loaded OK
 """
-from __future__ import annotations
-
 import json
 import urllib.request
 from datetime import datetime, timezone

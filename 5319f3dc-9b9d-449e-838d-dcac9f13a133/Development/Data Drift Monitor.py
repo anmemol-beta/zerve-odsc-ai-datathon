@@ -28,8 +28,6 @@ Outputs:
     weekly_drift_index           pd.DataFrame  one row per week
     drift_alerts                 list[dict]    actionable callouts
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

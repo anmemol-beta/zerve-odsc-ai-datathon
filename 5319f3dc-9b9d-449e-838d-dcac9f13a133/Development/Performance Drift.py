@@ -14,8 +14,6 @@ Outputs:
     drift_summary    pd.DataFrame  — per-model stability + slope + rank
     drift_alerts     list[dict]    — actionable callouts
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

@@ -3,12 +3,12 @@
 **Frontend**: <https://anmemol-beta.github.io/zerve-odsc-ai-datathon/>
 **API**: <https://beta-zerve.hub.zerve.cloud>
 
-A production-style MLOps pipeline built entirely inside the Zerve canvas. **33 blocks · 52 edges**, organized as a parallel-converge DAG that goes from raw events → validated features → an AutoML pool of 5 models → drift detection → a champion picked for serving → a Next.js frontend that reads canvas variables in real time.
+A production-style MLOps pipeline built entirely inside the Zerve canvas. **37 blocks · 57 edges**, organized as a parallel-converge DAG that goes from raw events → validated features → an AutoML pool of 5 models → drift detection → a champion picked for serving → a weekly retraining feedback loop → a Next.js frontend that reads canvas variables in real time.
 
 ```
 ┌──────────────────────┐        ┌──────────────────────┐        ┌──────────────────────┐
 │  Zerve canvas        │        │  Zerve deployment    │        │  GitHub Pages        │
-│  (Beta · 33 blocks)  │  ◄──►  │  zerve_deploy/main.py│  ◄──►  │  Next.js static site │
+│  (Beta · 37 blocks)  │  ◄──►  │  zerve_deploy/main.py│  ◄──►  │  Next.js static site │
 │                      │        │  beta-zerve.hub...   │        │  /web                │
 └──────────────────────┘        └──────────────────────┘        └──────────────────────┘
         ▲                                ▲                                ▲
@@ -23,7 +23,7 @@ The frontend never executes ML code. It draws the canvas DAG (using the exact xy
 - pick a segment → `GET /strategies/segments` (K2-Think output from the canvas)
 - the final card → `GET /insights` + `/figure/Insights Card`
 
-## Pipeline (33 blocks, parallel-converge DAG)
+## Pipeline (37 blocks, parallel-converge DAG)
 
 ```
                             ┌─ EDA Summary
@@ -68,8 +68,11 @@ Five tiers, each running in parallel within itself and converging at the next:
 | **Diagnostics + AutoML loop** | Diagnose v3, SHAP v3 (real shap or pure-numpy Štrumbelj-Kononenko fallback), Compare Models, Per-Segment Performance, Time-Rolling Splits, Train Across Time, Performance Drift, Champion Selector | rolling cohorts × all candidates → weighted champion (0.5·latest + 0.3·mean + 0.2·stability) |
 | **Strategy + Insights** | Build Strategies (K2-Think LLM strategist), ROI Ranking, Strategy Heatmap, Visualize Cohort, Insights Card | per-segment playbooks with cached fallback |
 | **Weekly drift + serve** | Weekly Data Slices, Data Drift Monitor (PSI 0.10/0.25 + KS), Persist Models, Load Models, Weekly Inference | train tier persists champion to `/tmp/zerve-models/v3/`; inference tier loads on demand and scores incoming weekly slices |
+| **Weekly data feedback loop** | Load Events Master, Load Weekly Drop, Merge Events, Persist Master | reads accumulated events pool from a durable store + this week's incoming drop; merges, dedups, applies a label-lag cutoff (60d); writes the new master back. Closes the retraining loop |
 
 Training and serving are **decoupled**: Persist Models writes joblib pickles + `meta.json`, Load Models reads them (with a GitHub-raw fallback so cold containers still work), Weekly Inference does the actual scoring without re-training. Run Persist Models on a weekly cron and Weekly Inference on demand.
+
+The data tier is **append-only**: Load Events Master fetches `data/events_master.parquet` from a durable store (GitHub raw in this demo, S3/GCS in production). Load Weekly Drop pulls one week of new events at a time. Merge Events unions, dedups, and applies a 60-day label-lag cutoff so users whose subscription outcome is still uncertain are excluded from the trainable subset. Persist Master writes back the updated pool with a SHA-256 hash for idempotent CI promotion.
 
 ## Repo layout
 

@@ -12,8 +12,6 @@ Why this block exists:
     *enforces* its assumptions at every stage is strictly stronger than one
     that only documents them in a README.
 """
-from __future__ import annotations
-
 import pandas as pd
 
 # ─── 1. schema ────────────────────────────────────────────────────────────

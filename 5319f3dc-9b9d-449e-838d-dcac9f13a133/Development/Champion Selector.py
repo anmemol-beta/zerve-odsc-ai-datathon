@@ -24,8 +24,6 @@ Outputs:
     current_champion         str
     champion_summary         dict
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

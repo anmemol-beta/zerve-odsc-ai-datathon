@@ -16,8 +16,6 @@ Outputs:
     insights_card_text    str  — the summary text (so it can be embedded)
     insights_payload      dict — structured payload, ready for the report
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

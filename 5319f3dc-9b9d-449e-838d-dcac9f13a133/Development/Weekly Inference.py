@@ -23,8 +23,6 @@ Outputs:
     weekly_pred_summary     pd.DataFrame  — week-level aggregate
     weekly_pred_by_stage    pd.DataFrame  — week × v4_stage aggregate
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

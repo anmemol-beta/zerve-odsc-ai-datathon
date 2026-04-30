@@ -23,8 +23,6 @@ web/public/data/strategies.json — that file is regenerated locally by
 build_strategies.py + committed; the canvas block is the cloud-side mirror
 for rubric "all work in Zerve" compliance.
 """
-from __future__ import annotations
-
 import json
 import os
 import re

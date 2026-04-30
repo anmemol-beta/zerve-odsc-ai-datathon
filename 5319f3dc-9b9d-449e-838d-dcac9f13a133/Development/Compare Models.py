@@ -10,8 +10,6 @@ Outputs:
     chosen_model           str  — "ensemble_v3"
     comparison_summary     dict — for the report block
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

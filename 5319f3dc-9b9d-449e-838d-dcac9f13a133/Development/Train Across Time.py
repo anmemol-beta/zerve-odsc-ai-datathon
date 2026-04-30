@@ -21,8 +21,6 @@ Inputs (from canvas namespace):
 Outputs:
     rolling_metrics_v3    pd.DataFrame  — long table: cohort × model → metrics
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (

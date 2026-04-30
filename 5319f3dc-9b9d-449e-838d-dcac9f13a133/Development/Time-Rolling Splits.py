@@ -21,8 +21,6 @@ Outputs:
           "n_test_pos": int }
     user_signup_month  pd.Series  — month-period per person_id
 """
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 

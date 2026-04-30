@@ -15,8 +15,6 @@ table. The reliability diagram makes the win visible.
 Outputs:
     diagnose_v3   dict — per-model metrics (PR-AUC, ROC-AUC, Brier, ECE)
 """
-from __future__ import annotations
-
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.calibration import calibration_curve

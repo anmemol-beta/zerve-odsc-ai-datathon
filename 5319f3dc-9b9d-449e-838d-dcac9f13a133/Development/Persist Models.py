@@ -29,8 +29,6 @@ Outputs:
     artifacts_path     str   — directory we wrote to
     artifacts_meta     dict  — same content as meta.json
 """
-from __future__ import annotations
-
 import json
 import os
 from datetime import datetime, timezone
