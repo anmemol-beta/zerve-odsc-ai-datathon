@@ -3,12 +3,12 @@
 **Frontend**: <https://anmemol-beta.github.io/zerve-odsc-ai-datathon/>
 **API**: <https://beta-zerve.hub.zerve.cloud>
 
-A production-style MLOps pipeline built entirely inside the Zerve canvas. **35 blocks · 50 edges**, organized as a parallel-converge DAG that goes from raw events → validated features → an AutoML pool of 5 models → drift detection → a champion picked for serving → a weekly retraining feedback loop → a Next.js frontend that reads canvas variables in real time.
+A production-style MLOps pipeline built entirely inside the Zerve canvas. **32 blocks · 42 edges**, organized as a parallel-converge DAG that goes from raw events → validated features → an AutoML pool of 5 models → drift detection → a champion picked for serving → a weekly retraining feedback loop → a Next.js frontend that reads canvas variables in real time.
 
 ```
 ┌──────────────────────┐        ┌──────────────────────┐        ┌──────────────────────┐
 │  Zerve canvas        │        │  Zerve deployment    │        │  GitHub Pages        │
-│  (Beta · 35 blocks)  │  ◄──►  │  zerve_deploy/main.py│  ◄──►  │  Next.js static site │
+│  (Beta · 32 blocks)  │  ◄──►  │  zerve_deploy/main.py│  ◄──►  │  Next.js static site │
 │                      │        │  beta-zerve.hub...   │        │  /web                │
 └──────────────────────┘        └──────────────────────┘        └──────────────────────┘
         ▲                                ▲                                ▲
