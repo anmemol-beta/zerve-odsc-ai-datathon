@@ -170,9 +170,12 @@ blocks:
 - auto_size: false
   canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   compute_settings:
-    compute_environment_type: 1
+    compute_environment_type: 2
+    ephemeral_storage_gib: 20
+    size: small
   description: Calibrated XGBoost + RandomForest + HistGB ensemble (isotonic, cv=3)
     with soft voting. Reports PR-AUC, ROC-AUC, Brier, top-K precision/recall.
+    Runs on Fargate (xgboost wheel + ensemble too heavy for Lambda's 1.5GB).
   height: 1000
   id: 826b50f0-502c-4fba-8c2f-0a0628ecf936
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
