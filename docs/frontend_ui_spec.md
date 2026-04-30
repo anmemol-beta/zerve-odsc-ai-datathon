@@ -120,7 +120,12 @@ export default function Page() {
         <ModelComparison />
       </Section>
 
-      <Section kicker="07" title="Campaign ROI calculator"
+      <Section kicker="07" title="Why the model works"
+               subtitle="SHAP가 보여주는 top-10 시그널, 그리고 각 시그널이 어떤 마케팅 액션과 1:1로 매핑되는지.">
+        <FeatureImportance />
+      </Section>
+
+      <Section kicker="08" title="Campaign ROI calculator"
                subtitle="타겟 비율을 슬라이더로 움직이면 결제자 포착 수가 즉시 갱신.">
         <TopKSimulator />
       </Section>
@@ -530,6 +535,89 @@ API: `GET /api/model-comparison` (백엔드에서 캔버스 `metrics_v3` + `Comp
 - [ ] 표 row hover → 해당 PR curve가 굵어지고 나머지 fade
 - [ ] champion row violet glow + ★
 - [ ] calibration plot에 y=x 대각선 + uncalibrated 곡선(앰버 점선) + ours(에메랄드 실선)
+
+---
+
+### §06.5 WHY THE MODEL WORKS — `FeatureImportance.tsx` (신규)
+
+**목적**: SHAP top-N + 마케팅 매핑. 영상 2:15 컷과 1:1.
+
+**왜 별도 섹션인가**: 모델 정확도(§06)와 비즈니스 가치(§07) 사이의 **인과 다리**. "모델은 정확하다 → 그래서 5% 타겟 = 효율 10배"로 바로 가면 심사위원이 "모델이 *왜* 이걸 잡는지"를 모름. 이 섹션이 그 답.
+
+```tsx
+type FeatureImportance = {
+  shap_top: Array<{
+    feature: string;                  // "hours_to_first_trigger"
+    label_ko: string;                 // "크레딧 한도 도달 속도"
+    label_en: string;                 // "Time to credit limit"
+    mean_abs_shap: number;            // 0.0273
+    direction: "positive" | "negative";
+    marketing_action_ko: string;      // "한도 임박 시점 24h 안에 in-app 결제 prompt"
+    marketing_action_en: string;
+    target_users_estimate: number;    // 649
+    expected_lift: number;            // 9.6
+  }>;
+};
+```
+
+API: `GET /api/feature-importance` (캔버스 `SHAP v3` 블록 + `mission1_v3_logit_coef.csv` 활용)
+
+레이아웃:
+```
+┌──────────────────────────────────────────────────────────┐
+│   What the model actually looks at                       │
+│                                                           │
+│   ┌─ SHAP top-10 (left 60%) ──┬─ Marketing bridge (40%)─┐│
+│   │ ▓▓▓▓▓▓▓▓ time to limit   │ → in-app prompt 24h     ││
+│   │ ▓▓▓▓▓▓▓ banner shown      │ → conversion modal       ││
+│   │ ▓▓▓▓▓▓ first-hour AI      │ → onboarding tour CTA    ││
+│   │ ▓▓▓▓▓ 7d page views       │ → re-engage email        ││
+│   │ ▓▓▓▓ created in 24h       │ → power-user webinar     ││
+│   │ ▓▓▓ purpose=Company       │ → sales-led cohort       ││
+│   │ ▓▓ device=Desktop         │ → desktop-first UX       ││
+│   │ ▓▓ os=Linux               │ → power-tier targeting   ││
+│   │ ▓ country=India           │ → regional pricing test  ││
+│   │ ▓ tour finished 24h       │ → 14d Pro free trial     ││
+│   └────────────────────────────┴──────────────────────────┘│
+│                                                            │
+│   각 feature → 1:1 캠페인 매핑                            │
+│   "모델이 보는 것"과 "마케팅이 할 것"이 같은 표에 있음   │
+└──────────────────────────────────────────────────────────┘
+```
+
+**인터랙션**:
+- bar hover → 우측 마케팅 액션 카드 highlight
+- bar 클릭 → §10 K2 StrategyGallery로 anchor scroll + 그 feature가 강한 segment 자동 선택
+
+**완료 기준**:
+- [ ] SHAP top-10 가로 막대 (`mean_abs_shap` desc)
+- [ ] direction(positive/negative) 색상 분리: violet vs rose
+- [ ] 우측에 마케팅 액션 매핑 1:1
+- [ ] hover 시 좌우 동기 highlight
+
+**인라인 폴백**:
+```ts
+const FALLBACK_SHAP: FeatureImportance = {
+  shap_top: [
+    { feature: "hours_to_first_trigger", label_ko: "크레딧 한도 도달 속도",
+      label_en: "Time to credit limit", mean_abs_shap: 0.0273, direction: "positive",
+      marketing_action_ko: "한도 임박 시점 24h 내 in-app 결제 prompt",
+      marketing_action_en: "In-app upgrade prompt within 24h of limit hit",
+      target_users_estimate: 649, expected_lift: 9.6 },
+    { feature: "did_see_banner_7d", label_ko: "한도 임박 배너 노출",
+      label_en: "Limit-warning banner shown", mean_abs_shap: 0.0134, direction: "positive",
+      marketing_action_ko: "배너 노출 후 24-48h 내 conversion modal",
+      marketing_action_en: "Conversion modal 24-48h after banner",
+      target_users_estimate: 302, expected_lift: 16.4 },
+    { feature: "n_credits_used_1h", label_ko: "첫 1시간 크레딧 사용량",
+      label_en: "First-hour credit usage", mean_abs_shap: 0.0158, direction: "positive",
+      marketing_action_ko: "초기 적극 사용자에게 Pro free-trial 제안",
+      marketing_action_en: "Pro free-trial offer to early heavy users",
+      target_users_estimate: 720, expected_lift: 4.2 },
+    // ... 7 more
+  ],
+};
+```
 
 ---
 

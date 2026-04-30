@@ -358,7 +358,7 @@
     <div class="seg k-model"    style="flex:14"> <span class="tlab">1:49</span><span class="ttitle">ensemble</span></div>
     <div class="seg k-model"    style="flex:12"> <span class="tlab">2:03</span><span class="ttitle">top-K</span></div>
     <div class="seg k-model"    style="flex:14" style="border-top: 2px solid var(--pink); background: linear-gradient(180deg, #2a1a3a, #0d1224)"> <span class="tlab">2:15</span><span class="ttitle">★ SHAP→마케팅</span></div>
-    <div class="seg k-mlops"    style="flex:16"> <span class="tlab">2:29</span><span class="ttitle">champion</span></div>
+    <div class="seg k-mlops"    style="flex:16"> <span class="tlab">2:29</span><span class="ttitle">guardrails</span></div>
     <div class="seg k-business" style="flex:14"> <span class="tlab">2:45</span><span class="ttitle">playbook</span></div>
     <div class="seg k-business" style="flex:12"> <span class="tlab">2:59</span><span class="ttitle">K2 demo</span></div>
     <div class="seg k-meta"     style="flex:3">  <span class="tlab">3:11</span><span class="ttitle">end</span></div>
@@ -672,20 +672,21 @@
     <div class="shot-head">
       <span class="pill-time">2:29</span>
       <span class="duration">16s</span>
-      <span class="kind-tag">mlops</span>
+      <span class="kind-tag">guardrails</span>
     </div>
     <div class="screen">
       <div class="label">SCREEN</div>
-      <div class="desc">Champion Selector + Performance Drift dashboard<br/>+ Data Drift Monitor heatmap (PSI/KS)</div>
+      <div class="desc">3-tier audit (Validate Events / Funnel v4 / Features v3)<br/>+ Diagnose v3 calibration reliability plot<br/>+ Data Drift Monitor PSI/KS heatmap</div>
     </div>
     <div class="overlays">
-      <span class="chip emerald">0.5 latest + 0.3 mean + 0.2 stability</span>
-      <span class="chip emerald">PSI 0.10 / 0.25</span>
-      <span class="chip">no-label drift watch</span>
+      <span class="chip emerald">21 leakage checks · automated</span>
+      <span class="chip emerald">PSI/KS weekly · no labels needed</span>
+      <span class="chip emerald">Calibrated probability · Brier 0.022</span>
+      <span class="chip">3 production guardrails</span>
     </div>
     <div class="voice">
-      <span class="vlabel">VOICE-OVER · EN</span>
-      Picking a champion from a single train-test split is a trap. So we run <b>all five models against four monthly cohorts — twenty evaluations</b> — and weight <b>stability at fifty percent</b>. A model that got lucky on March alone will not win. After deployment, we watch incoming data every week using two distribution-shift metrics. <b>No labels needed</b>. If drift crosses zero point two five, the system flags it for retraining.
+      <span class="vlabel">VOICE-OVER · EN · GUARDRAILS</span>
+      Beyond accuracy we wired <b>three production guardrails</b>. <b>Every pipeline block runs an automated audit</b> — leakage, feature shape, funnel rules. After deployment, we watch incoming data every week with <b>PSI and KS divergence — no labels needed</b>. And every prediction is <b>calibrated</b>, so when we say "twenty-three percent chance", that really means twenty-three percent.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -745,10 +746,10 @@
     </div>
   </div>
 
-  <!-- 14 -->
+  <!-- 15 -->
   <div class="shot k-meta">
     <div class="shot-head">
-      <span class="pill-time">2:57</span>
+      <span class="pill-time">3:11</span>
       <span class="duration">3s</span>
       <span class="kind-tag">end</span>
     </div>
@@ -824,7 +825,7 @@
         <td class="score">15</td>
         <td>
           <span class="where primary">1:37 leakage</span>
-          <span class="where">2:15 stability</span>
+          <span class="where">2:29 guardrails</span>
         </td>
       </tr>
       <tr>
@@ -834,7 +835,8 @@
         <td>
           <span class="where primary">1:49 metrics</span>
           <span class="where primary">2:03 top-K</span>
-          <span class="where">2:15 champion</span>
+          <span class="where primary">2:15 SHAP→action</span>
+          <span class="where">2:29 guardrails</span>
         </td>
       </tr>
       <tr>
@@ -860,7 +862,8 @@
         <td>Insights, Recommendations &amp; Business Impact</td>
         <td class="score">5</td>
         <td>
-          <span class="where primary">2:31 playbook</span>
+          <span class="where primary">2:45 playbook</span>
+          <span class="where primary">2:15 SHAP→action</span>
           <span class="where">2:03 top-K</span>
           <span class="where">0:53 post-upg</span>
         </td>
@@ -870,8 +873,8 @@
         <td>Communication &amp; Presentation</td>
         <td class="score">5</td>
         <td>
-          <span class="where primary">2:45 live demo</span>
-          <span class="where">2:57 end</span>
+          <span class="where primary">2:59 live demo</span>
+          <span class="where">3:11 end</span>
         </td>
       </tr>
     </tbody>
@@ -882,12 +885,13 @@
 <div class="checklist">
   <h3>녹화 직전 체크리스트</h3>
   <ol>
-    <li>캔버스 블록 13개 미리 다 실행해서 출력 캐시 — <code>EDA Summary</code>, <code>Funnel v4</code>, <code>Validate Features v3</code>, <code>Compare Models</code>, <code>Champion Selector</code>, <code>Performance Drift</code>, <code>Data Drift Monitor</code>, <code>Per-Segment Performance</code>, <code>Build Strategies</code>, <code>ROI Ranking</code>, <code>Insights Card</code>, <code>Visualize Cohort</code>, <code>Visualize Funnel</code></li>
-    <li>분석 리포트 표 4개를 <strong>큰 글자</strong>로 캡처해 두기 — 6장(lift table), 8장(meta combo), 10장(transitions), 11장(post-upg lifecycle)</li>
-    <li>프론트엔드 새 탭에서 <code>https://anmemol-beta.github.io/zerve-odsc-ai-datathon/</code> 한 번 ping → 콜드 스타트 워밍업</li>
+    <li>캔버스 블록 13개 미리 다 실행해서 출력 캐시 — <code>EDA Summary</code>, <code>Funnel v4</code>, <code>Validate Events</code>, <code>Validate Funnel v4</code>, <code>Validate Features v3</code>, <code>Compare Models</code>, <code>Diagnose v3</code>, <code>SHAP v3</code>, <code>Data Drift Monitor</code>, <code>Per-Segment Performance</code>, <code>Build Strategies</code>, <code>ROI Ranking</code>, <code>Insights Card</code>, <code>Visualize Cohort</code>, <code>Visualize Funnel</code></li>
+    <li>분석 리포트 표 4개 + SHAP top-10 차트를 <strong>큰 글자</strong>로 캡처 — 6장(lift table), 8장(meta combo), 10장(transitions), 11장(post-upg lifecycle), 9장(SHAP feature importance)</li>
+    <li>프론트엔드 새 탭에서 라이브 사이트 한 번 ping → 콜드 스타트 워밍업</li>
     <li>K2 StrategyGallery에서 한 segment 미리 펼쳐서 카드 3개 보이게 두고 녹화 시작</li>
     <li>보이스오버 3분 풀테이크 한 번 녹음 → DaVinci에서 컷 시퀀스를 voice 위에 붙임 (반대 순서 X)</li>
-    <li>이 페이지를 <strong>두 번째 모니터</strong>나 <strong>인쇄</strong>해서 옆에 두고 녹화 (Cmd+P → "background graphics" 체크하면 다크 그대로, 끄면 흑백)</li>
+    <li><strong>★ DaVinci 마지막 단계</strong> — 전체 voice + video 트랙을 <strong>1.078× speed</strong>로 retime (clip 우클릭 → "Change Clip Speed" → 107.8%). raw 194초 → 180초로 자연스럽게 압축. pitch correction 켜기.</li>
+    <li>이 페이지를 <strong>두 번째 모니터</strong>나 <strong>인쇄</strong>해서 옆에 두고 녹화</li>
   </ol>
 </div>
 

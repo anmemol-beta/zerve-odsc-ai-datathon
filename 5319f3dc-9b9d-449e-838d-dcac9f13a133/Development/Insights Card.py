@@ -174,14 +174,14 @@ insights_payload = {
 }
 
 # ─── 4. visual card ───────────────────────────────────────────────────────
-fig, ax = plt.subplots(figsize=(12, 8))
-ax.axis("off")
-ax.text(0.5, 0.97, "Zerve Upgrade Prediction & Funnel — Final Insights",
+ic_fig, ic_ax = plt.subplots(figsize=(12, 8))
+ic_ax.axis("off")
+ic_ax.text(0.5, 0.97, "Zerve Upgrade Prediction & Funnel — Final Insights",
         fontsize=18, fontweight="bold", ha="center", va="top",
-        transform=ax.transAxes, color="#1e293b")
-ax.text(0.5, 0.92, generated,
+        transform=ic_ax.transAxes, color="#1e293b")
+ic_ax.text(0.5, 0.92, generated,
         fontsize=10, ha="center", va="top",
-        transform=ax.transAxes, color="#64748b")
+        transform=ic_ax.transAxes, color="#64748b")
 
 # four big numbers
 panels = [
@@ -192,14 +192,14 @@ panels = [
 ]
 for i, (label, value, color) in enumerate(panels):
     x = 0.05 + i * 0.235
-    ax.add_patch(plt.Rectangle((x, 0.65), 0.21, 0.18,
-                               transform=ax.transAxes,
+    ic_ax.add_patch(plt.Rectangle((x, 0.65), 0.21, 0.18,
+                               transform=ic_ax.transAxes,
                                facecolor=color, alpha=0.12,
                                edgecolor=color, linewidth=1.5))
-    ax.text(x + 0.105, 0.78, label, fontsize=10, ha="center",
-            transform=ax.transAxes, color="#475569")
-    ax.text(x + 0.105, 0.71, value, fontsize=16, fontweight="bold",
-            ha="center", transform=ax.transAxes, color=color)
+    ic_ax.text(x + 0.105, 0.78, label, fontsize=10, ha="center",
+            transform=ic_ax.transAxes, color="#475569")
+    ic_ax.text(x + 0.105, 0.71, value, fontsize=16, fontweight="bold",
+            ha="center", transform=ic_ax.transAxes, color=color)
 
 # narrative
 narrative = (
@@ -212,24 +212,24 @@ narrative = (
     f"{len(strategies['segments'])} segments — all grounded in segment-specific "
     "data and a Zerve playbook excerpt."
 )
-ax.text(0.5, 0.55, narrative, fontsize=11, ha="center", va="top",
-        transform=ax.transAxes, color="#1e293b", wrap=True)
+ic_ax.text(0.5, 0.55, narrative, fontsize=11, ha="center", va="top",
+        transform=ic_ax.transAxes, color="#1e293b", wrap=True)
 
 if top_action is not None:
-    ax.text(0.5, 0.32,
+    ic_ax.text(0.5, 0.32,
             f"TOP ROI ACTION   {top_action['roi_multiple']:.1f}x",
             fontsize=14, fontweight="bold", ha="center",
-            transform=ax.transAxes, color="#ec4899")
-    ax.text(0.5, 0.27,
+            transform=ic_ax.transAxes, color="#ec4899")
+    ic_ax.text(0.5, 0.27,
             f"{top_action['segment_label']}  →  {top_action['channel']}",
-            fontsize=11, ha="center", transform=ax.transAxes, color="#475569")
-    ax.text(0.5, 0.22, f"\"{top_action['title'][:80]}\"",
+            fontsize=11, ha="center", transform=ic_ax.transAxes, color="#475569")
+    ic_ax.text(0.5, 0.22, f"\"{top_action['title'][:80]}\"",
             fontsize=10, ha="center", style="italic",
-            transform=ax.transAxes, color="#1e293b")
+            transform=ic_ax.transAxes, color="#1e293b")
 
-ax.text(0.5, 0.05,
+ic_ax.text(0.5, 0.05,
         "EDA → v4 Funnel → v3 Features → v3 Ensemble → SHAP/Diagnose → K2 Strategist → Insights",
-        fontsize=9, ha="center", transform=ax.transAxes,
+        fontsize=9, ha="center", transform=ic_ax.transAxes,
         color="#64748b", family="monospace")
 
 plt.tight_layout()
