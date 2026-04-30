@@ -283,14 +283,14 @@
   <div>
     <div class="logo">Zerve × ODSC AI Datathon · April 2026</div>
     <h1>3-min video storyboard</h1>
-    <div class="sub">15 cuts · 180s · findings + interpretability · audience-friendly · leakage 21/21 ✓</div>
+    <div class="sub">14 cuts · 180s · findings + interpretability · screen-led, voice-light</div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="v">180s</div><div class="l">target (edited)</div></div>
-    <div class="stat"><div class="v">194s</div><div class="l">raw → 7% speed-up</div></div>
-    <div class="stat"><div class="v">15</div><div class="l">cuts</div></div>
-    <div class="stat"><div class="v">21/21</div><div class="l">leak audit</div></div>
+    <div class="stat"><div class="v">180s</div><div class="l">target</div></div>
+    <div class="stat"><div class="v">~178s</div><div class="l">raw · near-natural</div></div>
+    <div class="stat"><div class="v">14</div><div class="l">cuts</div></div>
     <div class="stat"><div class="v">3.5M</div><div class="l">events</div></div>
+    <div class="stat"><div class="v">17,541</div><div class="l">users</div></div>
   </div>
 </header>
 
@@ -354,14 +354,13 @@
     <div class="seg k-funnel"   style="flex:16"> <span class="tlab">0:53</span><span class="ttitle">결제자 32% 위험</span></div>
     <div class="seg k-funnel"   style="flex:14"> <span class="tlab">1:09</span><span class="ttitle">transitions</span></div>
     <div class="seg k-discover" style="flex:14"> <span class="tlab">1:23</span><span class="ttitle">meta 55×</span></div>
-    <div class="seg k-leakage"  style="flex:12"> <span class="tlab">1:37</span><span class="ttitle">leakage</span></div>
-    <div class="seg k-model"    style="flex:14"> <span class="tlab">1:49</span><span class="ttitle">ensemble</span></div>
-    <div class="seg k-model"    style="flex:12"> <span class="tlab">2:03</span><span class="ttitle">top-K</span></div>
-    <div class="seg k-model"    style="flex:14" style="border-top: 2px solid var(--pink); background: linear-gradient(180deg, #2a1a3a, #0d1224)"> <span class="tlab">2:15</span><span class="ttitle">★ SHAP→마케팅</span></div>
-    <div class="seg k-mlops"    style="flex:16"> <span class="tlab">2:29</span><span class="ttitle">guardrails</span></div>
-    <div class="seg k-business" style="flex:14"> <span class="tlab">2:45</span><span class="ttitle">playbook</span></div>
-    <div class="seg k-business" style="flex:12"> <span class="tlab">2:59</span><span class="ttitle">K2 demo</span></div>
-    <div class="seg k-meta"     style="flex:3">  <span class="tlab">3:11</span><span class="ttitle">end</span></div>
+    <div class="seg k-model"    style="flex:14"> <span class="tlab">1:37</span><span class="ttitle">ensemble</span></div>
+    <div class="seg k-model"    style="flex:12"> <span class="tlab">1:51</span><span class="ttitle">top-K</span></div>
+    <div class="seg k-model"    style="flex:14;border-top:2px solid var(--pink);background:linear-gradient(180deg,#2a1a3a,#0d1224)"> <span class="tlab">2:03</span><span class="ttitle">★ SHAP→action</span></div>
+    <div class="seg k-mlops"    style="flex:16"> <span class="tlab">2:17</span><span class="ttitle">guardrails</span></div>
+    <div class="seg k-business" style="flex:14"> <span class="tlab">2:33</span><span class="ttitle">playbook</span></div>
+    <div class="seg k-business" style="flex:12"> <span class="tlab">2:47</span><span class="ttitle">K2 demo</span></div>
+    <div class="seg k-meta"     style="flex:3">  <span class="tlab">2:59</span><span class="ttitle">end</span></div>
   </div>
   <div class="legend">
     <span class="li"><span class="dot" style="background:var(--pink)"></span>discovery / business</span>
@@ -555,33 +554,9 @@
   </div>
 
   <!-- 8 -->
-  <div class="shot k-leakage">
-    <div class="shot-head">
-      <span class="pill-time">1:37</span>
-      <span class="duration">12s</span>
-      <span class="kind-tag">leakage</span>
-    </div>
-    <div class="screen">
-      <div class="label">SCREEN — SPLIT CARD</div>
-      <div class="desc">좌: <b style="color:#fbbf24">COST</b> · big amber number "−28%" / "PR-AUC 0.37 → 0.265" / "39 features dropped"<br/>우: <b style="color:#34d399">BENEFIT</b> · "21/21 audit checks pass" / "every metric production-honest" / "no leak survives review"<br/>위쪽 banner: "Our biggest discipline check"</div>
-    </div>
-    <div class="overlays">
-      <span class="chip amber">COST · −28% score</span>
-      <span class="chip emerald">BENEFIT · production-honest</span>
-    </div>
-    <div class="voice">
-      <span class="vlabel">VOICE-OVER · EN · TRUST</span>
-      Our biggest catch was a <b>hidden data leak</b>. One feature was <b>secretly telling the model who had already paid</b>, just by measuring <b>how long we had watched each user</b>. Upgraders' windows were artificially short because we cut them at purchase. We dropped it. <b>Here's what it cost us, and here's what we got back.</b>
-    </div>
-    <div class="footer-tags">
-      <span class="rubric match">R2 · Leakage &amp; Rigor</span>
-    </div>
-  </div>
-
-  <!-- 9 -->
   <div class="shot k-model">
     <div class="shot-head">
-      <span class="pill-time">1:49</span>
+      <span class="pill-time">1:37</span>
       <span class="duration">14s</span>
       <span class="kind-tag">model</span>
     </div>
@@ -605,27 +580,25 @@
     </div>
   </div>
 
-  <!-- 10 -->
+  <!-- 9 -->
   <div class="shot k-model">
     <div class="shot-head">
-      <span class="pill-time">2:03</span>
+      <span class="pill-time">1:51</span>
       <span class="duration">12s</span>
       <span class="kind-tag">model</span>
     </div>
     <div class="screen">
       <div class="label">SCREEN</div>
-      <div class="desc">Top-K 적용 시뮬 표 — 캠페인 비용 효율 직관화<br/>(상위 1%, 5%, 10%, 20% 비교)</div>
+      <div class="desc">Top-K 시뮬 — 슬라이더 애니메이션으로 5%·1% 케이스 차례로 표시<br/>"모델 vs 무작위" 좌우 막대 비교</div>
     </div>
     <div class="overlays">
-      <span class="chip violet">Top 1% (74명) → 34명 결제 · 18×</span>
-      <span class="chip violet">Top 5% (371명) → 90명 결제 · 10×</span>
-      <span class="chip violet">Top 10% (743명) → 124명 결제 · 6×</span>
-      <span class="chip">전체 결제자의 49% · 단 5% 타겟으로</span>
-      <span class="chip cyan">캠페인 비용 1/20</span>
+      <span class="chip violet">Top 5% · catch 90 of 185 upgraders</span>
+      <span class="chip violet">Random same 5% · catch only 9</span>
+      <span class="chip">10× efficiency · 1/20 budget</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · BUSINESS</span>
-      Here is what that means in practice. Out of seventeen thousand users, <b>send a campaign to just the top five percent</b>. That's three hundred seventy-one people. You catch <b>ninety upgraders</b>. <b>Half of all upgraders, with one-twentieth of the budget</b>. Random targeting on the same five percent catches only nine. So the model gives <b>ten times the efficiency</b>. Push it tighter to the top one percent, seventy-four people, and you still catch thirty-four upgraders. <b>Eighteen times better than random</b>.
+      Here's what that means in practice. Send a campaign to just the top five percent of users, and you catch <b>half of all upgraders for one-twentieth of the budget</b>. <b>Ten times the efficiency of random targeting</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -633,11 +606,11 @@
     </div>
   </div>
 
-  <!-- 11 NEW: SHAP / interpretability bridge -->
+  <!-- 10 SHAP / interpretability bridge -->
   <div class="shot k-model" style="border: 1px solid rgba(236, 72, 153, 0.4); background: linear-gradient(180deg, rgba(236, 72, 153, 0.04), var(--panel));">
     <div class="shot-head">
-      <span class="pill-time">2:15</span>
-      <span class="duration">14s · ★ NEW</span>
+      <span class="pill-time">2:03</span>
+      <span class="duration">14s</span>
       <span class="kind-tag">interpretability</span>
     </div>
     <div class="screen">
@@ -645,13 +618,13 @@
       <div class="desc">SHAP top-10 horizontal bar (left 60%) +<br/>각 시그널 → 마케팅 액션 매핑 패널 (right 40%)<br/>(canvas: <code>SHAP v3</code> block 출력)</div>
     </div>
     <div class="overlays">
-      <span class="chip violet">★ #1 SHAP signal: hours to credit limit</span>
-      <span class="chip">also: banner shown, first-hour AI usage, 7d page views, etc.</span>
-      <span class="chip cyan">SHAP top-10 → 1:1 캠페인 매핑</span>
+      <span class="chip violet">★ #1 signal: hours to credit limit</span>
+      <span class="chip">SHAP top-10 visible on screen</span>
+      <span class="chip cyan">each signal → 1:1 marketing action</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · INTERPRETABILITY</span>
-      Accuracy alone is not enough. <b>SHAP values show what the model actually looks at</b>. The single strongest signal is <b>how fast a user hits the credit limit</b>. We also see banner exposure, first-hour AI usage, and seven other signals in the top ten. Each one points to <b>an exact moment for a marketing nudge</b>, and that mapping is what powers the playbook on the next slide.
+      Accuracy alone is not enough. <b>SHAP values show what the model actually looks at</b>. The strongest signal you see at the top is <b>how fast a user hits the credit limit</b>. Each signal on screen maps to <b>an exact moment for a marketing nudge</b>, which is what powers the playbook next.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality (interpretable)</span>
@@ -659,26 +632,25 @@
     </div>
   </div>
 
-  <!-- 12 -->
+  <!-- 11 -->
   <div class="shot k-mlops">
     <div class="shot-head">
-      <span class="pill-time">2:29</span>
+      <span class="pill-time">2:17</span>
       <span class="duration">16s</span>
       <span class="kind-tag">guardrails</span>
     </div>
     <div class="screen">
       <div class="label">SCREEN</div>
-      <div class="desc">3-tier audit (Validate Events / Funnel v4 / Features v3)<br/>+ Diagnose v3 calibration reliability plot<br/>+ Data Drift Monitor PSI/KS heatmap</div>
+      <div class="desc">3-tier audit (Validate Events / Funnel v4 / Features v3) shown as ✓ ✓ ✓ list<br/>+ Diagnose v3 calibration reliability plot<br/>+ Data Drift Monitor PSI/KS heatmap (animated weekly)</div>
     </div>
     <div class="overlays">
-      <span class="chip emerald">21 leakage checks · automated</span>
-      <span class="chip emerald">PSI/KS weekly · no labels needed</span>
+      <span class="chip emerald">21 automated audit checks pass</span>
+      <span class="chip emerald">PSI/KS weekly drift watch · no labels</span>
       <span class="chip emerald">Calibrated probability · Brier 0.022</span>
-      <span class="chip">3 production guardrails</span>
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · GUARDRAILS</span>
-      Beyond accuracy we wired <b>three production guardrails</b>. <b>Every pipeline block runs an automated audit</b> covering leakage, feature shape, and funnel rules. After deployment, we watch incoming data every week with <b>PSI and KS divergence, no labels needed</b>. And every prediction is <b>calibrated</b>, so when we say "twenty-three percent chance", that really means twenty-three percent.
+      Beyond accuracy we wired <b>three production guardrails</b> you can see on screen. Every block runs an <b>automated audit</b>. We watch incoming data weekly with <b>no labels needed</b>. And every prediction is <b>calibrated</b>, so a "twenty-three percent chance" really means twenty-three percent.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -686,10 +658,10 @@
     </div>
   </div>
 
-  <!-- 13 -->
+  <!-- 12 -->
   <div class="shot k-business">
     <div class="shot-head">
-      <span class="pill-time">2:45</span>
+      <span class="pill-time">2:33</span>
       <span class="duration">14s</span>
       <span class="kind-tag">business</span>
     </div>
@@ -712,10 +684,10 @@
     </div>
   </div>
 
-  <!-- 14 -->
+  <!-- 13 -->
   <div class="shot k-business">
     <div class="shot-head">
-      <span class="pill-time">2:59</span>
+      <span class="pill-time">2:47</span>
       <span class="duration">12s</span>
       <span class="kind-tag">demo</span>
     </div>
@@ -738,10 +710,10 @@
     </div>
   </div>
 
-  <!-- 15 -->
+  <!-- 14 -->
   <div class="shot k-meta">
     <div class="shot-head">
-      <span class="pill-time">3:11</span>
+      <span class="pill-time">2:59</span>
       <span class="duration">3s</span>
       <span class="kind-tag">end</span>
     </div>
@@ -816,8 +788,7 @@
         <td>Handling of Leakage &amp; Methodological Rigor</td>
         <td class="score">15</td>
         <td>
-          <span class="where primary">1:37 leakage</span>
-          <span class="where">2:29 guardrails</span>
+          <span class="where primary">2:17 guardrails (audit + drift + calibration)</span>
         </td>
       </tr>
       <tr>
@@ -825,10 +796,10 @@
         <td>Predictive Model Quality &amp; Usefulness</td>
         <td class="score">25</td>
         <td>
-          <span class="where primary">1:49 metrics</span>
-          <span class="where primary">2:03 top-K</span>
-          <span class="where primary">2:15 SHAP→action</span>
-          <span class="where">2:29 guardrails</span>
+          <span class="where primary">1:37 metrics</span>
+          <span class="where primary">1:51 top-K</span>
+          <span class="where primary">2:03 SHAP→action</span>
+          <span class="where">2:17 guardrails</span>
         </td>
       </tr>
       <tr>
@@ -854,9 +825,9 @@
         <td>Insights, Recommendations &amp; Business Impact</td>
         <td class="score">5</td>
         <td>
-          <span class="where primary">2:45 playbook</span>
-          <span class="where primary">2:15 SHAP→action</span>
-          <span class="where">2:03 top-K</span>
+          <span class="where primary">2:33 playbook</span>
+          <span class="where primary">2:03 SHAP→action</span>
+          <span class="where">1:51 top-K</span>
           <span class="where">0:53 post-upg</span>
         </td>
       </tr>
@@ -866,7 +837,7 @@
         <td class="score">5</td>
         <td>
           <span class="where primary">2:59 live demo</span>
-          <span class="where">3:11 end</span>
+          <span class="where">2:59 end</span>
         </td>
       </tr>
     </tbody>
@@ -882,7 +853,7 @@
     <li>프론트엔드 새 탭에서 라이브 사이트 한 번 ping → 콜드 스타트 워밍업</li>
     <li>K2 StrategyGallery에서 한 segment 미리 펼쳐서 카드 3개 보이게 두고 녹화 시작</li>
     <li>보이스오버 3분 풀테이크 한 번 녹음 → DaVinci에서 컷 시퀀스를 voice 위에 붙임 (반대 순서 X)</li>
-    <li><strong>★ DaVinci 마지막 단계</strong> — 전체 voice + video 트랙을 <strong>1.078× speed</strong>로 retime (clip 우클릭 → "Change Clip Speed" → 107.8%). raw 194초 → 180초로 자연스럽게 압축. pitch correction 켜기.</li>
+    <li>raw 길이 약 178초로 자연 발화에서 거의 180초에 안착. 굳이 retime 안 해도 OK. 약간 짧으면 마지막 카드 dwell time을 5초까지 늘려 정확히 180초 맞춤.</li>
     <li>이 페이지를 <strong>두 번째 모니터</strong>나 <strong>인쇄</strong>해서 옆에 두고 녹화</li>
   </ol>
 </div>
