@@ -46,8 +46,8 @@ print(f"[drop] target week = {TARGET_WEEK}")
 
 def _fetch_text(url: str) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": "zerve-canvas/1.0"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return r.read().decode("utf-8")
+    with urllib.request.urlopen(req, timeout=30) as lwd_resp:
+        return lwd_resp.read().decode("utf-8")
 
 
 url = DROP_URL_TEMPLATE.format(week=TARGET_WEEK)

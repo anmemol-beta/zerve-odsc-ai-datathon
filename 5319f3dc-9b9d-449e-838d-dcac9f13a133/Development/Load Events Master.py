@@ -42,8 +42,8 @@ HTTP_TIMEOUT = 30
 
 def _fetch(url: str) -> bytes:
     req = urllib.request.Request(url, headers={"User-Agent": "zerve-canvas/1.0"})
-    with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as r:
-        return r.read()
+    with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as lem_resp:
+        return lem_resp.read()
 
 
 events_master = None

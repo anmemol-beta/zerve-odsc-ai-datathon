@@ -137,10 +137,10 @@ for cm_ax, m in zip(cm_axes, metric_order):
     rows = model_comparison.dropna(subset=[m])
     versions = []
     values = []
-    for _, r in rows.iterrows():
-        label = f"{r['version']} {r['model']}"[:25]
+    for _, pc_row in rows.iterrows():
+        label = f"{pc_row['version']} {pc_row['model']}"[:25]
         versions.append(label)
-        values.append(r[m])
+        values.append(pc_row[m])
     colors = ["#06b6d4" if "v1" in v else "#ec4899" for v in versions]
     bars = cm_ax.barh(versions, values, color=colors)
     cm_ax.set_title(titles[m])
