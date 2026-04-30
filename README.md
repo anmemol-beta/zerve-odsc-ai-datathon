@@ -1,5 +1,7 @@
 # Zerve × ODSC AI Datathon
 
+**Live demo**: <https://beta-zerve.hub.zerve.cloud>
+
 Canvas: **Beta** → Layer: **Development**. Two parallel pipelines after EDA.
 
 ```
@@ -43,13 +45,41 @@ uv run run_local.py --save-figures           # write each plt.show() to figures/
 
 The runner `chdir`s into `datas/` before exec so block code can keep using `pd.read_csv("zerve_events.csv")` unchanged — same path as in Zerve. macOS auto-injects `DYLD_FALLBACK_LIBRARY_PATH` for `libomp`.
 
-### Streamlit demo
+### Web app (Next.js)
 
 ```bash
-uv run streamlit run app.py
+./build-archive.sh                # export JSON + build Next.js + commit/push app.zip
+( cd web && npm run dev )         # local hot-reload at :3000
+uv run uvicorn server:app --port 8000   # serve the production /web/out build
 ```
 
-Opens a 4-section dashboard at `localhost:8501`: headline metrics → 3D PCA user manifold → user lookup with SHAP → funnel sankey + interactive thresholds. Same script deploys to Zerve via the Streamlit App option (variables come from `from zerve import variable`; falls back to local canvas re-execution otherwise).
+Four-section dashboard: headline metrics (animated counters) → 3D PCA user manifold (PC1/PC2/PC3 axes, react-three-fiber) → user lookup with SHAP waterfall → funnel sankey + live threshold sliders backed by a 980-cell prebaked grid.
+
+## Deploy (Zerve Custom Deployment)
+
+The canvas pipeline runs once at *build time* on the local machine; the deployed container only serves the prebuilt static bundle, so the runtime is a 25-line FastAPI wrapper.
+
+```
+[local]  ./build-archive.sh
+           ├─ export-data.py             → web/public/data/*.json
+           ├─ next build                 → web/out/  (data baked in)
+           ├─ zip                        → app.zip   (committed to git)
+           └─ git push
+
+[zerve]  main.py boots in container
+           ├─ fetch app.zip from raw.githubusercontent.com
+           ├─ unzip → /tmp/zerve-app
+           └─ FastAPI StaticFiles mount /  →  https://beta-zerve.hub.zerve.cloud
+```
+
+After a rebuild, hot-reload the deployment without a UI restart:
+
+```bash
+curl -X POST https://beta-zerve.hub.zerve.cloud/admin/refresh
+curl     https://beta-zerve.hub.zerve.cloud/admin/version
+```
+
+Zerve UI Restart is only needed when `main.py` itself changes — which is rare.
 
 ## Data loading optimizations
 
@@ -69,7 +99,12 @@ Canvas requires `pyarrow`, `scikit-learn`, `lightgbm`, `shap`, `streamlit`, `plo
 | `5319f3dc-…/Development/layer.yaml` | Blocks + edges for the Development layer |
 | `5319f3dc-…/Development/*.py` | Python block source — one file per block |
 | `run_local.py` | Local runner — re-execs the canvas off the YAML |
-| `app.py` | Streamlit dashboard (3D PCA + Sankey + SHAP) |
+| `export-data.py` | Re-runs the pipeline and dumps JSON into `web/public/data/` |
+| `web/` | Next.js 14 frontend (App Router, static export) |
+| `server.py` | Local FastAPI wrapper that mounts `web/out/` |
+| `main.py` | Zerve deployment entry — fetches `app.zip` from GitHub, mounts static |
+| `app.zip` | Build artifact: `server.py + requirements.txt + web/out/` |
+| `build-archive.sh` | Build → zip → commit → push, all in one |
 | `pyproject.toml` / `uv.lock` | Local deps |
 | `datas/zerve_events.csv` | Input dataset (gitignored) |
 | `figures/` | `--save-figures` output (gitignored) |
