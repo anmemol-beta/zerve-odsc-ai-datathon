@@ -28,34 +28,36 @@ The frontend never executes ML code. It draws the canvas DAG (using the exact xy
 ```
                             ┌─ EDA Summary
                             ├─ Funnel Stages ──── Visualize Funnel
-Example Dataset ────────────┤                                                          ┌─ Visualize Cohort
-   │                        ├─ Build Features  ── Train Model (v1) ──┐                 │
-   │                        │                                        │                 │
-   │                        ├─ Funnel v4 ─────────────────────────────┼──────── Build Features v3 ──┐
-   │                        │                                        │                              │
-   ├─ Validate Events       ├─ Validate Funnel v4                    │                              │
-   │                        ├─ Validate Features v3                  │                              │
-   │                        │                                        │                              │
-   │                        │     ┌──────────── Train Model v3   (XGB+RF+HGB calibrated ensemble)  ─┤
-   │                        │     ├──────────── Train MLP v3     (PyTorch tab-MLP, isotonic cal)   ─┤
-   │                        │     ├──────────── Train GBM v3     (sklearn GBM, isotonic cv=3)      ─┤
-   │                        │     │                                                                 │
-   │                        │     ▼                                                                 │
-   │                        │   Diagnose v3 · SHAP v3 · Compare Models · Per-Segment Performance ───┤
-   │                        │                                                                       │
-   │                        │   Time-Rolling Splits ──► Train Across Time ──► Performance Drift ───┤
-   │                        │                                  │                                    │
-   │                        │                                  └──► Champion Selector ──┐           │
-   │                        │                                                            │           │
-   │                        │   Build Strategies (K2-Think LLM) ──► ROI Ranking          │           │
-   │                        │                                  └──► Strategy Heatmap     │           │
-   │                        │                                                            │           │
-   ├─ Weekly Data Slices ──► Data Drift Monitor (PSI + KS)                              │           │
-   │            │                                                                       │           │
-   │            ▼                                                                       │           │
-   │     Weekly Inference ◄── Load Models ◄── Persist Models ◄──────────────────────────┘           │
-   │            │                                                                                   │
-   └────────────┴──────────────────────────────► Insights Card ◄──────────────────────────────────┘
+Example Dataset ────────────┤
+   │                        ├─ Build Features  ── Train Model (v1) ──────────────┐
+   │                        ├─ Funnel v4
+   │                        ├─ Validate Funnel v4
+   │                        ├─ Validate Features v3                              │
+   ├─ Validate Events       └─ Build Features v3 ──┐                             │
+   │                                                │                             │
+   │     ┌─ Train Model v3   (XGB+RF+HGB calibrated soft-vote ensemble) ─┐       │
+   │     ├─ Train MLP v3     (PyTorch tab-MLP, isotonic calibration)     ┤       │
+   │     ├─ Train GBM v3     (sklearn GBM, isotonic cv=3)                ┤       │
+   │     │                                                                │       │
+   │     ▼                                                                ▼       │
+   │   Diagnose v3 · SHAP v3 · Compare Models · Per-Segment Performance ──────┐  │
+   │                                                                            │  │
+   │   Time-Rolling Splits ─► Train Across Time ─► Performance Drift ─► Champion Selector
+   │                                                                            │  │
+   │   Build Strategies (K2-Think LLM) ──► ROI Ranking · Strategy Heatmap ────┐│  │
+   │                                                                          ││  │
+   ├─ Weekly Data Slices ──► Data Drift Monitor (PSI + KS) ──────────────────┐│  │
+   │            │                                                            ││  │
+   │            ▼                                                            ││  │
+   │     Weekly Inference ◄── Load Models ◄── Persist Models ◄───────────────┘│  │
+   │                                                                           │  │
+   └─ Load Events Master ─┐                                                    │  │
+                           ├─► Merge Events ─┬─► Build Inference Pool ─────────┤  │
+   Load Weekly Drop ─────┘                  └─► Build Training Pool ─► Persist Master
+                                                                              │  │
+                                                          Visualize Cohort ◄──┤  │
+                                                                              ▼  ▼
+                                                                        Insights Card
 ```
 
 Five tiers, each running in parallel within itself and converging at the next:
@@ -79,7 +81,7 @@ The data tier is **append-only**: Load Events Master fetches `data/events_master
 | Path | What it is |
 |---|---|
 | `5319f3dc-…/canvas.yaml` | Canvas root — globals, requirements, env vars |
-| `5319f3dc-…/Development/layer.yaml` | Layer config — 33 blocks + 52 edges |
+| `5319f3dc-…/Development/layer.yaml` | Layer config — 39 blocks + 60 edges |
 | `5319f3dc-…/Development/*.py` | One file per block (~5500 lines total) |
 | `zerve_deploy/main.py` | FastAPI deployment — paste into Zerve deployment editor |
 | `web/` | Next.js 14 frontend (App Router, static export, ReactFlow DAG) |
@@ -162,9 +164,9 @@ requirements:
 
 `shap` is **not** declared — SHAP v3 ships a pure-numpy Štrumbelj-Kononenko Monte Carlo Shapley estimator that activates if the import fails. `catboost` was replaced by sklearn's GradientBoosting for the same reason.
 
-## Key design choices (for the rubric)
+## Key design choices
 
-- **Real DAG, not a notebook**: 33 blocks with explicit edges; you can see fan-out (parallel model training) and fan-in (Champion Selector, Insights Card) directly in the canvas.
+- **Real DAG, not a notebook**: 39 blocks with explicit edges; you can see fan-out (parallel model training, train/infer split) and fan-in (Champion Selector, Insights Card) directly in the canvas.
 - **Train/serve separation**: Persist Models + Load Models pattern decouples weekly retraining from on-demand inference. Inference works even if training is offline (GitHub-raw fallback).
 - **AutoML over time, not just one split**: Time-Rolling Splits + Train Across Time + Performance Drift + Champion Selector picks the model that is **stable across cohorts**, not the one with the best single-split number.
 - **Drift-aware**: Data Drift Monitor watches incoming weekly data without labels (PSI + KS), so we know when to re-train before metrics degrade.
