@@ -75,20 +75,21 @@ export type PostUpgrade = {
   churned: number;
 };
 
+// Canon: docs/analysis_report.md §9 (15 categories, total 17,541).
 export const FALLBACK_FUNNEL_STAGES: FunnelStage[] = [
-  { id: "0.NoEvent",            label: "No event",              users:    34, pct: 0.0019, is_terminal: false },
-  { id: "1.New",                label: "Signed up",             users:  3914, pct: 0.2231, is_terminal: false },
-  { id: "2.Exploring",          label: "Exploring",             users:  6202, pct: 0.3535, is_terminal: false },
-  { id: "3.Created",            label: "First create",          users:  2150, pct: 0.1226, is_terminal: false },
-  { id: "4.UsedAI",             label: "Used AI",               users:  1980, pct: 0.1129, is_terminal: false },
-  { id: "5.WroteCode",          label: "Wrote code",            users:   985, pct: 0.0561, is_terminal: false },
-  { id: "6.Integrated",         label: "Connected tools",       users:   720, pct: 0.0410, is_terminal: false },
-  { id: "7.Engaged",            label: "Engaged",               users:   234, pct: 0.0133, is_terminal: false },
+  { id: "0.NoEvent",            label: "No event",              users:    74, pct: 0.0042, is_terminal: false },
+  { id: "1.New",                label: "Signed up",             users:  2155, pct: 0.1229, is_terminal: false },
+  { id: "2.Exploring",          label: "Exploring",             users:  8181, pct: 0.4664, is_terminal: false },
+  { id: "3.Created",            label: "First create",          users:     3, pct: 0.0002, is_terminal: false },
+  { id: "4.UsedAI",             label: "Used AI",               users:   248, pct: 0.0141, is_terminal: false },
+  { id: "5.WroteCode",          label: "Wrote code",            users:   105, pct: 0.0060, is_terminal: false },
+  { id: "6.Integrated",         label: "Connected tools",       users:    56, pct: 0.0032, is_terminal: false },
+  { id: "7.Engaged",            label: "Engaged",               users:   174, pct: 0.0099, is_terminal: false },
   { id: "8.Upgraded",           label: "Paying — active",       users:   221, pct: 0.0126, is_terminal: false },
-  { id: "9.AtRisk@UsedAI",      label: "At risk (Used AI)",     users:   265, pct: 0.0151, is_terminal: false },
-  { id: "9.AtRisk@WroteCode",   label: "At risk (Wrote code)",  users:   190, pct: 0.0108, is_terminal: false },
-  { id: "9.AtRisk@Integrated",  label: "At risk (Connected)",   users:   153, pct: 0.0087, is_terminal: false },
-  { id: "9.AtRisk@Engaged",     label: "At risk (Engaged)",     users:   175, pct: 0.0100, is_terminal: false },
+  { id: "9.AtRisk@UsedAI",      label: "At risk (Used AI)",     users:  3767, pct: 0.2148, is_terminal: false },
+  { id: "9.AtRisk@WroteCode",   label: "At risk (Wrote code)",  users:  1803, pct: 0.1028, is_terminal: false },
+  { id: "9.AtRisk@Integrated",  label: "At risk (Connected)",   users:   195, pct: 0.0111, is_terminal: false },
+  { id: "9.AtRisk@Engaged",     label: "At risk (Engaged)",     users:   457, pct: 0.0261, is_terminal: false },
   { id: "9.AtRisk@Upgraded",    label: "At risk (Paying)",      users:    74, pct: 0.0042, is_terminal: true  },
   { id: "9.Churned@Upgraded",   label: "Churned (Paying)",      users:    28, pct: 0.0016, is_terminal: true  },
 ];

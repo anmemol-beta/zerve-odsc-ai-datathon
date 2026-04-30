@@ -12,7 +12,6 @@ import FeatureImportance from "@/components/FeatureImportance";
 import TopKSimulator from "@/components/TopKSimulator";
 import LivePredict from "@/components/LivePredict";
 import PlaybookList from "@/components/PlaybookList";
-import StrategyGallery from "@/components/StrategyGallery";
 import InsightsCard from "@/components/InsightsCard";
 import VersionBadge from "@/components/VersionBadge";
 import ShaderBackgroundLazy from "@/components/ShaderBackgroundLazy";
@@ -112,14 +111,6 @@ export default function Page() {
 
       <Section
         kicker="10"
-        title="K2-Think strategies · per-segment"
-        subtitle="14 v4 funnel segments. Each one shipped through the Build Strategies node, which prompts K2-Think with the segment's behavioral profile and a Zerve playbook excerpt. The 3 ranked actions, target filters, expected uplift, and ROI multipliers come back from the deployed canvas."
-      >
-        <StrategyGallery />
-      </Section>
-
-      <Section
-        kicker="11"
         title="The canvas, in your browser"
         subtitle="Every block here is a real Zerve canvas node. Coordinates, edges, descriptions all read straight from canvas.yaml. Click a block to pull its live matplotlib figure or variable from the deployed FastAPI — same calibrated XGB ensemble, same cohort tables, same K2 strategies that the data scientist sees inside the canvas."
       >
@@ -127,7 +118,7 @@ export default function Page() {
       </Section>
 
       <Section
-        kicker="12"
+        kicker="11"
         title="Insights card · the fan-in"
         subtitle="The final canvas node — fan-in from Diagnose v3, SHAP v3, Compare Models, Per-Segment Performance, Build Strategies, and ROI Ranking. The PNG and the text both come from the same canvas variables."
       >

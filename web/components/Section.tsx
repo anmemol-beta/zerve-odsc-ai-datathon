@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function Section({
   kicker,
@@ -13,13 +14,27 @@ export default function Section({
   subtitle: string;
   children: React.ReactNode;
 }) {
+  const ref = useRef<HTMLElement>(null);
+  // Scroll progress: 0 when section's top hits viewport bottom, 1 when its
+  // bottom hits viewport top. We map that to opacity + Y offset so the section
+  // fades and lifts in as it enters, then fades and lifts out as it leaves.
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const opacity = useTransform(
+    scrollYProgress,
+    [0, 0.18, 0.82, 1],
+    [0, 1, 1, 0],
+  );
+  const y = useTransform(
+    scrollYProgress,
+    [0, 0.18, 0.82, 1],
+    [40, 0, 0, -40],
+  );
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-120px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
+    <motion.section ref={ref} style={{ opacity, y }}>
       <div className="flex items-baseline gap-3 mb-1.5">
         <span className="font-mono text-[10px] text-pink-400 tracking-[0.3em]">// {kicker}</span>
       </div>
