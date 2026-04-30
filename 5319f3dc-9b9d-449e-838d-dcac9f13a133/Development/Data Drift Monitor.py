@@ -195,10 +195,10 @@ else:
 
 
 # ─── 6. plots ────────────────────────────────────────────────────────────
-fig, axes = plt.subplots(2, 1, figsize=(14, 10))
+ddm_fig, ddm_axes = plt.subplots(2, 1, figsize=(14, 10))
 
 # [Top] heatmap (feature × week) of PSI
-ax = axes[0]
+ax = ddm_axes[0]
 pivot = drift_per_week_per_feature.pivot_table(
     index="feature", columns="week", values="psi"
 ).reindex(index=MONITORED_FEATURES, columns=all_weeks)
@@ -220,7 +220,7 @@ for i, feat in enumerate(MONITORED_FEATURES):
                     fontsize=7, color="white" if v > 0.3 else "black")
 
 # [Bottom] line plot — overall drift over time
-ax = axes[1]
+ax = ddm_axes[1]
 xs = range(len(weekly_drift_index))
 ax.plot(xs, weekly_drift_index["mean_psi"], "o-", color="#06b6d4", label="mean PSI")
 ax.plot(xs, weekly_drift_index["max_psi"], "s-", color="#ec4899", label="max PSI")

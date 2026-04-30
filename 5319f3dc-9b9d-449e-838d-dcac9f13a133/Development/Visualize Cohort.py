@@ -67,10 +67,10 @@ DOW_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
 # ── Plot
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+vc_fig, vc_axes = plt.subplots(2, 2, figsize=(15, 10))
 
 # Top-left: cumulative growth lines
-ax = axes[0, 0]
+ax = vc_axes[0, 0]
 ax.plot(daily_cum.index, daily_cum["n"],          label=f"users (final {int(daily_cum['n'].iloc[-1]):,})",         color="#94a3b8", linewidth=1.6)
 ax.plot(daily_cum.index, daily_cum["n_active"],   label=f"active ({int(daily_cum['n_active'].iloc[-1]):,})",       color="#3b82f6", linewidth=1.4)
 ax.plot(daily_cum.index, daily_cum["n_engaged"],  label=f"engaged ({int(daily_cum['n_engaged'].iloc[-1]):,})",     color="#84cc16", linewidth=1.4)
@@ -83,7 +83,7 @@ ax.grid(True, alpha=0.3)
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %y"))
 
 # Top-right: daily events sparkline + upgrade markers
-ax = axes[0, 1]
+ax = vc_axes[0, 1]
 ax.fill_between(events_per_day.index, events_per_day.values, color="#06b6d4", alpha=0.4, linewidth=0)
 ax.plot(events_per_day.index, events_per_day.values, color="#06b6d4", linewidth=1.2)
 # Upgrade event dots
@@ -98,7 +98,7 @@ ax.grid(True, alpha=0.3)
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %y"))
 
 # Bottom-left: cohort upgrade rate vs cumulative
-ax = axes[1, 0]
+ax = vc_axes[1, 0]
 ax.bar(cohort_grp.index, cohort_grp["rate"], width=5, color="#ec4899", alpha=0.55, label="this-cohort upgrade %")
 ax.plot(cohort_grp.index, cohort_grp["cum_rate"], color="#94a3b8", linewidth=1.8, label="cumulative all-time %")
 ax.set_title("Weekly cohort upgrade rate vs cumulative baseline")
@@ -108,7 +108,7 @@ ax.grid(True, alpha=0.3)
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %y"))
 
 # Bottom-right: hourly heatmap
-ax = axes[1, 1]
+ax = vc_axes[1, 1]
 im = ax.imshow(heat.values, aspect="auto", cmap="viridis", origin="lower")
 ax.set_yticks(range(7))
 ax.set_yticklabels(DOW_NAMES)
@@ -116,7 +116,7 @@ ax.set_xticks(range(0, 24, 3))
 ax.set_xticklabels([f"{h:02d}" for h in range(0, 24, 3)])
 ax.set_xlabel("hour of day (UTC)")
 ax.set_title("Activity heatmap — events by day-of-week × hour")
-fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="events")
+vc_fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="events")
 
 plt.tight_layout()
 plt.show()

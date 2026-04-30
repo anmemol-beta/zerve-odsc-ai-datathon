@@ -125,7 +125,7 @@ champion_summary = {
 }
 
 # ─── 3. visual ────────────────────────────────────────────────────────────
-fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+cm_fig, cm_axes = plt.subplots(1, 3, figsize=(15, 5))
 metric_order = ["pr_auc", "roc_auc", "brier"]
 titles = {
     "pr_auc": "PR-AUC (higher ↑ better)\nthe imbalance-aware metric",
@@ -133,7 +133,7 @@ titles = {
     "brier": "Brier (lower ↓ better)",
 }
 
-for ax, m in zip(axes, metric_order):
+for ax, m in zip(cm_axes, metric_order):
     rows = model_comparison.dropna(subset=[m])
     versions = []
     values = []

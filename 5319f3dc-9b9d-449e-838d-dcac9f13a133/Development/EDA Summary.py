@@ -34,30 +34,30 @@ print(leak.to_string() if len(leak) else "  (none observed)")
 # ── Visualization on the canvas node: top-20 events bar chart with daily activity sparkline.
 import matplotlib.pyplot as plt
 
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 9), gridspec_kw={"height_ratios": [3, 1]})
+eda_fig, (eda_ax1, eda_ax2) = plt.subplots(2, 1, figsize=(14, 9), gridspec_kw={"height_ratios": [3, 1]})
 
 top20 = events["event"].value_counts().head(20)
 colors = ["#dd8452" if e in LEAK_CANDIDATES else "#4c72b0" for e in top20.index]
-ax1.barh(range(len(top20)), top20.values, color=colors)
-ax1.set_yticks(range(len(top20)))
-ax1.set_yticklabels(top20.index, fontsize=9)
-ax1.invert_yaxis()
-ax1.set_xlabel("event count")
-ax1.set_title(f"Top 20 events  ·  {n_users:,} users  ·  base upgrade rate {100*upgraded_users/n_users:.2f}%")
+eda_ax1.barh(range(len(top20)), top20.values, color=colors)
+eda_ax1.set_yticks(range(len(top20)))
+eda_ax1.set_yticklabels(top20.index, fontsize=9)
+eda_ax1.invert_yaxis()
+eda_ax1.set_xlabel("event count")
+eda_ax1.set_title(f"Top 20 events  ·  {n_users:,} users  ·  base upgrade rate {100*upgraded_users/n_users:.2f}%")
 for i, ev in enumerate(top20.values):
-    ax1.text(ev, i, f"  {ev:,}", va="center", fontsize=8)
-ax1.legend(handles=[
+    eda_ax1.text(ev, i, f"  {ev:,}", va="center", fontsize=8)
+eda_ax1.legend(handles=[
     plt.Rectangle((0, 0), 1, 1, color="#4c72b0", label="safe to use as feature"),
     plt.Rectangle((0, 0), 1, 1, color="#dd8452", label="leakage — excluded"),
 ], loc="lower right", fontsize=8)
 
 daily_events = events.groupby(events["timestamp"].dt.date).size()
-ax2.fill_between(daily_events.index, daily_events.values, color="#4c72b0", alpha=0.5, linewidth=0)
-ax2.plot(daily_events.index, daily_events.values, color="#4c72b0", linewidth=1)
-ax2.set_xlabel("date")
-ax2.set_ylabel("events / day")
-ax2.set_title(f"Daily event volume  ·  {events['timestamp'].min().date()} → {events['timestamp'].max().date()}")
-ax2.grid(True, alpha=0.3)
+eda_ax2.fill_between(daily_events.index, daily_events.values, color="#4c72b0", alpha=0.5, linewidth=0)
+eda_ax2.plot(daily_events.index, daily_events.values, color="#4c72b0", linewidth=1)
+eda_ax2.set_xlabel("date")
+eda_ax2.set_ylabel("events / day")
+eda_ax2.set_title(f"Daily event volume  ·  {events['timestamp'].min().date()} → {events['timestamp'].max().date()}")
+eda_ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.show()

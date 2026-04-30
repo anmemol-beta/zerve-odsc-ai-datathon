@@ -152,10 +152,10 @@ pie_labels = [nice[s] for s in pie_order]
 pie_values = [int(counts[s]) for s in pie_order]
 pie_colors = [stage_color[s] for s in pie_order]
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7), gridspec_kw={"width_ratios": [1, 1.2]})
+fs_fig, (fs_ax1, fs_ax2) = plt.subplots(1, 2, figsize=(15, 7), gridspec_kw={"width_ratios": [1, 1.2]})
 
 # Donut pie (mutually exclusive — sums to 100%)
-wedges, _, autotexts = ax1.pie(
+wedges, _, autotexts = fs_ax1.pie(
     pie_values,
     labels=None,
     colors=pie_colors,
@@ -166,10 +166,10 @@ wedges, _, autotexts = ax1.pie(
     wedgeprops={"width": 0.42, "edgecolor": "#020617", "linewidth": 1.2},
     textprops={"color": "white", "fontsize": 9, "fontweight": "bold"},
 )
-ax1.text(0, 0.06, f"{total:,}", ha="center", va="center", fontsize=22, fontweight="bold")
-ax1.text(0, -0.10, "USERS", ha="center", va="center", fontsize=9, color="#94a3b8")
-ax1.set_title("Current stage breakdown — mutually exclusive (sums to 100%)")
-ax1.legend(wedges, [f"{l}  ({c:,})" for l, c in zip(pie_labels, pie_values)],
+fs_ax1.text(0, 0.06, f"{total:,}", ha="center", va="center", fontsize=22, fontweight="bold")
+fs_ax1.text(0, -0.10, "USERS", ha="center", va="center", fontsize=9, color="#94a3b8")
+fs_ax1.set_title("Current stage breakdown — mutually exclusive (sums to 100%)")
+fs_ax1.legend(wedges, [f"{l}  ({c:,})" for l, c in zip(pie_labels, pie_values)],
            loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=9, frameon=False)
 
 # Strict-nested funnel (cumulative reach)
@@ -177,15 +177,15 @@ funnel_order = ["1_signed_up", "2_active", "3_created_content", "4_used_ai", "5_
 funnel_labels = [s.split("_", 1)[1].replace("_", " ") for s in funnel_order]
 funnel_counts = [int(funnel_reach[s]) for s in funnel_order]
 funnel_colors = [stage_color[s] for s in funnel_order]
-ax2.barh(range(len(funnel_counts)), funnel_counts, color=funnel_colors, edgecolor="#020617")
-ax2.set_yticks(range(len(funnel_counts)))
-ax2.set_yticklabels(funnel_labels)
-ax2.invert_yaxis()
-ax2.set_xlabel("users (cumulative reach, strict-nested)")
-ax2.set_title("Strict-nested funnel — every higher stage requires all lower")
+fs_ax2.barh(range(len(funnel_counts)), funnel_counts, color=funnel_colors, edgecolor="#020617")
+fs_ax2.set_yticks(range(len(funnel_counts)))
+fs_ax2.set_yticklabels(funnel_labels)
+fs_ax2.invert_yaxis()
+fs_ax2.set_xlabel("users (cumulative reach, strict-nested)")
+fs_ax2.set_title("Strict-nested funnel — every higher stage requires all lower")
 for i, fv in enumerate(funnel_counts):
     pct = 100 * fv / total if total else 0.0
-    ax2.text(fv, i, f"  {fv:,}  ({pct:.1f}%)", va="center", fontsize=9)
+    fs_ax2.text(fv, i, f"  {fv:,}  ({pct:.1f}%)", va="center", fontsize=9)
 
 plt.tight_layout()
 plt.show()

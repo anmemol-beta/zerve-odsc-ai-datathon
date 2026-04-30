@@ -55,10 +55,10 @@ print(strategy_heatmap_data.fillna(0).round(1).to_string())
 
 
 # ─── plot ─────────────────────────────────────────────────────────────────
-fig, axes = plt.subplots(1, 2, figsize=(16, 8))
+sh_fig, sh_axes = plt.subplots(1, 2, figsize=(16, 8))
 
 # [L] ROI heatmap
-ax = axes[0]
+ax = sh_axes[0]
 data = strategy_heatmap_data.fillna(0).values
 im = ax.imshow(data, aspect="auto", cmap="RdPu",
                vmin=0, vmax=max(data.max(), 1))
@@ -77,7 +77,7 @@ ax.set_title("ROI heatmap\n(blank = K2 didn't recommend that channel for this se
 plt.colorbar(im, ax=ax, label="ROI multiple")
 
 # [R] action count per cell
-ax = axes[1]
+ax = sh_axes[1]
 count_data = (
     df.pivot_table(index="segment", columns="channel",
                    values="roi_multiple", aggfunc="count")

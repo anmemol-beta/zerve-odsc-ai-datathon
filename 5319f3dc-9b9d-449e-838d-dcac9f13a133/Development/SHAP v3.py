@@ -149,18 +149,18 @@ for _, row in shap_summary_v3.head(20).iterrows():
 
 
 # ═══ plots ═══════════════════════════════════════════════════════════════
-fig, axes = plt.subplots(1, 2, figsize=(14, 8))
+shp_fig, shp_axes = plt.subplots(1, 2, figsize=(14, 8))
 
 # [L] top-20 bar
 top = shap_summary_v3.head(20).iloc[::-1]
-axes[0].barh(top["feature"], top["mean_abs_shap"], color="#ec4899")
-axes[0].set_xlabel("mean |SHAP value|")
-axes[0].set_title(f"Top-20 features driving v3 ensemble\n({interpret_method})")
-axes[0].tick_params(axis="y", labelsize=9)
-axes[0].grid(alpha=0.3, axis="x")
+shp_axes[0].barh(top["feature"], top["mean_abs_shap"], color="#ec4899")
+shp_axes[0].set_xlabel("mean |SHAP value|")
+shp_axes[0].set_title(f"Top-20 features driving v3 ensemble\n({interpret_method})")
+shp_axes[0].tick_params(axis="y", labelsize=9)
+shp_axes[0].grid(alpha=0.3, axis="x")
 
 # [R] contrasting upgrader vs non-upgrader (works for both paths)
-ax = axes[1]
+ax = shp_axes[1]
 pos_idx = np.where(y_explain == 1)[0]
 neg_idx = np.where(y_explain == 0)[0]
 if len(pos_idx) and len(neg_idx):

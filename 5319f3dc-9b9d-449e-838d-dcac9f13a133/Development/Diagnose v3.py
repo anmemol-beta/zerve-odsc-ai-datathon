@@ -84,12 +84,12 @@ for name, p in preds_v3.items():
 
 
 # ─── 2x2 dashboard ────────────────────────────────────────────────────────
-fig, axes = plt.subplots(2, 2, figsize=(13, 10))
+diag_fig, diag_axes = plt.subplots(2, 2, figsize=(13, 10))
 COLORS = {"xgb_v3": "#ec4899", "rf_v3": "#06b6d4",
           "hgb_v3": "#a855f7", "ensemble_v3": "#10b981"}
 
 # [TL] Reliability diagram
-ax = axes[0, 0]
+ax = diag_axes[0, 0]
 ax.plot([0, 1], [0, 1], "--", color="#475569", label="perfect")
 for name, p in preds_v3.items():
     p = np.asarray(p)
@@ -106,7 +106,7 @@ ax.legend(loc="upper left", fontsize=8)
 ax.grid(alpha=0.3)
 
 # [TR] ROC curves
-ax = axes[0, 1]
+ax = diag_axes[0, 1]
 ax.plot([0, 1], [0, 1], "--", color="#475569")
 for name, p in preds_v3.items():
     p = np.asarray(p)
@@ -121,7 +121,7 @@ ax.legend(loc="lower right", fontsize=8)
 ax.grid(alpha=0.3)
 
 # [BL] PR curves
-ax = axes[1, 0]
+ax = diag_axes[1, 0]
 diagnose_base_rate = y.mean()
 ax.axhline(diagnose_base_rate, linestyle="--", color="#475569",
            label=f"baseline ({diagnose_base_rate:.4f})")
@@ -139,7 +139,7 @@ ax.grid(alpha=0.3)
 ax.set_ylim(0, max(0.4, ax.get_ylim()[1]))
 
 # [BR] Brier decomposition
-ax = axes[1, 1]
+ax = diag_axes[1, 1]
 names = list(diagnose_v3.keys())
 rels = [diagnose_v3[n]["brier_reliability"] for n in names]
 ress = [diagnose_v3[n]["brier_resolution"] for n in names]
