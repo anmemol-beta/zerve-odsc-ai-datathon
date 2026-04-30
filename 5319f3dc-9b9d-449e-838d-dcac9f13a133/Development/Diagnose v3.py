@@ -66,7 +66,7 @@ def _brier_decomp(y_true, y_prob, n_bins=10):
 
 
 # ─── per-model metrics ────────────────────────────────────────────────────
-diagnose_v3: dict = {}
+diagnose_v3 = {}
 for name, p in preds_v3.items():
     p = np.asarray(p)
     fpr, tpr, _ = roc_curve(y, p)

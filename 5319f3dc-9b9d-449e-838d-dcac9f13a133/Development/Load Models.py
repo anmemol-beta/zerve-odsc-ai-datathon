@@ -75,7 +75,7 @@ else:
         model_age_hours = float("nan")
 
     # ─── 2. load model artifacts ────────────────────────────────────────
-    loaded_models: dict = {}
+    loaded_models = {}
     for name in ["models_v3.joblib", "gbm_v3.joblib", "mlp_v3.joblib"]:
         path = _try_local_or_remote(name)
         if path is None:

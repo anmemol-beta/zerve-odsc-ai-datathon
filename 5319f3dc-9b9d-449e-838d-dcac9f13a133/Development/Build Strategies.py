@@ -281,7 +281,7 @@ def _top_demographics(feat: pd.DataFrame, mask: pd.Series) -> dict:
     seg = feat[mask]
     if len(seg) == 0:
         return {}
-    out: dict = {}
+    out = {}
     for prefix, label in [
         ("purpose_", "purpose"), ("role_", "role"),
         ("work_type_", "work_type"), ("device_type_", "device_type"),
@@ -303,7 +303,7 @@ def _metadata_flags(feat: pd.DataFrame, mask: pd.Series) -> dict:
     seg = feat[mask]
     if len(seg) == 0:
         return {}
-    out: dict = {}
+    out = {}
     for col, label in [
         ("agent_first", "agent_first"),
         ("is_power_engaged", "is_power_engaged"),
