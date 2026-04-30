@@ -20,101 +20,105 @@ Inputs (from canvas namespace):
 
 Outputs:
     rolling_metrics_v3    pd.DataFrame  — long table: cohort × model → metrics
-"""
 
-# pyright: reportRedeclaration=false, reportGeneralTypeIssues=false, reportPossiblyUnboundVariable=false
+NOTE on shape: the entire block body is wrapped in a single function so
+that no transient locals (`candidates`, `rows`, `pivot_pr`, `y_full`, ...)
+are exposed at module level. Zerve runs all canvas blocks in one shared
+global namespace, so module-level names collide across blocks and the
+canvas linter flags them as 'defined in multiple places'. Wrapping moves
+those names into function scope, leaves only the explicitly-returned
+output (`rolling_metrics_v3`) at module level.
+"""
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
     average_precision_score, roc_auc_score, brier_score_loss,
 )
 
-# ─── 1. assemble candidate predictions in one dict ────────────────────────
-candidates = {}
 
-# Train Model v3 contributes 4 (3 base + ensemble)
-for name, p in preds_v3.items():
-    candidates[name] = np.asarray(p)
+def _train_across_time_main(rolling_splits_in, y_v3_test_in,
+                             preds_v3_in, mlp_proba_v3_in, gbm_proba_v3_in):
+    # ─── 1. assemble candidate predictions ───────────────────────────────
+    candidates = {}
+    for name, p in preds_v3_in.items():
+        candidates[name] = np.asarray(p)
+    candidates["mlp_v3"] = np.asarray(mlp_proba_v3_in)
+    candidates["gbm_v3"] = np.asarray(gbm_proba_v3_in)
 
-# Deep learning candidate
-candidates["mlp_v3"] = np.asarray(mlp_proba_v3)
+    print(f"[AutoML] {len(candidates)} candidate models × "
+          f"{len(rolling_splits_in)} rolling cohorts = "
+          f"{len(candidates) * len(rolling_splits_in)} evaluations")
 
-# Additional GBM candidate
-candidates["gbm_v3"] = np.asarray(gbm_proba_v3)
+    y_full = np.asarray(y_v3_test_in).astype(int)
 
-print(f"[AutoML] {len(candidates)} candidate models × "
-      f"{len(rolling_splits)} rolling cohorts = "
-      f"{len(candidates) * len(rolling_splits)} evaluations")
+    def _safe_metric(fn, y, p):
+        if y.sum() == 0 or (y.sum() == len(y)):
+            return float("nan")
+        try:
+            return float(fn(y, p))
+        except Exception:
+            return float("nan")
 
-y_full = np.asarray(y_v3_test).astype(int)
+    # ─── 2. evaluate every (model, cohort) pair ──────────────────────────
+    rows = []
+    for cohort in rolling_splits_in:
+        mask = cohort["test_mask"]
+        y_c = y_full[mask]
+        if y_c.sum() == 0:
+            continue
+        base_rate = y_c.mean()
+        n = len(y_c)
+        k5 = max(int(np.ceil(n * 0.05)), 1)
+        k10 = max(int(np.ceil(n * 0.10)), 1)
+        for model_name, p_full in candidates.items():
+            p_c = p_full[mask]
+            order = np.argsort(-p_c)
+            top5_prec = float(y_c[order[:k5]].mean()) if k5 else float("nan")
+            top10_prec = float(y_c[order[:k10]].mean()) if k10 else float("nan")
+            rows.append({
+                "cohort": cohort["name"],
+                "cohort_label": cohort["label"],
+                "month": cohort["month"],
+                "model": model_name,
+                "n_test": n,
+                "n_pos": int(y_c.sum()),
+                "base_rate": float(base_rate),
+                "pr_auc": _safe_metric(average_precision_score, y_c, p_c),
+                "roc_auc": _safe_metric(roc_auc_score, y_c, p_c),
+                "brier": _safe_metric(brier_score_loss, y_c, p_c),
+                "top5_precision": top5_prec,
+                "top10_precision": top10_prec,
+                "top5_lift": top5_prec / base_rate if base_rate > 0 else float("nan"),
+            })
+
+    df = pd.DataFrame(rows)
+
+    # ─── 3. pretty-print pivots ──────────────────────────────────────────
+    print()
+    print("=" * 110)
+    print("ROLLING METRICS  (PR-AUC primary metric — handles imbalance correctly)")
+    print("=" * 110)
+
+    pivot_pr = df.pivot_table(index="model", columns="cohort_label", values="pr_auc")
+    ordered_cohorts = [c["label"] for c in rolling_splits_in
+                       if c["label"] in pivot_pr.columns]
+    pivot_pr = pivot_pr.reindex(columns=ordered_cohorts)
+    print(pivot_pr.round(4).to_string())
+
+    print()
+    print("ROC-AUC view:")
+    pivot_roc = df.pivot_table(
+        index="model", columns="cohort_label", values="roc_auc"
+    ).reindex(columns=ordered_cohorts)
+    print(pivot_roc.round(4).to_string())
+
+    print()
+    print(f"Total rows in rolling_metrics_v3: {len(df)}")
+    print("Columns:", list(df.columns))
+
+    return df
 
 
-def _safe_metric(fn, y, p):
-    if y.sum() == 0 or (y.sum() == len(y)):
-        return float("nan")
-    try:
-        return float(fn(y, p))
-    except Exception:
-        return float("nan")
-
-
-# ─── 2. evaluate every (model, cohort) pair ──────────────────────────────
-rows = []
-for cohort in rolling_splits:
-    mask = cohort["test_mask"]
-    y_c = y_full[mask]
-    if y_c.sum() == 0:
-        continue
-    base_rate = y_c.mean()
-    n = len(y_c)
-    k5 = max(int(np.ceil(n * 0.05)), 1)
-    k10 = max(int(np.ceil(n * 0.10)), 1)
-    for model_name, p_full in candidates.items():
-        p_c = p_full[mask]
-        # rank-based top-K precision
-        order = np.argsort(-p_c)
-        top5_prec = float(y_c[order[:k5]].mean()) if k5 else float("nan")
-        top10_prec = float(y_c[order[:k10]].mean()) if k10 else float("nan")
-        rows.append({
-            "cohort": cohort["name"],
-            "cohort_label": cohort["label"],
-            "month": cohort["month"],
-            "model": model_name,
-            "n_test": n,
-            "n_pos": int(y_c.sum()),
-            "base_rate": float(base_rate),
-            "pr_auc": _safe_metric(average_precision_score, y_c, p_c),
-            "roc_auc": _safe_metric(roc_auc_score, y_c, p_c),
-            "brier": _safe_metric(brier_score_loss, y_c, p_c),
-            "top5_precision": top5_prec,
-            "top10_precision": top10_prec,
-            "top5_lift": top5_prec / base_rate if base_rate > 0 else float("nan"),
-        })
-
-rolling_metrics_v3 = pd.DataFrame(rows)
-
-print()
-print("=" * 110)
-print("ROLLING METRICS  (PR-AUC primary metric — handles imbalance correctly)")
-print("=" * 110)
-
-# pretty pivot
-pivot_pr = rolling_metrics_v3.pivot_table(
-    index="model", columns="cohort_label", values="pr_auc"
+rolling_metrics_v3 = _train_across_time_main(
+    rolling_splits, y_v3_test, preds_v3, mlp_proba_v3, gbm_proba_v3,
 )
-# preserve cohort order from rolling_splits
-ordered_cohorts = [c["label"] for c in rolling_splits
-                   if c["label"] in pivot_pr.columns]
-pivot_pr = pivot_pr.reindex(columns=ordered_cohorts)
-print(pivot_pr.round(4).to_string())
-
-print()
-print("ROC-AUC view:")
-pivot_roc = rolling_metrics_v3.pivot_table(
-    index="model", columns="cohort_label", values="roc_auc"
-).reindex(columns=ordered_cohorts)
-print(pivot_roc.round(4).to_string())
-
-print()
-print(f"Total rows in rolling_metrics_v3: {len(rolling_metrics_v3)}")
-print("Columns:", list(rolling_metrics_v3.columns))
