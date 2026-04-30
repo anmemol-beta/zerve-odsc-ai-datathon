@@ -47,7 +47,7 @@ print(f"\n[rolling] test cohort signup month coverage: "
 # full training set. This isolates how the model performs on users who
 # signed up at different points in time.
 ROLLING_MONTHS = ["2025-12", "2026-01", "2026-02", "2026-03", "2026-04"]
-rolling_splits: list[dict] = []
+rolling_splits = []
 y_test_arr = np.asarray(y_v3_test)
 
 for m in ROLLING_MONTHS:

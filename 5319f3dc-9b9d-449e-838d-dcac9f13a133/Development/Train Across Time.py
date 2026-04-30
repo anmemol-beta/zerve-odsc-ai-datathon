@@ -30,7 +30,7 @@ from sklearn.metrics import (
 )
 
 # ─── 1. assemble candidate predictions in one dict ────────────────────────
-candidates: dict[str, np.ndarray] = {}
+candidates = {}
 
 # Train Model v3 contributes 4 (3 base + ensemble)
 for name, p in preds_v3.items():
@@ -59,7 +59,7 @@ def _safe_metric(fn, y, p):
 
 
 # ─── 2. evaluate every (model, cohort) pair ──────────────────────────────
-rows: list[dict] = []
+rows = []
 for cohort in rolling_splits:
     mask = cohort["test_mask"]
     y_c = y_full[mask]

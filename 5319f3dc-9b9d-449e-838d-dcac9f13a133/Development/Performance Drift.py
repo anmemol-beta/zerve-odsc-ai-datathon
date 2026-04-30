@@ -68,7 +68,7 @@ drift_summary = (
 )
 
 # ─── 2. alerts ────────────────────────────────────────────────────────────
-drift_alerts: list[dict] = []
+drift_alerts = []
 for _, r in drift_summary.iterrows():
     if pd.notna(r["pr_slope"]) and r["pr_slope"] < -0.005:
         drift_alerts.append({

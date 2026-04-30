@@ -149,7 +149,7 @@ def _fmt_num(x):
 
 
 def _build_user_prompt(seg: dict, playbook_excerpt: str) -> str:
-    L: list[str] = []
+    L = []
     L.append(f"SEGMENT_ID:   {seg['segment_id']}")
     L.append(f"LABEL:        {seg['label']}")
     L.append(f"SIZE:         {seg['size']:,} users  ({seg['pct_of_total']:.1f}% of all)")
@@ -200,7 +200,7 @@ def _build_user_prompt(seg: dict, playbook_excerpt: str) -> str:
 
 
 # ═══ 4. segment definitions ══════════════════════════════════════════════
-SEGMENTS: list[dict] = [
+SEGMENTS = [
     {"id": "new",                  "filter": ("stage_eq", "1.New")},
     {"id": "exploring",            "filter": ("stage_eq", "2.Exploring")},
     {"id": "used_ai",              "filter": ("stage_eq", "4.UsedAI")},
@@ -253,7 +253,7 @@ def _select(feat: pd.DataFrame, spec: tuple) -> pd.Series:
 
 
 def _top_behavioral(feat: pd.DataFrame, mask: pd.Series, k: int = 6) -> list:
-    rows: list[dict] = []
+    rows = []
     seg_n = int(mask.sum())
     base_n = len(feat)
     if seg_n == 0:
@@ -348,13 +348,13 @@ def _playbook_excerpt(playbook: str, segment_id: str, label: str) -> str:
         return "(playbook unavailable — generate generic recommendations)"
     keywords = [label, segment_id, label.split(".", 1)[-1].replace("@", " ")]
     paragraphs = re.split(r"\n\s*\n", playbook)
-    scored: list[tuple[int, int, str]] = []
+    scored = []
     for p in paragraphs:
         s = sum(1 for kw in keywords if kw and kw.lower() in p.lower())
         if s > 0:
             scored.append((s, len(p), p))
     scored.sort(key=lambda t: (-t[0], t[1]))
-    chunks: list[str] = []
+    chunks = []
     used = 0
     for _, _, p in scored:
         if used + len(p) > 1500:
@@ -468,7 +468,7 @@ if K2_API_KEY:
         playbook = ""
 
     # 6c. Loop segments → K2
-    out_segments: list[dict] = []
+    out_segments = []
     for spec in SEGMENTS:
         stats = _build_segment_stats(_feat, spec)
         if stats is None or stats["size"] == 0:

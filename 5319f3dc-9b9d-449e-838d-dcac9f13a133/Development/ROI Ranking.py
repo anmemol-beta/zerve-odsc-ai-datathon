@@ -22,7 +22,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # ─── 1. flatten ───────────────────────────────────────────────────────────
-rows: list[dict] = []
+rows = []
 for seg in strategies["segments"]:
     if not seg.get("strategy") or not seg["strategy"].get("actions"):
         continue

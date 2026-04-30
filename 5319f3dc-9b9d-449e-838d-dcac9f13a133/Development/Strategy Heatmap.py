@@ -18,7 +18,7 @@ CHANNELS = ["email", "in_app_modal", "sales_call",
             "push_notification", "ad_retargeting", "lifecycle_drip"]
 
 # build flat table (avoid depending on ROI Ranking having run)
-rows: list[dict] = []
+rows = []
 for seg in strategies["segments"]:
     if not seg.get("strategy") or not seg["strategy"].get("actions"):
         continue

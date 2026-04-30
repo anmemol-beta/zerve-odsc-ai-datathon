@@ -542,6 +542,109 @@ blocks:
   width: 1600
   x: 5100
   y: 4500
+- auto_size: false
+  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  compute_settings:
+    compute_environment_type: 1
+  description: ISO-week slicing of `events`. Per-(week, user) feature snapshot
+    (n_events, AI/credit/run/exception event counts, distinct hours,
+    session minutes proxy, had_upgrade). Outputs `weekly_slices` dict,
+    `weekly_summary` df, `weekly_baseline_id`. Head of the data-drift /
+    weekly-inference branch.
+  height: 1000
+  id: 4d3699d9-98e5-4ade-a997-b60b19cf14fa
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  name: Weekly Data Slices
+  parent_id: null
+  properties: {}
+  status: 1
+  type: 1
+  variables: null
+  width: 1600
+  x: 6800
+  y: 0
+- auto_size: false
+  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  compute_settings:
+    compute_environment_type: 1
+  description: Data-drift detection without labels. Per-(week, feature) PSI
+    and KS test vs first-4-weeks baseline. Thresholds 0.10 (moderate) /
+    0.25 (material). Outputs `drift_per_week_per_feature`,
+    `weekly_drift_index`, `drift_alerts`. Heatmap + line plot dashboard.
+  height: 1000
+  id: e60588f1-a7dd-4f74-92aa-d66f75a32a98
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  name: Data Drift Monitor
+  parent_id: null
+  properties: {}
+  status: 1
+  type: 1
+  variables: null
+  width: 1600
+  x: 6800
+  y: 500
+- auto_size: false
+  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  compute_settings:
+    compute_environment_type: 2
+    ephemeral_storage_gib: 20
+    size: small
+  description: End of TRAIN tier. Pickles every candidate model + meta.json
+    (champion + metrics + trained_at) into /tmp/zerve-models/v3/. Schedule
+    this on a weekly cron via Zerve UI; the Inference tier loads from the
+    same path on demand.
+  height: 1000
+  id: b414a1f0-5bb3-4a35-865a-ee11a8101de6
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  name: Persist Models
+  parent_id: null
+  properties: {}
+  status: 1
+  type: 1
+  variables: null
+  width: 1600
+  x: 5100
+  y: 5000
+- auto_size: false
+  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  compute_settings:
+    compute_environment_type: 1
+  description: Head of INFER tier. Loads models from /tmp/zerve-models/v3
+    if available; otherwise fetches from this repo's GitHub raw
+    (models/v3/*.joblib + meta.json). Outputs `loaded_models` dict,
+    `loaded_meta`, `model_age_hours`, `inference_ready` bool.
+  height: 1000
+  id: a858f620-5c72-4a88-9da7-a84d9a309a7f
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  name: Load Models
+  parent_id: null
+  properties: {}
+  status: 1
+  type: 1
+  variables: null
+  width: 1600
+  x: 6800
+  y: 1000
+- auto_size: false
+  canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  compute_settings:
+    compute_environment_type: 1
+  description: Per-week champion-model inference dashboard. Joins predictions
+    with v4 stage to produce `weekly_predictions` (user-level), `weekly_pred_summary`
+    (week-level), `weekly_pred_by_stage` (week × stage). Decoupled from
+    training — just reads the persisted champion + scores incoming weekly slices.
+  height: 1000
+  id: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  name: Weekly Inference
+  parent_id: null
+  properties: {}
+  status: 1
+  type: 1
+  variables: null
+  width: 1600
+  x: 6800
+  y: 1500
 edges:
 - canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
   id: 7cdcc258-b746-4ec9-ae59-43e11c9edc65
@@ -782,4 +885,70 @@ edges:
   id: 1bfc01a5-9a92-41a5-bf90-5f21cfb3ebf9
   layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
   source: 270985b3-cc22-4754-b630-ac6bd6ca7f90
+  target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+# Example Dataset → Weekly Data Slices
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 77185581-2ebc-4c95-b654-698914c04c81
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: bbd1b635-38e8-4533-b331-c647f51a44a2
+  target: 4d3699d9-98e5-4ade-a997-b60b19cf14fa
+# Weekly Data Slices → Data Drift Monitor
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: e8c6a3e8-6339-42f3-bc7a-4c0ce4bdf75a
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: 4d3699d9-98e5-4ade-a997-b60b19cf14fa
+  target: e60588f1-a7dd-4f74-92aa-d66f75a32a98
+# Train Model v3 → Persist Models
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 93726a5f-2334-4e88-ae76-ed86886e5f8c
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: 826b50f0-502c-4fba-8c2f-0a0628ecf936
+  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6
+# Train GBM v3 → Persist Models
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 45a439c5-08c3-4e35-b7f1-4e51a5b7a59e
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: 7808a43a-63e4-49ec-8521-acbf44685678
+  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6
+# Train MLP v3 → Persist Models
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 3738791c-b4e5-471b-9879-6b70da85273d
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: 6d61ebe2-68f6-4250-9cc0-fe6e9cbb7206
+  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6
+# Champion Selector → Persist Models
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 23e53b50-72e2-40fa-812a-684b04d71ef9
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: 270985b3-cc22-4754-b630-ac6bd6ca7f90
+  target: b414a1f0-5bb3-4a35-865a-ee11a8101de6
+# Persist Models → Load Models
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: c2506c4d-d8ef-40d6-a228-056f038b439a
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: b414a1f0-5bb3-4a35-865a-ee11a8101de6
+  target: a858f620-5c72-4a88-9da7-a84d9a309a7f
+# Load Models → Weekly Inference
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 7a4eaa86-fa17-4c07-9786-7ebcd6550ade
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: a858f620-5c72-4a88-9da7-a84d9a309a7f
+  target: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
+# Weekly Data Slices → Weekly Inference
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 88c22123-5e01-41df-8003-1f026aff60aa
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: 4d3699d9-98e5-4ade-a997-b60b19cf14fa
+  target: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
+# Weekly Inference → Insights Card
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: a19f1ec3-3334-4cca-9abd-303dd72a8791
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: 2f0b7c9d-b916-49ee-ab67-e49629c479d0
+  target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
+# Data Drift Monitor → Insights Card
+- canvas_id: 5319f3dc-9b9d-449e-838d-dcac9f13a133
+  id: 2bf8a3e6-981c-48a0-a107-82d44f41b978
+  layer_id: d4c770ac-c591-4c73-a787-9d4824a1884a
+  source: e60588f1-a7dd-4f74-92aa-d66f75a32a98
   target: d9a9c7f6-5f70-4db8-9450-204ccd3f93f8
