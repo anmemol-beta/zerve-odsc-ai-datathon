@@ -1,0 +1,206 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api, figureUrl } from "@/lib/api";
+import { blockById, KIND_COLORS } from "@/lib/canvas";
+import type { RunStatus } from "./BlockNode";
+
+const VARIABLE_QUERY: Partial<Record<string, () => Promise<unknown>>> = {
+  "train-model-v3":          api.metrics,
+  "build-strategies":        api.strategies,
+  "compare-models":          () => api.validate("Compare Models"),
+  "per-segment-performance": () => api.validate("Per-Segment Performance"),
+  "roi-ranking":             api.roiTop10,
+  "strategy-heatmap":        api.roiHeatmap,
+  "insights-card":           api.insights,
+  "validate-events":         () => api.validate("Validate Events"),
+  "validate-funnel-v4":      () => api.validate("Validate Funnel v4"),
+  "validate-features-v3":    () => api.validate("Validate Features v3"),
+};
+
+export default function BlockDetail({
+  blockId,
+  onClose,
+  onStatus,
+}: {
+  blockId: string | null;
+  onClose: () => void;
+  onStatus: (id: string, s: RunStatus) => void;
+}) {
+  const block = blockId ? blockById(blockId) : null;
+  const [bust, setBust] = useState(0);
+  const [pulled, setPulled] = useState(false);
+
+  // Mark this node "running" while we pull, "done" after, "error" on fail.
+  const lastSig = useRef<string>("");
+  useEffect(() => {
+    if (!block) return;
+    const sig = `${block.id}:${bust}`;
+    if (lastSig.current === sig) return;
+    lastSig.current = sig;
+    setPulled(false);
+    onStatus(block.id, "running");
+  }, [block, bust, onStatus]);
+
+  const variableQuery = useQuery({
+    queryKey: ["block-var", block?.id, bust],
+    queryFn: VARIABLE_QUERY[block?.id ?? ""] ?? (async () => null),
+    enabled: !!block && block.id in VARIABLE_QUERY,
+  });
+
+  // Track variable + figure load completion to flip the status badge.
+  useEffect(() => {
+    if (!block) return;
+    if (pulled) return;
+
+    const wantsFigure = block.hasFigure;
+    const wantsVar = block.id in VARIABLE_QUERY;
+    if (!wantsFigure && !wantsVar) {
+      onStatus(block.id, "done");
+      setPulled(true);
+      return;
+    }
+    if (wantsVar) {
+      if (variableQuery.isError) {
+        onStatus(block.id, "error");
+        setPulled(true);
+      } else if (variableQuery.isSuccess && !wantsFigure) {
+        onStatus(block.id, "done");
+        setPulled(true);
+      }
+    }
+  }, [block, variableQuery.isSuccess, variableQuery.isError, pulled, onStatus]);
+
+  if (!block) return null;
+  const c = KIND_COLORS[block.kind];
+
+  return (
+    <div className="absolute right-0 top-0 z-20 flex h-full w-full max-w-[440px] flex-col border-l border-slate-800 bg-slate-950/95 backdrop-blur-md">
+      <header className="flex items-start justify-between gap-3 border-b border-slate-800 p-5">
+        <div className="space-y-1.5">
+          <span
+            className="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider"
+            style={{ background: c.bg, color: c.ring }}
+          >
+            {c.label}
+          </span>
+          <h3 className="text-lg font-semibold tracking-tight text-slate-50">
+            {block.name}
+          </h3>
+          <p className="text-xs leading-relaxed text-slate-400">
+            {block.description}
+          </p>
+        </div>
+        <button
+          onClick={onClose}
+          className="rounded-md border border-slate-700 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-slate-100"
+        >
+          ✕
+        </button>
+      </header>
+
+      <div className="flex-1 space-y-5 overflow-y-auto p-5">
+        {block.hasFigure && (
+          <FigurePane
+            block={block.name}
+            bust={bust}
+            onLoad={() => {
+              onStatus(block.id, "done");
+              setPulled(true);
+            }}
+            onError={() => {
+              onStatus(block.id, "error");
+              setPulled(true);
+            }}
+          />
+        )}
+
+        {block.id in VARIABLE_QUERY && (
+          <section>
+            <SectionTitle>Live variables</SectionTitle>
+            {variableQuery.isLoading && <Skeleton />}
+            {variableQuery.isError && (
+              <ErrorBanner error={variableQuery.error} />
+            )}
+            {variableQuery.isSuccess && (
+              <pre className="max-h-[280px] overflow-auto rounded-md border border-slate-800 bg-slate-900/60 p-3 text-[11px] leading-relaxed text-slate-300">
+                {JSON.stringify(variableQuery.data, null, 2)}
+              </pre>
+            )}
+          </section>
+        )}
+
+        {!block.hasFigure && !(block.id in VARIABLE_QUERY) && (
+          <p className="text-xs text-slate-400">
+            This block produces upstream artifacts that downstream nodes consume.
+            Click a downstream block to inspect its output.
+          </p>
+        )}
+      </div>
+
+      <footer className="border-t border-slate-800 p-4">
+        <button
+          onClick={() => setBust((n) => n + 1)}
+          className="w-full rounded-md border border-cyan-400/40 bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-200 transition hover:bg-cyan-500/20"
+        >
+          ↻ Re-pull from canvas
+        </button>
+      </footer>
+    </div>
+  );
+}
+
+function FigurePane({
+  block,
+  bust,
+  onLoad,
+  onError,
+}: {
+  block: string;
+  bust: number;
+  onLoad: () => void;
+  onError: () => void;
+}) {
+  return (
+    <section>
+      <SectionTitle>matplotlib · live from canvas</SectionTitle>
+      <div className="overflow-hidden rounded-md border border-slate-800 bg-slate-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={figureUrl(block, bust)}
+          alt={`${block} figure`}
+          className="block w-full"
+          onLoad={onLoad}
+          onError={onError}
+        />
+      </div>
+    </section>
+  );
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+      {children}
+    </h4>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="h-24 animate-pulse rounded-md border border-slate-800 bg-slate-900/40" />
+  );
+}
+
+function ErrorBanner({ error }: { error: unknown }) {
+  return (
+    <div className="rounded-md border border-rose-500/40 bg-rose-500/10 p-3 text-[11px] text-rose-200">
+      <strong>fetch failed</strong> — {String(error)}
+      <div className="mt-1 text-rose-300/70">
+        Block name in BLOCKS map may not match the canvas variable name. Edit
+        zerve_deploy/main.py and re-deploy, or click ↻ once the block runs.
+      </div>
+    </div>
+  );
+}

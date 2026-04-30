@@ -2,9 +2,11 @@
 /venv/
 /.venv/
 /figures/
-/app/
 __pycache__/
 .DS_Store
+web/out/
+web/.next/
+web/node_modules/
 
 # secrets — NEVER commit
 .env
