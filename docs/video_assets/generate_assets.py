@@ -124,8 +124,8 @@ def make_discovery1():
              weight="bold", family="monospace")
 
     cards = [
-        ("14 min",     "median lifetime",      "절반이 가입 후\n14분 내 이탈",   CYAN),
-        ("first week", "most upgrades happen", "76%는 7일 안에\n많은 수가 day 1",  VIOLET),
+        ("14 min",     "median lifetime",      "half churn within\n14 min of signup",  CYAN),
+        ("first week", "most upgrades happen", "76% within 7 days\nmany on day 1",     VIOLET),
         ("first hour", "decisive signal",      "model must read\nearly behavior", PINK),
     ]
     for i, (big, label, sub, color) in enumerate(cards):
@@ -149,20 +149,24 @@ def make_lift_table():
     df = df.loc[df["upg_users"] >= 50].sort_values("lift_reach", ascending=False).head(6)
 
     label_map = {
-        "ai_credit_banner_shown":             "Limit-warning banner shown",
-        "credits_exceeded":                   "Hit credit limit",
-        "credits_below_4":                    "Credits running low",
-        "agent_tool_call_analyze_attachment_tool": "Used 'analyze' AI tool",
-        "notebook_deployment_deployed":       "Deployed a notebook",
-        "notebook_deployment_preview_created":"Created notebook preview",
-        "notebook_deployment_preview_updated":"Updated notebook preview",
-        "notebook_deployment_updated":        "Updated a deployment",
-        "source_control_commit":              "Made a Git commit",
-        "source_control_pull":                "Pulled from Git",
-        "canvas_clone":                       "Cloned a canvas",
-        "credits_used":                       "Used credits",
-        "agent_message":                      "Sent a message to AI agent",
-        "files_upload":                       "Uploaded a file",
+        "ai_credit_banner_shown":                       "Limit-warning banner shown",
+        "credits_exceeded":                             "Hit credit limit",
+        "credits_below_4":                              "Credits running low",
+        "agent_tool_call_analyze_attachment_tool":      "Used 'analyze' AI tool",
+        "agent_tool_call_list_executor_images_tool":    "Used 'list images' AI tool",
+        "agent_tool_call_get_scripts_tool":             "Used 'get scripts' AI tool",
+        "notebook_deployment_deployed":                 "Deployed a notebook",
+        "notebook_deployment_preview_created":          "Created notebook preview",
+        "notebook_deployment_preview_updated":          "Updated notebook preview",
+        "notebook_deployment_updated":                  "Updated a deployment",
+        "notebook_deployment_usage_tracked":            "Notebook deployment used",
+        "notebook_deployment_automatic_preview_started":"Auto-preview started",
+        "source_control_commit":                        "Made a Git commit",
+        "source_control_pull":                          "Pulled from Git",
+        "canvas_clone":                                 "Cloned a canvas",
+        "credits_used":                                 "Used credits",
+        "agent_message":                                "Sent a message to AI agent",
+        "files_upload":                                 "Uploaded a file",
     }
     df["label"] = df["event"].map(lambda e: label_map.get(e, e))
 
@@ -187,9 +191,9 @@ def make_lift_table():
     for y, v in zip(y_pos, df["lift_reach"].values):
         ax.text(v + df["lift_reach"].max() * 0.015, y, f"{v:.1f}x",
                 color=TEXT, va="center", fontsize=22, weight="bold")
-    fig.text(0.05, 0.06, "Banner shown ~22x and credit-limit hit ~12x are the two strongest signals.",
+    fig.text(0.05, 0.04, "Limit-warning banner is the strongest signal at 22x; deployment activity clusters at 13-18x.",
              fontsize=18, color=EMERALD)
-    fig.subplots_adjust(left=0.32, right=0.96, top=0.78, bottom=0.15)
+    fig.subplots_adjust(left=0.32, right=0.96, top=0.78, bottom=0.18)
     save(fig, "cut_0_23_lift_table.png")
 
 # ── 0:41 FUNNEL 15-STAGE DISTRIBUTION ────────────────────────────────────────
