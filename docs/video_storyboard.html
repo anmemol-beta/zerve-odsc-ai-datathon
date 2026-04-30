@@ -395,7 +395,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      <b>Three and a half million events. Seventeen thousand users.</b> We built two things — a model that predicts who will upgrade, and a funnel that explains how users behave over time.
+      <b>Three and a half million events. Seventeen thousand users.</b> We built two things. A model that predicts who will upgrade, and a funnel that explains how users behave over time.
     </div>
   </div>
 
@@ -417,7 +417,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      Two things jumped out of the data right away. First — <b>half of all users disappear within fourteen minutes of signing up</b>. Second — <b>three out of four upgraders pay within their first week, and two out of three pay on day one</b>. So our model can't rely on long histories. It has to read the first hour, the first day.
+      Two things jumped out of the data right away. First, <b>half of all users disappear within fourteen minutes of signing up</b>. Second, <b>three out of four upgraders pay within their first week, and two out of three pay on day one</b>. So our model can't rely on long histories. It has to read the first hour, the first day.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -442,7 +442,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      We compared upgraders and non-upgraders for every event in the data. The two strongest signals — <b>users who saw the credit-limit warning banner are twenty-two times more likely to upgrade</b>, and <b>users who actually hit the credit limit are twelve times more likely</b>. We also considered deployment usage, source control commits, and canvas cloning — all in the same range. The pattern is one sentence: <b>serious users who hit the free-tier ceiling are the ones who pay</b>.
+      We compared upgraders and non-upgraders for every event in the data. The two strongest signals stand out clearly. <b>Users who saw the credit limit warning banner are twenty-two times more likely to upgrade</b>, and <b>users who actually hit the credit limit are twelve times more likely</b>. We also considered deployment usage, source control commits, and canvas cloning, all in the same range. The pattern is one sentence. <b>Serious users who hit the free-tier ceiling are the ones who pay</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -469,7 +469,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      On top of those patterns we built a <b>fifteen-stage funnel</b>. Every rule is deterministic — <b>"Engaged" means three or more active days. "At-Risk" means fourteen days of silence.</b> Every user lands in exactly one stage, and an engineer could rebuild the whole thing from our definitions.
+      On top of those patterns we built a <b>fifteen-stage funnel</b>. Every rule is deterministic. <b>"Engaged" means three or more active days. "At-Risk" means fourteen days of silence.</b> Every user lands in exactly one stage, and an engineer could rebuild the whole thing from our definitions.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R4 · Funnel Design</span>
@@ -495,7 +495,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · KEY FINDING</span>
-      Here is our biggest finding. We tracked all <b>three hundred twenty-three upgraders</b> after they paid. <b>Only two out of three are still active</b>. Almost a quarter went silent for thirty days. Nearly one in eleven already canceled or downgraded. Treating "upgraded" as the end of the funnel hides the fact that <b>one in three paying users is at risk</b>. So we added two new stages — "at-risk after upgrade" and "churned after upgrade".
+      Here is our biggest finding. We tracked all <b>three hundred twenty-three upgraders</b> after they paid. <b>Only two out of three are still active</b>. Almost a quarter went silent for thirty days. Nearly one in eleven already canceled or downgraded. Treating "upgraded" as the end of the funnel hides the fact that <b>one in three paying users is at risk</b>. So we added two new stages: "at-risk after upgrade", and "churned after upgrade".
     </div>
     <div class="footer-tags">
       <span class="rubric match">R4 · Funnel Design</span>
@@ -521,7 +521,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      The transitions between stages show one clear pattern. <b>Half of the users who connect an external tool go on to become consistent users.</b> And <b>thirteen percent of consistent users convert to paid</b> — that's seven times the platform average. So the <b>"integration to engagement" step is where every dollar of growth budget should go</b>.
+      The transitions between stages show one clear pattern. <b>Half of the users who connect an external tool go on to become consistent users.</b> And <b>thirteen percent of consistent users convert to paid</b>. That's seven times the platform average. So the <b>integration to engagement step is where every dollar of growth budget should go</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R5 · Transition Logic</span>
@@ -547,7 +547,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN</span>
-      Beyond the funnel, we extracted <b>seven behavioral flags</b>. The most striking finding: <b>users who hit our three strongest flags — power users, AI-first users, and onboarding completers — are fifty-five times more likely to upgrade than users with none of them</b>. We also considered reactivation patterns, exception rates, and signup purpose. All seven feed into the model.
+      Beyond the funnel, we extracted <b>seven behavioral flags</b>. The most striking finding: <b>users who hit our three strongest flags, namely power users, AI-first users, and onboarding completers, are fifty-five times more likely to upgrade than users with none of them</b>. We also considered reactivation patterns, exception rates, and signup purpose. All seven feed into the model.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R1 · Data Understanding</span>
@@ -571,7 +571,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · TRUST</span>
-      Our biggest catch — a <b>hidden data leak</b>. One feature was <b>secretly telling the model who had already paid</b>, just by measuring <b>how long we had watched each user</b>. Upgraders' windows were artificially short because we cut them at purchase. We dropped it. <b>Here's what it cost us — and here's what we got back.</b>
+      Our biggest catch was a <b>hidden data leak</b>. One feature was <b>secretly telling the model who had already paid</b>, just by measuring <b>how long we had watched each user</b>. Upgraders' windows were artificially short because we cut them at purchase. We dropped it. <b>Here's what it cost us, and here's what we got back.</b>
     </div>
     <div class="footer-tags">
       <span class="rubric match">R2 · Leakage &amp; Rigor</span>
@@ -598,7 +598,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · NUMBERS</span>
-      We trained <b>five candidate models</b> side by side. Always predicting "no upgrade" gets ninety-seven percent accuracy but catches <b>zero upgraders</b> — useless. Logistic regression: <b>five times better than random</b>. A single XGBoost: <b>ten times</b>. Our final model — <b>three tree models, all calibrated, voting together</b> — scores <b>eleven times random</b>. And calibration makes our probabilities <b>four times more accurate</b>. So "twenty-three percent chance" really means twenty-three percent.
+      We trained <b>five candidate models</b> side by side. Always predicting "no upgrade" gets ninety-seven percent accuracy but catches <b>zero upgraders</b>. Useless. Logistic regression is <b>five times better than random</b>. A single XGBoost, <b>ten times</b>. Our final model is <b>three tree models, all calibrated, voting together</b>. It scores <b>eleven times random</b>. And calibration makes our probabilities <b>four times more accurate</b>. So "twenty-three percent chance" really means twenty-three percent.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -625,7 +625,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · BUSINESS</span>
-      Here is what that means in practice. Out of seventeen thousand users, <b>send a campaign to just the top five percent — three hundred seventy-one people</b>. You catch <b>ninety upgraders. Half of all upgraders, with one-twentieth of the budget</b>. Random targeting on the same five percent catches only nine. So the model gives <b>ten times the efficiency</b>. Push it tighter — top one percent, seventy-four people — and you still catch thirty-four upgraders. <b>Eighteen times better than random</b>.
+      Here is what that means in practice. Out of seventeen thousand users, <b>send a campaign to just the top five percent</b>. That's three hundred seventy-one people. You catch <b>ninety upgraders</b>. <b>Half of all upgraders, with one-twentieth of the budget</b>. Random targeting on the same five percent catches only nine. So the model gives <b>ten times the efficiency</b>. Push it tighter to the top one percent, seventy-four people, and you still catch thirty-four upgraders. <b>Eighteen times better than random</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -651,7 +651,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · INTERPRETABILITY</span>
-      Accuracy alone is not enough. <b>SHAP values show what the model actually looks at</b>. The single strongest signal — <b>how fast a user hits the credit limit</b>. We also see banner exposure, first-hour AI usage, and seven other signals in the top ten. Each one points to <b>an exact moment for a marketing nudge</b> — and that mapping is what powers the playbook on the next slide.
+      Accuracy alone is not enough. <b>SHAP values show what the model actually looks at</b>. The single strongest signal is <b>how fast a user hits the credit limit</b>. We also see banner exposure, first-hour AI usage, and seven other signals in the top ten. Each one points to <b>an exact moment for a marketing nudge</b>, and that mapping is what powers the playbook on the next slide.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality (interpretable)</span>
@@ -678,7 +678,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · GUARDRAILS</span>
-      Beyond accuracy we wired <b>three production guardrails</b>. <b>Every pipeline block runs an automated audit</b> — leakage, feature shape, funnel rules. After deployment, we watch incoming data every week with <b>PSI and KS divergence — no labels needed</b>. And every prediction is <b>calibrated</b>, so when we say "twenty-three percent chance", that really means twenty-three percent.
+      Beyond accuracy we wired <b>three production guardrails</b>. <b>Every pipeline block runs an automated audit</b> covering leakage, feature shape, and funnel rules. After deployment, we watch incoming data every week with <b>PSI and KS divergence, no labels needed</b>. And every prediction is <b>calibrated</b>, so when we say "twenty-three percent chance", that really means twenty-three percent.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R3 · Predictive Quality</span>
@@ -705,7 +705,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · ACTION</span>
-      We translated every finding into <b>seven concrete campaigns ranked by ROI</b>. The strongest: users who saw the limit-warning banner — three hundred two people — <b>convert sixteen times more often than the average user</b>. Right behind: credit-ceiling hitters — <b>seven times the average</b>. We also have ranked campaigns for notebook deployers, onboarding completers, and three more. Combined the top three reach <b>about thirteen hundred users — just seven percent of our base — converting five to sixteen times more often than the average</b>.
+      We turned every finding into <b>seven concrete campaigns, ranked by ROI</b>. The strongest one targets users who saw the credit limit banner. They <b>convert sixteen times more often than the average user</b>. Combined, our top three campaigns reach <b>about thirteen hundred users, just seven percent of our base</b>.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R6 · Insights</span>
@@ -730,7 +730,7 @@
     </div>
     <div class="voice">
       <span class="vlabel">VOICE-OVER · EN · LIVE DEMO</span>
-      Finally, we hand all of this to <b>K2-Think — an LLM that generates three ranked actions for every one of our fourteen user segments</b>. Channel, message copy, expected lift, ROI multiple. <b>Forty-two ready-to-launch campaigns on one screen</b>. The whole thing runs as a live web app — every number you see is fetched from the canvas in real time, not baked in.
+      Finally, we hand it all to an AI strategist called <b>K2-Think</b>. For each of our fourteen segments, it writes three ranked actions. <b>Forty-two ready-to-launch campaigns on one screen</b>, all live from the canvas.
     </div>
     <div class="footer-tags">
       <span class="rubric match">R7 · Communication</span>
