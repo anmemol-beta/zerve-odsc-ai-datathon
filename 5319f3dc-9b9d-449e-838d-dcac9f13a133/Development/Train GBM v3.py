@@ -54,7 +54,7 @@ y_test_arr = np.asarray(y_v3_test).astype(int)
 # ═══ Path A — catboost (only if importable; not in Zerve requirements) ═══
 if CATBOOST_OK:
     print("[GBM v3] backend=catboost  (oblivious trees + ordered boosting)")
-    base = CatBoostClassifier(
+    gbm_base = CatBoostClassifier(
         iterations=500,
         depth=6,
         learning_rate=0.05,
@@ -73,7 +73,7 @@ else:
     print("[GBM v3] backend=sklearn_gbm  "
           "(GradientBoostingClassifier — classic CART-tree GBM)")
     from sklearn.ensemble import GradientBoostingClassifier
-    base = GradientBoostingClassifier(
+    gbm_base = GradientBoostingClassifier(
         n_estimators=300,
         max_depth=5,
         learning_rate=0.05,
@@ -85,7 +85,7 @@ else:
 
 # ─── shared: calibrate, fit, predict ──────────────────────────────────────
 print(f"[GBM v3] calibrating with isotonic CV=3...")
-gbm_v3 = CalibratedClassifierCV(base, method="isotonic", cv=3)
+gbm_v3 = CalibratedClassifierCV(gbm_base, method="isotonic", cv=3)
 gbm_v3.fit(X_train_arr, y_train_arr)
 
 gbm_proba_v3 = gbm_v3.predict_proba(X_test_arr)[:, 1]

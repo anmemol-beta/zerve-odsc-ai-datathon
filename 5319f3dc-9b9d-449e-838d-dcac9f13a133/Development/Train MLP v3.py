@@ -201,7 +201,7 @@ else:
         X_train_bal = X_train_a[keep]
         y_train_bal = y_train_a[keep].astype(int)
 
-    base = Pipeline([
+    mlp_base = Pipeline([
         ("scaler", StandardScaler()),
         ("mlp", MLPClassifier(
             hidden_layer_sizes=(256, 128, 64), activation="relu",
@@ -210,7 +210,7 @@ else:
             n_iter_no_change=10, random_state=42, verbose=False,
         )),
     ])
-    mlp_v3 = CalibratedClassifierCV(base, method="isotonic", cv=3)
+    mlp_v3 = CalibratedClassifierCV(mlp_base, method="isotonic", cv=3)
     mlp_v3.fit(X_train_bal, y_train_bal.astype(int))
     mlp_proba_v3 = mlp_v3.predict_proba(X_test_a)[:, 1]
     mlp_backend = "sklearn"

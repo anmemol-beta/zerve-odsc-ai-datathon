@@ -120,9 +120,9 @@ ax.grid(alpha=0.3)
 
 # [BL] PR curves
 ax = axes[1, 0]
-base = y.mean()
-ax.axhline(base, linestyle="--", color="#475569",
-           label=f"baseline ({base:.4f})")
+diagnose_base_rate = y.mean()
+ax.axhline(diagnose_base_rate, linestyle="--", color="#475569",
+           label=f"baseline ({diagnose_base_rate:.4f})")
 for name, p in preds_v3.items():
     p = np.asarray(p)
     prec, rec, _ = precision_recall_curve(y, p)
